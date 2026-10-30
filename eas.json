@@ -9,17 +9,13 @@
       "android": {
         "buildType": "apk"
       },
-      "env": {
-        "EXPO_PUBLIC_API_URL": "https://YOUR-SERVER.vercel.app"
-      }
+      "channel": "preview"
     },
     "production": {
       "android": {
         "buildType": "app-bundle"
       },
-      "env": {
-        "EXPO_PUBLIC_API_URL": "https://YOUR-SERVER.vercel.app"
-      }
+      "channel": "production"
     }
   }
 }

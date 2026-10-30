@@ -53,6 +53,15 @@
     ],
     "experiments": {
       "typedRoutes": false
+    },
+    "owner": "omar-nutris-team",
+    "extra": {
+      "eas": {
+        "projectId": "198f3b44-c7e0-470c-a89d-134d5ad199ee"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
     }
   }
 }

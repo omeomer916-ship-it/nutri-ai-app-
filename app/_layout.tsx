@@ -1,10 +1,25 @@
 import { useEffect, useState } from 'react';
-import { View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useApp } from '../src/store';
 import { C } from '../src/theme';
+
+// Show any startup error on screen instead of closing the app.
+export function ErrorBoundary({ error, retry }: { error: Error; retry: () => Promise<void> }) {
+  return (
+    <View style={{ flex: 1, backgroundColor: '#000', padding: 24, paddingTop: 80 }}>
+      <Text style={{ color: '#39E68C', fontSize: 22, fontWeight: '800', marginBottom: 12 }}>Nutri AI</Text>
+      <Text style={{ color: '#fff', fontSize: 16, marginBottom: 12 }}>حدث خطأ. صوّر هذه الشاشة وأرسلها.</Text>
+      <Text selectable style={{ color: '#ff8080', fontSize: 13 }}>{String(error?.message || error)}</Text>
+      <Text selectable style={{ color: 'rgba(255,255,255,0.5)', fontSize: 11, marginTop: 10 }}>{String(error?.stack || '').slice(0, 1200)}</Text>
+      <Pressable onPress={() => retry()} style={{ marginTop: 24, backgroundColor: '#39E68C', borderRadius: 16, padding: 16, alignItems: 'center' }}>
+        <Text style={{ fontWeight: '800' }}>Retry</Text>
+      </Pressable>
+    </View>
+  );
+}
 
 export default function RootLayout() {
   const [ready, setReady] = useState(useApp.persist.hasHydrated());

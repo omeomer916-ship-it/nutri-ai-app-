@@ -8,7 +8,6 @@ import { useT } from '../src/i18n';
 import { useApp } from '../src/store';
 import { C, IMG } from '../src/theme';
 import { Btn, Txt } from '../src/components/ui';
-import { useGoogleSignIn } from '../src/google';
 import { Leaf } from '../src/components/Leaf';
 
 const { height: H } = Dimensions.get('window');
@@ -49,7 +48,6 @@ export default function Intro() {
   const finishIntro = useApp((s) => s.finishIntro);
   const [i, setI] = useState(0);
   const zoom = useRef(new Animated.Value(0)).current;
-  const google = useGoogleSignIn();
 
   useEffect(() => {
     zoom.setValue(0);
@@ -68,12 +66,9 @@ export default function Intro() {
     router.replace(useApp.getState().profile ? '/(tabs)/today' : '/onboarding');
   };
   const onGoogle = async () => {
-    if (!google.available) {
-      Alert.alert('Google', t('googleOff'));
-      return done({ name: t('guestName'), guest: true });
-    }
-    const u = await google.signIn();
-    if (u) done({ ...u, guest: false });
+    // Real Google sign-in is enabled in phase 2 (see src/google.ts).
+    Alert.alert('Google', t('googleOff'));
+    done({ name: t('guestName'), guest: true });
   };
 
   const chips: React.ReactNode[] = [

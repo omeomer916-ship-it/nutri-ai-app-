@@ -1,0 +1,14 @@
+# Builds the Google Play bundle (.aab) when code is pushed to the "release" branch.
+name: Build Play Store bundle
+
+on:
+  push:
+    branches: ['release']
+
+jobs:
+  build_store:
+    name: Build Android App Bundle
+    type: build
+    params:
+      platform: android
+      profile: store

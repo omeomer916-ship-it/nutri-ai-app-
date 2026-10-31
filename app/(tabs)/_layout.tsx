@@ -8,7 +8,7 @@ import * as Haptics from 'expo-haptics';
 import { useT, TKey } from '../../src/i18n';
 import { C } from '../../src/theme';
 import { Icon, IconName } from '../../src/components/Icon';
-import { Txt } from '../../src/components/ui';
+import { Pop, Txt } from '../../src/components/ui';
 
 const META: Record<string, { icon: IconName; label: TKey }> = {
   today: { icon: 'home', label: 'tToday' },
@@ -46,14 +46,16 @@ function Bar({ state, navigation }: BottomTabBarProps) {
             return (
               <Pressable key={r.key} onPress={() => go(r.name)} style={st.fabWrap}>
                 <LinearGradient colors={['#7CF5B5', C.green, '#17A35B']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={st.fab}>
-                  <Icon name="scan" size={28} color="#03140b" stroke={2.4} />
+                  <Pop loop="pulse"><Icon name="scan" size={28} color="#03140b" stroke={2.4} /></Pop>
                 </LinearGradient>
               </Pressable>
             );
           }
           return (
             <Pressable key={r.key} onPress={() => go(r.name)} style={st.item}>
-              <Icon name={m.icon} size={23} color={on ? '#fff' : 'rgba(255,255,255,0.42)'} stroke={on ? 2.2 : 1.8} />
+              <Pop key={on ? 'on' : 'off'}>
+                <Icon name={m.icon} size={23} color={on ? C.green : 'rgba(255,255,255,0.42)'} stroke={on ? 2.2 : 1.8} fill={on && m.icon !== 'chart' ? 'rgba(57,230,140,0.18)' : undefined} />
+              </Pop>
               <Txt center numberOfLines={1} style={{ fontSize: 11, fontWeight: on ? '800' : '600', color: on ? '#fff' : 'rgba(255,255,255,0.42)', marginTop: 2 }}>{t(m.label)}</Txt>
               <View style={[st.dot, on && { backgroundColor: C.green }]} />
             </Pressable>

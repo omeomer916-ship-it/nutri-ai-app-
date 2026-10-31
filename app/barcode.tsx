@@ -115,7 +115,7 @@ export default function Barcode() {
               <Num style={{ color: C.mut, fontSize: 15, fontWeight: '700', marginTop: 12 }}>kcal</Num>
             </View>
             <Row style={{ gap: 8, marginTop: 10 }}>
-              {([['drumstick', prod.P, 'P', C.pro], ['wheat', prod.C, 'Cb', C.carb], ['avocado', prod.F, 'F', C.fat]] as [IconName, number, TKey, string][]).map(([ic, n, k, col]) => (
+              {([['meat', prod.P, 'P', C.pro], ['bread', prod.C, 'Cb', C.carb], ['avocado', prod.F, 'F', C.fat]] as [IconName, number, TKey, string][]).map(([ic, n, k, col]) => (
                 <View key={k} style={st.mt}>
                   <Row style={{ gap: 5 }}><Icon name={ic} size={15} color={col} /><Num style={{ fontWeight: '900', fontSize: 16 }}>{v(n)}g</Num></Row>
                   <Txt center style={{ color: C.mut, fontSize: 11 }}>{t(k)}</Txt>

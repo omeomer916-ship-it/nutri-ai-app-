@@ -68,7 +68,7 @@ function Daily() {
           <Num style={{ color: C.mut, fontSize: 13 }}>/ {fmt(goals.kcal)} kcal</Num>
         </Ring>
         <View style={{ alignSelf: 'stretch', gap: 14, marginTop: 22 }}>
-          {([['P', d.tot.P, goals.P, C.pro, 'drumstick'], ['Cb', d.tot.C, goals.C, C.carb, 'wheat'], ['F', d.tot.F, goals.F, C.fat, 'avocado']] as [TKey, number, number, string, IconName][]).map(([k, v, g, col, ic]) => (
+          {([['P', d.tot.P, goals.P, C.pro, 'meat'], ['Cb', d.tot.C, goals.C, C.carb, 'bread'], ['F', d.tot.F, goals.F, C.fat, 'avocado']] as [TKey, number, number, string, IconName][]).map(([k, v, g, col, ic]) => (
             <View key={k}>
               <Row style={{ justifyContent: 'space-between', marginBottom: 7 }}>
                 <Row style={{ gap: 8 }}>
@@ -84,7 +84,7 @@ function Daily() {
       </Card>
 
       <Row style={{ gap: 10, marginTop: 10 }}>
-        {([['flame', '#FF9F5C', t('avg'), avg ? fmt(avg) : '—'], ['drumstick', C.pro, t('pavg'), pavg ? `${pavg} g` : '—'], ['bolt', C.green, t('streak'), String(streak)]] as [IconName, string, string, string][]).map(([ic, col, l, v]) => (
+        {([['flame', '#7CF5B5', t('avg'), avg ? fmt(avg) : '—'], ['meat', C.pro, t('pavg'), pavg ? `${pavg} g` : '—'], ['bolt', C.green, t('streak'), String(streak)]] as [IconName, string, string, string][]).map(([ic, col, l, v]) => (
           <Card key={l} style={{ flex: 1, padding: 14 }}>
             <IconBadge name={ic} color={col} size={34} icon={17} />
             <Num style={{ fontSize: 22, fontWeight: '900', marginTop: 10, textAlign: 'left' }}>{v}</Num>
@@ -159,12 +159,12 @@ function Weekly() {
   const mP = avg(cur, (d) => d.tot.P * 4), mC = avg(cur, (d) => d.tot.C * 4), mF = avg(cur, (d) => d.tot.F * 9);
   const sum = mP + mC + mF;
   const tiles: [IconName, string, string, string][] = [
-    ['flame', '#FF9F5C', t('avg'), aK ? fmt(aK) : '—'],
+    ['flame', '#7CF5B5', t('avg'), aK ? fmt(aK) : '—'],
     ['target', C.green, t('onTarget'), `${onT}/7`],
     ['bowl', C.carb, t('mealsLogged'), String(cur.reduce((a, d) => a + d.n, 0))],
     ['drop', C.water, t('water'), `${(cur.reduce((a, d) => a + d.water, 0) * 0.25).toFixed(1)} L`],
     ['run', C.pro, t('burned'), fmt(cur.reduce((a, d) => a + d.b, 0))],
-    ['drumstick', C.pro, t('pavg'), `${Math.round(avg(cur, (d) => d.tot.P))} g`],
+    ['meat', C.pro, t('pavg'), `${Math.round(avg(cur, (d) => d.tot.P))} g`],
   ];
   return (
     <>
@@ -209,7 +209,7 @@ function Weekly() {
       )}
       {best && (
         <Card style={{ marginTop: 10, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-          <IconBadge name="trophy" color="#FFD45C" size={42} />
+          <IconBadge name="trophy" color="#39E68C" size={42} />
           <View style={{ flex: 1 }}>
             <Txt style={{ color: C.mut, fontSize: 12 }}>{t('bestDay')}</Txt>
             <Txt style={{ fontWeight: '900' }}>{new Date(best.ts).toLocaleDateString(loc, { weekday: 'long', day: 'numeric', month: 'short' })}</Txt>

@@ -9,7 +9,7 @@ import { Btn, Card, IconBadge, Num, Row, Screen, Txt } from '../src/components/u
 import { Ring } from '../src/components/Ring';
 import { Icon, IconName } from '../src/components/Icon';
 
-const OPT_ICON: Record<string, IconName> = { m: 'user', f: 'user', lose: 'flame', keep: 'target', gain: 'drumstick', 1: 'moon', 2: 'sun', 3: 'bolt', 4: 'flame' };
+const OPT_ICON: Record<string, IconName> = { m: 'user', f: 'user', lose: 'flame', keep: 'target', gain: 'meat', 1: 'moon', 2: 'sun', 3: 'bolt', 4: 'flame' };
 
 type Step =
   | { k: 'sex' | 'goal' | 'act'; q: TKey; opts: [string | number, TKey][] }
@@ -59,7 +59,7 @@ export default function Onboarding() {
             <Num style={{ color: C.mut, fontSize: 13 }}>kcal</Num>
           </Ring>
           <Row style={{ gap: 10, marginTop: 22 }}>
-            {([['P', plan.P, C.pro, 'drumstick'], ['Cb', plan.C, C.carb, 'wheat'], ['F', plan.F, C.fat, 'avocado']] as [TKey, number, string, IconName][]).map(([k, v, col, ic]) => (
+            {([['P', plan.P, C.pro, 'meat'], ['Cb', plan.C, C.carb, 'bread'], ['F', plan.F, C.fat, 'avocado']] as [TKey, number, string, IconName][]).map(([k, v, col, ic]) => (
               <View key={k} style={styles.mac}>
                 <Icon name={ic} size={20} color={col} />
                 <Num style={{ fontSize: 20, fontWeight: '900', marginTop: 4 }}>{v}g</Num>

@@ -138,7 +138,7 @@ export default function FoodSearch() {
               <Num style={{ color: C.mut, fontSize: 15, fontWeight: '700', marginTop: 12 }}>kcal</Num>
             </View>
             <Row style={{ gap: 8, marginTop: 10 }}>
-              {([['drumstick', pick.P, 'P', C.pro], ['wheat', pick.C, 'Cb', C.carb], ['avocado', pick.F, 'F', C.fat]] as [IconName, number, TKey, string][]).map(([ic, v, k, col]) => (
+              {([['meat', pick.P, 'P', C.pro], ['bread', pick.C, 'Cb', C.carb], ['avocado', pick.F, 'F', C.fat]] as [IconName, number, TKey, string][]).map(([ic, v, k, col]) => (
                 <View key={k} style={st.mt}>
                   <Row style={{ gap: 5 }}><Icon name={ic} size={15} color={col} /><Num style={{ fontWeight: '900', fontSize: 16 }}>{Math.round(v * mult)}g</Num></Row>
                   <Txt center style={{ color: C.mut, fontSize: 11 }}>{t(k)}</Txt>
@@ -170,7 +170,7 @@ export default function FoodSearch() {
           <TextInput value={mf.name} onChangeText={(v) => setMf({ ...mf, name: v })} placeholder={t('fName')} placeholderTextColor={C.dim}
             style={[st.field, { textAlign: rtl ? 'right' : 'left', fontFamily: fontFor(700, lang) }]} />
           <Row style={{ gap: 8, marginTop: 8 }}>
-            {([['k', 'kcal', '#FF9F5C'], ['P', t('P'), C.pro], ['C', t('Cb'), C.carb], ['F', t('F'), C.fat]] as ['k' | 'P' | 'C' | 'F', string, string][]).map(([key, lab, col]) => (
+            {([['k', 'kcal', '#7CF5B5'], ['P', t('P'), C.pro], ['C', t('Cb'), C.carb], ['F', t('F'), C.fat]] as ['k' | 'P' | 'C' | 'F', string, string][]).map(([key, lab, col]) => (
               <View key={key} style={{ flex: 1 }}>
                 <TextInput value={mf[key]} onChangeText={(v) => setMf({ ...mf, [key]: v })} keyboardType="decimal-pad" placeholder="0" placeholderTextColor={C.dim}
                   style={[st.field, { textAlign: 'center', fontFamily: fontFor(800, lang), borderColor: col + '55' }]} />

@@ -12,7 +12,7 @@ import { Ring } from '../src/components/Ring';
 import { Icon } from '../src/components/Icon';
 
 const PLANS = [12, 14, 16, 18, 20, 23];
-const PH: [number, TKey, string][] = [[0, 'ph1', C.carb], [4, 'ph2', C.water], [12, 'ph3', '#FF9F5C'], [16, 'ph4', C.pro]];
+const PH: [number, TKey, string][] = [[0, 'ph1', C.carb], [4, 'ph2', C.water], [12, 'ph3', '#7CF5B5'], [16, 'ph4', C.pro]];
 
 
 export default function Fasting() {
@@ -46,7 +46,7 @@ export default function Fasting() {
         </Row>
         <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 40 }}>
           <View style={{ alignItems: 'center', marginTop: 10 }}>
-            <Ring size={250} stroke={18} value={on ? el : 0} max={goal} color={el >= goal ? C.green : '#FF9F5C'}>
+            <Ring size={250} stroke={18} value={on ? el : 0} max={goal} color={el >= goal ? C.green : '#7CF5B5'}>
               <Txt center style={{ color: C.mut, fontWeight: '700' }}>{on ? (el >= goal ? t('fastDone') : t('fastElapsed')) : t('fastIdle')}</Txt>
               <Num style={{ fontSize: 40, fontWeight: '900', textAlign: 'center' }}>{hms(el)}</Num>
               {on && el < goal && <Num style={{ color: C.dim, fontSize: 13, textAlign: 'center' }}>-{hms(goal - el)}</Num>}
@@ -91,7 +91,7 @@ export default function Fasting() {
             ))}
           </View>
 
-          <Btn title={on ? t('fastEnd') : t('fastStart')} style={[{ marginTop: 20 }, on && { backgroundColor: '#FF9F5C', shadowColor: '#FF9F5C' }]}
+          <Btn title={on ? t('fastEnd') : t('fastStart')} style={[{ marginTop: 20 }, on && { backgroundColor: '#7CF5B5', shadowColor: '#7CF5B5' }]}
             icon={<Icon name={on ? 'check' : 'bolt'} size={18} color="#000" stroke={2.6} />}
             onPress={() => { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {}); on ? endFast() : startFast(fast.hours); }} />
           <Txt style={{ color: C.dim, fontSize: 11, marginTop: 10, lineHeight: 17 }}>{t('fastNote')}</Txt>
@@ -128,6 +128,6 @@ const st = StyleSheet.create({
   phase: { alignSelf: 'center', flexDirection: 'row', alignItems: 'center', gap: 6, borderWidth: 1, borderRadius: 999, paddingHorizontal: 14, paddingVertical: 6, marginTop: 14 },
   plans: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   plan: { width: '31.5%', paddingVertical: 12, borderRadius: R.md, backgroundColor: C.surface, borderWidth: 1, borderColor: C.stroke },
-  planOn: { backgroundColor: '#FF9F5C', borderColor: '#FF9F5C' },
+  planOn: { backgroundColor: '#7CF5B5', borderColor: '#7CF5B5' },
   dot: { width: 26, height: 26, borderRadius: 13, alignItems: 'center', justifyContent: 'center' },
 });

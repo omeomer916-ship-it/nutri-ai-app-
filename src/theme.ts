@@ -16,10 +16,13 @@ export const C = {
   dim: 'rgba(255,255,255,0.38)',
   red: '#FF6B6B',
   // macro colours
-  pro: '#FF7A8C',
-  carb: '#FFC35C',
-  fat: '#6CB6FF',
-  water: '#4FC3FF',
+  // One brand: every accent is a shade of the logo green.
+  pro: '#39E68C',
+  carb: '#B5F7D5',
+  fat: '#17B062',
+  water: '#7CF5B5',
+  mint: '#9AF3C4',
+  deep: '#0F2A1B',
 };
 
 export const R = { sm: 12, md: 18, lg: 26, xl: 32, pill: 999 };
@@ -60,12 +63,12 @@ export const IMG = {
 
 /** Category icon names + accent colours (see components/Icon). */
 export const CAT_ICON = {
-  bf: { icon: 'sun', color: '#FFC35C' },
+  bf: { icon: 'sun', color: '#39E68C' },
   ln: { icon: 'bowl', color: '#39E68C' },
-  dn: { icon: 'moon', color: '#9C8CFF' },
-  sn: { icon: 'cookie', color: '#FF9F5C' },
-  ds: { icon: 'cake', color: '#FF7A8C' },
-  dr: { icon: 'cup', color: '#4FC3FF' },
+  dn: { icon: 'moon', color: '#39E68C' },
+  sn: { icon: 'cookie', color: '#39E68C' },
+  ds: { icon: 'cake', color: '#39E68C' },
+  dr: { icon: 'cup', color: '#39E68C' },
 } as const;
 
 // legacy emoji map (unused by new screens)

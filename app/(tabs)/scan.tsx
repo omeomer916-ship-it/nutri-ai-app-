@@ -271,7 +271,7 @@ export default function Scan() {
 }
 
 function MacroTiles({ P, C: Cb, F, t, compact }: { P: number; C: number; F: number; t: (k: TKey) => string; compact?: boolean }) {
-  const items: [IconName, number, TKey, string][] = [['drumstick', P, 'P', C.pro], ['wheat', Cb, 'Cb', C.carb], ['avocado', F, 'F', C.fat]];
+  const items: [IconName, number, TKey, string][] = [['meat', P, 'P', C.pro], ['bread', Cb, 'Cb', C.carb], ['avocado', F, 'F', C.fat]];
   return (
     <Row style={{ gap: 8, marginTop: compact ? 10 : 16 }}>
       {items.map(([ic, v, k, col]) => (

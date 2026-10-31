@@ -6,7 +6,7 @@ import { useT, TKey } from '../../src/i18n';
 import { CATS, Cat, Meal, dayKey, streakOf, totals, useApp } from '../../src/store';
 import { fmt, hms } from '../../src/calc';
 import { C, CAT_ICON, IMG, R } from '../../src/theme';
-import { Btn, Card, H2, IconBadge, Num, Row, Screen, Txt } from '../../src/components/ui';
+import { Btn, Card, H2, IconBadge, Num, Pop, Row, Screen, Txt } from '../../src/components/ui';
 import { Ring } from '../../src/components/Ring';
 import { Brand } from '../../src/components/Brand';
 import { Icon, IconName } from '../../src/components/Icon';
@@ -54,8 +54,8 @@ export default function Today() {
   const openScan = (cat?: Cat) => router.push({ pathname: '/(tabs)/scan', params: cat ? { cat } : {} });
   const openFood = (cat?: Cat) => router.push({ pathname: '/food', params: cat ? { cat } : {} });
   const macros: [string, number, number, string, IconName][] = [
-    [t('P'), tot.P, goals.P, C.pro, 'drumstick'],
-    [t('Cb'), tot.C, goals.C, C.carb, 'wheat'],
+    [t('P'), tot.P, goals.P, C.pro, 'meat'],
+    [t('Cb'), tot.C, goals.C, C.carb, 'bread'],
     [t('F'), tot.F, goals.F, C.fat, 'avocado'],
   ];
 
@@ -92,7 +92,7 @@ export default function Today() {
             <Num style={{ fontWeight: '900', fontSize: 13, color: '#000' }}>PRO</Num>
           </Pressable>
           <Pressable onPress={() => router.navigate('/(tabs)/progress')} style={st.streak}>
-            <Icon name="flame" size={17} color="#FF9F5C" fill="#FF9F5C33" />
+            <Icon name="flame" size={17} color="#7CF5B5" fill="#7CF5B533" />
             <Num style={{ fontWeight: '800', fontSize: 15 }}>{streak}</Num>
           </Pressable>
         </Row>
@@ -131,13 +131,13 @@ export default function Today() {
               <View style={st.vsep} />
               <View>
                 <Txt style={st.small}>{t('burned')}</Txt>
-                <Num style={[st.smallV, { color: '#FF9F5C' }]}>+{fmt(burned)}</Num>
+                <Num style={[st.smallV, { color: '#7CF5B5' }]}>+{fmt(burned)}</Num>
               </View>
             </>}
           </Row>
         </View>
         <Ring size={128} stroke={12} value={tot.kcal} max={goals.kcal + burned} color={left < 0 ? C.red : C.green}>
-          <View style={st.flame}><Icon name="flame" size={30} color="#fff" fill="rgba(255,255,255,0.12)" /></View>
+          <View style={st.flame}><Pop loop="wiggle"><Icon name="flame" size={30} color={C.green} fill="rgba(57,230,140,0.2)" /></Pop></View>
         </Ring>
       </Card>
 
@@ -153,7 +153,7 @@ export default function Today() {
               <Txt numberOfLines={1} style={{ color: C.mut, fontSize: 12, fontWeight: '600' }}>{l} {rem >= 0 ? t('leftS') : t('overS')}</Txt>
               <View style={{ alignItems: 'center', marginTop: 12 }}>
                 <Ring size={66} stroke={7} value={v} max={g} color={col}>
-                  <Icon name={ic} size={22} color={col} />
+                  <Pop loop="pulse" delay={macros.findIndex((m) => m[0] === l) * 300}><Icon name={ic} size={22} color={col} fill={col + '2E'} /></Pop>
                 </Ring>
               </View>
             </Card>
@@ -163,13 +163,13 @@ export default function Today() {
 
       <Row style={{ gap: 10, marginTop: 10 }}>
         <QuickBtn icon="camera" label={t('scanNow')} color={C.green} onPress={() => openScan()} />
-        <QuickBtn icon="barcode" label={t('barcode')} color="#9C8CFF" onPress={() => router.push('/barcode')} />
-        <QuickBtn icon="search" label={t('addFood')} color={C.water} onPress={() => openFood()} />
-        <QuickBtn icon="share" label={t('shareDay')} color={C.carb} onPress={shareDay} />
+        <QuickBtn delay={250} icon="barcode" label={t('barcode')} color="#9AF3C4" onPress={() => router.push('/barcode')} />
+        <QuickBtn delay={500} icon="search" label={t('addFood')} color={C.water} onPress={() => openFood()} />
+        <QuickBtn delay={750} icon="share" label={t('shareDay')} color={C.carb} onPress={shareDay} />
       </Row>
 
       <Card style={{ marginTop: 10, flexDirection: 'row', gap: 12, alignItems: 'flex-start' }}>
-        <IconBadge name="sparkle" color={C.green} size={42} />
+        <IconBadge name="sparkle" color={C.green} size={42} loop="pulse" />
         <View style={{ flex: 1 }}>
           <Txt style={{ fontWeight: '900' }}>{t('tipTitle')}</Txt>
           <Txt style={{ color: C.mut, fontSize: 14, lineHeight: 22, marginTop: 2 }}>{t(tip)}</Txt>
@@ -182,13 +182,13 @@ export default function Today() {
 
       <Card style={{ marginTop: 10 }}>
         <Row style={{ gap: 12 }}>
-          <IconBadge name="drop" color={C.water} size={44} />
+          <IconBadge name="drop" color={C.water} size={44} loop="float" delay={400} />
           <View style={{ flex: 1 }}>
             <Txt style={{ fontWeight: '800', fontSize: 16 }}>{t('water')}</Txt>
             <Num style={{ color: C.mut, fontSize: 13, textAlign: 'left' }}>{water * 250} / {waterGoal * 250} ml</Num>
           </View>
           <Pressable hitSlop={8} style={st.round} onPress={() => setWater(water - 1)}><Icon name="minus" size={18} /></Pressable>
-          <Pressable hitSlop={8} style={[st.round, { backgroundColor: C.water }]} onPress={() => setWater(water + 1)}><Icon name="plus" size={18} color="#001a26" stroke={2.6} /></Pressable>
+          <Pressable hitSlop={8} style={[st.round, { backgroundColor: C.water }]} onPress={() => setWater(water + 1)}><Icon name="plus" size={18} color="#03140b" stroke={2.6} /></Pressable>
         </Row>
         <Row style={{ gap: 6, marginTop: 14 }}>
           {Array.from({ length: waterGoal }, (_, i) => i + 1).map((n) => (
@@ -202,36 +202,36 @@ export default function Today() {
       <Pressable onPress={() => router.push('/fasting')}>
         <Card style={{ marginTop: 10 }}>
           <Row style={{ gap: 12 }}>
-            <IconBadge name="moon" color="#9C8CFF" size={44} />
+            <IconBadge name="moon" color="#9AF3C4" size={44} loop="float" />
             <View style={{ flex: 1 }}>
               <Txt style={{ fontWeight: '800', fontSize: 16 }}>{t('fastT')}</Txt>
               {fast.start
-                ? <Num style={{ color: '#9C8CFF', fontWeight: '900', fontSize: 15 }}>{hms(now - fast.start)} / {fast.hours}h</Num>
+                ? <Num style={{ color: '#9AF3C4', fontWeight: '900', fontSize: 15 }}>{hms(now - fast.start)} / {fast.hours}h</Num>
                 : <Txt style={{ color: C.mut, fontSize: 12 }}>{t('fastS')}</Txt>}
             </View>
             {fast.start
-              ? <Ring size={44} stroke={5} value={now - fast.start} max={fast.hours * 3600e3} color="#9C8CFF"><Icon name="moon" size={16} color="#9C8CFF" /></Ring>
-              : <View style={[st.round, { backgroundColor: '#9C8CFF' }]}><Icon name="bolt" size={17} color="#000" stroke={2.6} /></View>}
+              ? <Ring size={44} stroke={5} value={now - fast.start} max={fast.hours * 3600e3} color="#9AF3C4"><Icon name="moon" size={16} color="#9AF3C4" /></Ring>
+              : <View style={[st.round, { backgroundColor: '#9AF3C4' }]}><Icon name="bolt" size={17} color="#000" stroke={2.6} /></View>}
           </Row>
         </Card>
       </Pressable>
 
       <Card style={{ marginTop: 10 }}>
         <Row style={{ gap: 12 }}>
-          <IconBadge name="run" color="#FF9F5C" size={44} />
+          <IconBadge name="run" color="#7CF5B5" size={44} loop="float" delay={200} />
           <View style={{ flex: 1 }}>
             <Txt style={{ fontWeight: '800', fontSize: 16 }}>{t('exT')}</Txt>
             {burned > 0
-              ? <Num style={{ color: '#FF9F5C', fontSize: 13, fontWeight: '700', textAlign: 'left' }}>{fmt(burned)} kcal</Num>
+              ? <Num style={{ color: '#7CF5B5', fontSize: 13, fontWeight: '700', textAlign: 'left' }}>{fmt(burned)} kcal</Num>
               : <Txt style={{ color: C.mut, fontSize: 12 }}>{t('exNone')}</Txt>}
           </View>
-          <Pressable hitSlop={8} style={[st.round, { backgroundColor: '#FF9F5C' }]} onPress={() => setExOpen(true)}><Icon name="plus" size={18} color="#000" stroke={2.8} /></Pressable>
+          <Pressable hitSlop={8} style={[st.round, { backgroundColor: '#7CF5B5' }]} onPress={() => setExOpen(true)}><Icon name="plus" size={18} color="#000" stroke={2.8} /></Pressable>
         </Row>
         {burnList.map((b) => (
           <Pressable key={b.id} onLongPress={() => removeBurn(dk, b.id)} style={st.exRow}>
             <Txt style={{ flex: 1, fontWeight: '700', fontSize: 14 }}>{b.name}</Txt>
             <Num style={{ color: C.mut, fontSize: 12 }}>{b.min} min</Num>
-            <Num style={{ fontWeight: '900', color: '#FF9F5C', width: 70, textAlign: 'right' }}>-{fmt(b.kcal)}</Num>
+            <Num style={{ fontWeight: '900', color: '#7CF5B5', width: 70, textAlign: 'right' }}>-{fmt(b.kcal)}</Num>
           </Pressable>
         ))}
       </Card>
@@ -302,7 +302,7 @@ export default function Today() {
                   <View style={{ flex: 1 }}>
                     <Txt numberOfLines={1} style={{ fontWeight: '800', fontSize: 14 }}>{m.name}</Txt>
                     <Row style={{ gap: 10, marginTop: 3 }}>
-                      {([['drumstick', m.P, C.pro], ['wheat', m.C, C.carb], ['avocado', m.F, C.fat]] as [IconName, number, string][]).map(([ic, v, col]) => (
+                      {([['meat', m.P, C.pro], ['bread', m.C, C.carb], ['avocado', m.F, C.fat]] as [IconName, number, string][]).map(([ic, v, col]) => (
                         <Row key={ic} style={{ gap: 3 }}>
                           <Icon name={ic} size={12} color={col} />
                           <Num style={{ color: C.mut, fontSize: 11, fontWeight: '700' }}>{Math.round(v)}g</Num>
@@ -346,10 +346,10 @@ export default function Today() {
   );
 }
 
-function QuickBtn({ icon, label, color, onPress }: { icon: IconName; label: string; color: string; onPress: () => void }) {
+function QuickBtn({ icon, label, color, onPress, delay = 0 }: { icon: IconName; label: string; color: string; onPress: () => void; delay?: number }) {
   return (
     <Pressable onPress={onPress} style={({ pressed }) => [st.quick, pressed && { transform: [{ scale: 0.97 }] }]}>
-      <IconBadge name={icon} color={color} size={38} icon={19} />
+      <IconBadge name={icon} color={color} size={38} icon={19} loop="float" delay={delay} />
       <Txt center numberOfLines={1} adjustsFontSizeToFit style={{ fontSize: 12, fontWeight: '800', marginTop: 6 }}>{label}</Txt>
     </Pressable>
   );
@@ -376,7 +376,7 @@ function CountUp({ value, style }: { value: number; style: object }) {
 }
 
 const st = StyleSheet.create({
-  pro: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: '#FFD45C', borderRadius: R.pill, paddingHorizontal: 10, paddingVertical: 6 },
+  pro: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: '#39E68C', borderRadius: R.pill, paddingHorizontal: 10, paddingVertical: 6 },
   streak: { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: C.surface2, borderRadius: R.pill, paddingHorizontal: 12, paddingVertical: 6, borderWidth: 1, borderColor: C.stroke },
   day: { width: 38, height: 38, borderRadius: 19, alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.12)', borderStyle: 'dashed' },
   dayHas: { borderStyle: 'solid', borderColor: C.green },
@@ -392,7 +392,7 @@ const st = StyleSheet.create({
   round: { width: 36, height: 36, borderRadius: 18, backgroundColor: C.surface2, alignItems: 'center', justifyContent: 'center' },
   glass: { height: 26, borderRadius: 7, backgroundColor: 'rgba(79,195,255,0.12)' },
   proBan: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: R.lg, padding: 16, borderWidth: 1, borderColor: 'rgba(57,230,140,0.35)' },
-  crown: { width: 42, height: 42, borderRadius: 14, backgroundColor: '#FFD45C', alignItems: 'center', justifyContent: 'center' },
+  crown: { width: 42, height: 42, borderRadius: 14, backgroundColor: '#39E68C', alignItems: 'center', justifyContent: 'center' },
   meal: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: C.stroke },
   qa: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: C.surface, borderWidth: 1, borderColor: C.stroke, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 8 },
   exRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 10, paddingTop: 10, borderTopWidth: 1, borderTopColor: C.stroke },

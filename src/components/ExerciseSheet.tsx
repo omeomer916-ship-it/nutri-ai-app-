@@ -60,7 +60,7 @@ export function ExerciseSheet({ open, onClose }: { open: boolean; onClose: () =>
           ))}
         </Row>
         <View style={st.kcal}>
-          <Icon name="flame" size={26} color="#FF9F5C" fill="#FF9F5C33" />
+          <Icon name="flame" size={26} color="#7CF5B5" fill="#7CF5B533" />
           <Num style={{ fontSize: 38, fontWeight: '900' }}>{fmt(kcal)}</Num>
           <Num style={{ color: C.mut, fontSize: 14, fontWeight: '700', marginTop: 12 }}>kcal</Num>
         </View>
@@ -76,7 +76,7 @@ const st = StyleSheet.create({
   grab: { alignSelf: 'center', width: 44, height: 5, borderRadius: 3, backgroundColor: 'rgba(255,255,255,0.2)', marginBottom: 16 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 14 },
   act: { width: '31.6%', paddingVertical: 11, borderRadius: 14, backgroundColor: C.surface2, alignItems: 'center' },
-  actOn: { backgroundColor: '#FF9F5C' },
+  actOn: { backgroundColor: '#7CF5B5' },
   lab: { color: C.mut, fontWeight: '700', fontSize: 13, marginTop: 16, marginBottom: 8 },
   min: { flex: 1, height: 44, borderRadius: 14, backgroundColor: C.surface2, alignItems: 'center', justifyContent: 'center' },
   kcal: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 16, paddingVertical: 6, backgroundColor: C.surface2, borderRadius: 20 },

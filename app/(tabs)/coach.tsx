@@ -74,7 +74,7 @@ export default function Coach() {
     }
   };
 
-  const sugg: [IconName, string, 'q1' | 'q2' | 'q3'][] = [['bowl', C.green, 'q1'], ['drumstick', C.pro, 'q2'], ['target', C.carb, 'q3']];
+  const sugg: [IconName, string, 'q1' | 'q2' | 'q3'][] = [['bowl', C.green, 'q1'], ['meat', C.pro, 'q2'], ['target', C.carb, 'q3']];
 
   return (
     <View style={{ flex: 1, backgroundColor: C.bg }}>

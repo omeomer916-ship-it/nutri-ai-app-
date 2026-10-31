@@ -146,16 +146,16 @@ export const FOODS: Food[] = [
 
 export const GROUPS: { id: FoodGroup | 'all' | 'mine'; icon: IconName; color: string }[] = [
   { id: 'all', icon: 'sparkle', color: '#39E68C' },
-  { id: 'mine', icon: 'star', color: '#FFD45C' },
-  { id: 'intl', icon: 'globe', color: '#6CB6FF' },
+  { id: 'mine', icon: 'star', color: '#39E68C' },
+  { id: 'intl', icon: 'globe', color: '#17B062' },
   { id: 'healthy', icon: 'target', color: '#39E68C' },
-  { id: 'bf', icon: 'sun', color: '#FFC35C' },
+  { id: 'bf', icon: 'sun', color: '#B5F7D5' },
   { id: 'main', icon: 'bowl', color: '#39E68C' },
-  { id: 'grill', icon: 'flame', color: '#FF9F5C' },
-  { id: 'bread', icon: 'wheat', color: '#E8C48A' },
-  { id: 'sweet', icon: 'cake', color: '#FF7A8C' },
-  { id: 'drink', icon: 'cup', color: '#4FC3FF' },
-  { id: 'snack', icon: 'cookie', color: '#9C8CFF' },
+  { id: 'grill', icon: 'flame', color: '#7CF5B5' },
+  { id: 'bread', icon: 'bread', color: '#B5F7D5' },
+  { id: 'sweet', icon: 'cake', color: '#39E68C' },
+  { id: 'drink', icon: 'cup', color: '#7CF5B5' },
+  { id: 'snack', icon: 'cookie', color: '#9AF3C4' },
 ];
 
 /** Loose match: ignores case, Arabic hamza/taa-marbuta/ya variants and diacritics. */

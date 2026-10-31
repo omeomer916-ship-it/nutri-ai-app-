@@ -80,12 +80,12 @@ export default function Intro() {
   const chips: React.ReactNode[] = [
     <>
       <Chip key="a" top={50} side="end" delay={600}><Icon name="sparkle" size={16} color={C.green} /><Txt style={st.ct}>{ar ? 'مانجا طازجة' : 'Fresh mango'}</Txt><Num style={st.cg}>200 g</Num></Chip>
-      <Chip key="b" top={59} side="end" delay={1000}><Icon name="flame" size={16} color="#FF9F5C" /><Num style={st.cg}>120 kcal</Num><Txt style={st.ct}>{ar ? 'ثقة عالية' : 'high confidence'}</Txt></Chip>
+      <Chip key="b" top={59} side="end" delay={1000}><Icon name="flame" size={16} color="#7CF5B5" /><Num style={st.cg}>120 kcal</Num><Txt style={st.ct}>{ar ? 'ثقة عالية' : 'high confidence'}</Txt></Chip>
     </>,
     <>
-      <Chip key="a" top={14} side="start" delay={400}><Icon name="drumstick" size={16} color={C.pro} /><Txt style={st.ct}>{t('P')}</Txt><Num style={st.cg}>34 g</Num></Chip>
+      <Chip key="a" top={14} side="start" delay={400}><Icon name="meat" size={16} color={C.pro} /><Txt style={st.ct}>{t('P')}</Txt><Num style={st.cg}>34 g</Num></Chip>
       <Chip key="b" top={26} side="end" delay={700}><Icon name="avocado" size={16} color={C.fat} /><Txt style={st.ct}>{t('F')}</Txt><Num style={st.cg}>22 g</Num></Chip>
-      <Chip key="c" top={38} side="start" delay={1000}><Icon name="flame" size={16} color="#FF9F5C" /><Num style={st.cg}>412 kcal</Num></Chip>
+      <Chip key="c" top={38} side="start" delay={1000}><Icon name="flame" size={16} color="#7CF5B5" /><Num style={st.cg}>412 kcal</Num></Chip>
     </>,
     <>
       <Chip key="a" top={13} side="end" delay={400}><Txt style={[st.ct, { maxWidth: 220 }]}>{ar ? 'هل الماء مع الليمون مفيد؟' : 'Is lemon water good for me?'}</Txt></Chip>
@@ -93,7 +93,7 @@ export default function Intro() {
     </>,
     <>
       <Chip key="a" top={16} side="end" delay={500}><Icon name="target" size={16} color={C.green} /><Txt style={st.ct}>{t('goal')}</Txt><Num style={st.cg}>2,100</Num></Chip>
-      <Chip key="b" top={28} side="start" delay={900}><Icon name="flame" size={16} color="#FF9F5C" /><Txt style={st.ct}>{ar ? '5 أيام متتالية' : '5-day streak'}</Txt></Chip>
+      <Chip key="b" top={28} side="start" delay={900}><Icon name="flame" size={16} color="#7CF5B5" /><Txt style={st.ct}>{ar ? '5 أيام متتالية' : '5-day streak'}</Txt></Chip>
     </>,
   ];
 

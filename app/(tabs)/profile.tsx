@@ -40,12 +40,12 @@ export default function Profile() {
   const onGoal = all.some((d) => { const k = totals(d).kcal; return k >= goals.kcal * 0.9 && k <= goals.kcal * 1.1; });
   const ach: [IconName, TKey, boolean, string][] = [
     ['bowl', 'a_first', mealsN > 0, C.green],
-    ['flame', 'a_s3', best >= 3, '#FF9F5C'],
+    ['flame', 'a_s3', best >= 3, '#7CF5B5'],
     ['bolt', 'a_s7', best >= 7, C.carb],
-    ['trophy', 'a_s30', best >= 30, '#FFD45C'],
+    ['trophy', 'a_s30', best >= 30, '#39E68C'],
     ['star', 'a_m50', mealsN >= 50, C.pro],
     ['drop', 'a_water', all.some((d) => d.water >= 8), C.water],
-    ['scale', 'a_weight', weights.length > 1, '#9C8CFF'],
+    ['scale', 'a_weight', weights.length > 1, '#9AF3C4'],
     ['target', 'a_goal', onGoal, C.green],
   ];
   const bmi = profile ? profile.w / Math.pow(profile.h / 100, 2) : 0;
@@ -105,13 +105,13 @@ export default function Profile() {
       </View>
 
       <Pressable onPress={() => router.push('/pro')} style={({ pressed }) => [{ marginTop: 16 }, pressed && { opacity: 0.9 }]}>
-        <LinearGradient colors={['#3a3010', '#14120a']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={st.proBan}>
+        <LinearGradient colors={['#1d3b2b', '#0e1a14']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={st.proBan}>
           <View style={st.crown}><Icon name="crown" size={22} color="#000" stroke={2.2} /></View>
           <View style={{ flex: 1 }}>
             <Txt style={{ fontWeight: '900', fontSize: 16 }}>{t('goPro')}</Txt>
             <Txt style={{ color: C.mut, fontSize: 12 }}>{t('proBan')}</Txt>
           </View>
-          <View style={{ transform: [{ scaleX: rtl ? -1 : 1 }] }}><Icon name="chevron" size={20} color="#FFD45C" stroke={2.6} /></View>
+          <View style={{ transform: [{ scaleX: rtl ? -1 : 1 }] }}><Icon name="chevron" size={20} color="#39E68C" stroke={2.6} /></View>
         </LinearGradient>
       </Pressable>
 
@@ -143,15 +143,15 @@ export default function Profile() {
 
       <H2>{t('goals')}</H2>
       <Card style={{ paddingVertical: 2 }}>
-        {field('kcal', 'kcal', 'flame', '#FF9F5C', 'kcal')}
-        {field('P', 'P', 'drumstick', C.pro, 'g')}
-        {field('C', 'Cb', 'wheat', C.carb, 'g')}
+        {field('kcal', 'kcal', 'flame', '#7CF5B5', 'kcal')}
+        {field('P', 'P', 'meat', C.pro, 'g')}
+        {field('C', 'Cb', 'bread', C.carb, 'g')}
         <View style={{ marginBottom: -1 }}>{field('F', 'F', 'avocado', C.fat, 'g')}</View>
       </Card>
 
       <H2>{t('remT')}</H2>
       <Card style={{ paddingVertical: 2 }}>
-        {sw('bell', '#FF9F5C', t('remMeals'), 'meals')}
+        {sw('bell', '#7CF5B5', t('remMeals'), 'meals')}
         {sw('drop', C.water, t('remWater'), 'water')}
         <Row style={[st.row, { borderBottomWidth: 0 }]}>
           <IconBadge name="drop" color={C.water} size={38} icon={18} />
@@ -194,8 +194,8 @@ const st = StyleSheet.create({
   inWrap: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: C.surface2, borderRadius: R.pill, paddingHorizontal: 12, height: 42 },
   in: { width: 62, height: 42, paddingVertical: 0, color: '#fff', textAlign: 'center', textAlignVertical: 'center', includeFontPadding: false, fontSize: 16 },
   step: { width: 32, height: 32, borderRadius: 16, backgroundColor: C.surface2, alignItems: 'center', justifyContent: 'center' },
-  proBan: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: R.lg, padding: 16, borderWidth: 1, borderColor: 'rgba(255,212,92,0.4)' },
-  crown: { width: 42, height: 42, borderRadius: 14, backgroundColor: '#FFD45C', alignItems: 'center', justifyContent: 'center' },
+  proBan: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: R.lg, padding: 16, borderWidth: 1, borderColor: 'rgba(57,230,140,0.4)' },
+  crown: { width: 42, height: 42, borderRadius: 14, backgroundColor: '#39E68C', alignItems: 'center', justifyContent: 'center' },
   bmiTag: { borderRadius: 999, paddingHorizontal: 10, paddingVertical: 3 },
   bmiBar: { flexDirection: 'row', height: 8, borderRadius: 4, overflow: 'visible', marginTop: 10, direction: 'ltr' },
   bmiDot: { position: 'absolute', top: -5, width: 18, height: 18, marginLeft: -9, borderRadius: 9, backgroundColor: '#fff', borderWidth: 3, borderColor: '#000' },

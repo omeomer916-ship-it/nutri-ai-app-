@@ -44,7 +44,7 @@ export function MealSheet({ meal, dayK, onClose }: { meal: Meal | null; dayK: st
           <Num style={{ color: C.mut, fontSize: 15, fontWeight: '700', marginTop: 12 }}>kcal</Num>
         </View>
         <Row style={{ gap: 8, marginTop: 10 }}>
-          {([['drumstick', meal.P, 'P', C.pro], ['wheat', meal.C, 'Cb', C.carb], ['avocado', meal.F, 'F', C.fat]] as [IconName, number, TKey, string][]).map(([ic, n, k, col]) => (
+          {([['meat', meal.P, 'P', C.pro], ['bread', meal.C, 'Cb', C.carb], ['avocado', meal.F, 'F', C.fat]] as [IconName, number, TKey, string][]).map(([ic, n, k, col]) => (
             <View key={k} style={st.mt}>
               <Row style={{ gap: 5 }}><Icon name={ic} size={15} color={col} /><Num style={{ fontWeight: '900', fontSize: 16 }}>{v(n)}g</Num></Row>
               <Txt center style={{ color: C.mut, fontSize: 11 }}>{t(k)}</Txt>

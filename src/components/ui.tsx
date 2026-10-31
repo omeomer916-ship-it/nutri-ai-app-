@@ -1,5 +1,5 @@
-import { ReactNode } from 'react';
-import { Pressable, ScrollView, StyleProp, StyleSheet, Text, TextProps, TextStyle, View, ViewStyle } from 'react-native';
+import { ReactNode, useEffect, useRef } from 'react';
+import { Animated, Easing, Pressable, ScrollView, StyleProp, StyleSheet, Text, TextProps, TextStyle, View, ViewStyle } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { C, R, fontFor } from '../theme';
@@ -125,12 +125,38 @@ export function Row({ children, style }: { children: ReactNode; style?: StylePro
   return <View style={[{ flexDirection: 'row', alignItems: 'center' }, style]}>{children}</View>;
 }
 
-/** Rounded square with a tinted icon. */
-export function IconBadge({ name, color = C.green, size = 40, icon = 20 }: { name: IconName; color?: string; size?: number; icon?: number }) {
+type Loop = 'float' | 'pulse' | 'wiggle';
+const LINE_ONLY = new Set(['refresh', 'logout', 'share', 'search', 'info', 'plus', 'minus', 'x', 'chevron', 'check', 'edit', 'copy', 'barcode', 'scan', 'run', 'chart', 'send', 'sun', 'bowl', 'wheat', 'bread']);
+/** Pops in when it appears; can keep a gentle idle motion. */
+export function Pop({ children, delay = 0, loop, style }: { children: ReactNode; delay?: number; loop?: Loop; style?: StyleProp<ViewStyle> }) {
+  const a = useRef(new Animated.Value(0)).current;
+  const l = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    Animated.spring(a, { toValue: 1, delay, friction: 5, tension: 90, useNativeDriver: true }).start();
+    if (!loop) return;
+    const d = loop === 'wiggle' ? 900 : 1800;
+    const anim = Animated.loop(Animated.sequence([
+      Animated.timing(l, { toValue: 1, duration: d, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+      Animated.timing(l, { toValue: 0, duration: d, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+    ]));
+    const id = setTimeout(() => anim.start(), delay + 400);
+    return () => { clearTimeout(id); anim.stop(); };
+  }, []);
+  const tf: object[] = [{ scale: a.interpolate({ inputRange: [0, 1], outputRange: [0.4, 1] }) }];
+  if (loop === 'float') tf.push({ translateY: l.interpolate({ inputRange: [0, 1], outputRange: [0, -3] }) });
+  if (loop === 'pulse') tf.push({ scale: l.interpolate({ inputRange: [0, 1], outputRange: [1, 1.1] }) });
+  if (loop === 'wiggle') tf.push({ rotate: l.interpolate({ inputRange: [0, 1], outputRange: ['-7deg', '7deg'] }) });
+  return <Animated.View style={[style, { opacity: a, transform: tf as never }]}>{children}</Animated.View>;
+}
+
+/** Rounded square with a two-tone green icon that pops in (and can keep moving). */
+export function IconBadge({ name, color = C.green, size = 40, icon = 20, loop, delay = 0 }: { name: IconName; color?: string; size?: number; icon?: number; loop?: Loop; delay?: number }) {
   return (
-    <View style={{ width: size, height: size, borderRadius: size * 0.32, backgroundColor: color + '22', alignItems: 'center', justifyContent: 'center' }}>
-      <Icon name={name} size={icon} color={color} />
-    </View>
+    <Pop delay={delay} loop={loop}>
+      <View style={{ width: size, height: size, borderRadius: size * 0.32, backgroundColor: color + '1F', borderWidth: 1, borderColor: color + '33', alignItems: 'center', justifyContent: 'center' }}>
+        <Icon name={name} size={icon} color={color} fill={LINE_ONLY.has(name) ? undefined : color + '2E'} />
+      </View>
+    </Pop>
   );
 }
 

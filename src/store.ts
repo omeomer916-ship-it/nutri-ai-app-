@@ -62,6 +62,11 @@ type State = {
   days: Record<string, Day>;
   weights: { t: number; w: number }[];
   myFoods: MyFood[];
+  remind: { meals: boolean; water: boolean };
+  setRemind: (r: Partial<{ meals: boolean; water: boolean }>) => void;
+  burn: Record<string, { id: string; name: string; kcal: number; min: number }[]>;
+  addBurn: (b: { name: string; kcal: number; min: number }) => void;
+  removeBurn: (key: string, id: string) => void;
   addMyFood: (f: Omit<MyFood, 'id'>) => void;
   removeMyFood: (id: string) => void;
   updateMeal: (key: string, id: string, patch: Partial<Omit<Meal, 'id'>>) => void;
@@ -77,7 +82,7 @@ type State = {
   resetAll: () => void;
 };
 
-const initial: Pick<State, 'lang' | 'seenIntro' | 'account' | 'profile' | 'goals' | 'days' | 'weights' | 'myFoods'> = {
+const initial: Pick<State, 'lang' | 'seenIntro' | 'account' | 'profile' | 'goals' | 'days' | 'weights' | 'myFoods' | 'remind' | 'burn'> = {
   lang: deviceLang(),
   seenIntro: false,
   account: null,
@@ -86,6 +91,8 @@ const initial: Pick<State, 'lang' | 'seenIntro' | 'account' | 'profile' | 'goals
   days: {},
   weights: [],
   myFoods: [],
+  remind: { meals: false, water: false },
+  burn: {},
 };
 
 export const useApp = create<State>()(
@@ -108,6 +115,13 @@ export const useApp = create<State>()(
         days[k] = { ...d, meals: [meal, ...d.meals] };
         set({ days });
       },
+      setRemind: (r) => set({ remind: { ...get().remind, ...r } }),
+      addBurn: (b) => {
+        const k = dayKey();
+        const list = get().burn[k] ?? [];
+        set({ burn: { ...get().burn, [k]: [{ ...b, id: Math.random().toString(36).slice(2) }, ...list] } });
+      },
+      removeBurn: (key, id) => set({ burn: { ...get().burn, [key]: (get().burn[key] ?? []).filter((x) => x.id !== id) } }),
       addMyFood: (f) => set({ myFoods: [{ ...f, id: Math.random().toString(36).slice(2) }, ...get().myFoods] }),
       removeMyFood: (id) => set({ myFoods: get().myFoods.filter((x) => x.id !== id) }),
       updateMeal: (key, id, patch) => {

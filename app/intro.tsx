@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Alert, Animated, Dimensions, Image, Pressable, StyleSheet, View } from 'react-native';
+import { Alert, Animated, Dimensions, Image, Linking, Pressable, StyleSheet, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -141,7 +141,9 @@ export default function Intro() {
                 <Btn kind="white" title={t('google')} icon={<GoogleG />} onPress={onGoogle} />
               )}
               <Btn kind="ghost" title={t('guest')} style={{ marginTop: 12 }} onPress={() => done({ name: t('guestName'), guest: true })} />
-              <Txt center style={st.terms}>{t('terms')}</Txt>
+              <Pressable onPress={() => Linking.openURL('https://nutri-ai-server.netlify.app/privacy').catch(() => {})}>
+                <Txt center style={st.terms}>{t('terms')}</Txt>
+              </Pressable>
             </>
           )}
         </View>
@@ -162,7 +164,7 @@ const st = StyleSheet.create({
   logo: { alignSelf: 'center', flexDirection: 'row', gap: 8, alignItems: 'center', paddingHorizontal: 14, paddingVertical: 8, borderRadius: 999, backgroundColor: 'rgba(0,0,0,0.45)', borderWidth: 1, borderColor: C.line, marginBottom: 14 },
   title: { fontSize: H < 700 ? 28 : 32, fontWeight: '900', marginBottom: 8, lineHeight: H < 700 ? 40 : 46 },
   desc: { color: C.mut, fontSize: 16, lineHeight: 25, marginBottom: 24 },
-  terms: { color: C.dim, fontSize: 12, marginTop: 14 },
+  terms: { color: C.dim, fontSize: 12, marginTop: 14, textDecorationLine: 'underline' },
   chip: { position: 'absolute', flexDirection: 'row', alignItems: 'center', gap: 7, backgroundColor: 'rgba(14,20,17,0.86)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.14)', borderRadius: 18, paddingHorizontal: 14, paddingVertical: 10 },
   ct: { color: '#fff', fontWeight: '700', fontSize: 14 },
   cg: { color: C.green, fontWeight: '800', fontSize: 14 },

@@ -11,6 +11,7 @@ import { Ring } from '../../src/components/Ring';
 import { Brand } from '../../src/components/Brand';
 import { Icon, IconName } from '../../src/components/Icon';
 import { MealSheet } from '../../src/components/MealSheet';
+import { ExerciseSheet } from '../../src/components/ExerciseSheet';
 
 export default function Today() {
   const { t, lang, rtl } = useT();
@@ -19,10 +20,14 @@ export default function Today() {
   const account = useApp((s) => s.account);
   const setWater = useApp((s) => s.setWater);
   const [edit, setEdit] = useState<Meal | null>(null);
+  const [exOpen, setExOpen] = useState(false);
   const dk = dayKey();
   const day = days[dk];
   const tot = totals(day);
-  const left = goals.kcal - tot.kcal;
+  const burnList = useApp((s) => s.burn[dk]) ?? [];
+  const removeBurn = useApp((s) => s.removeBurn);
+  const burned = burnList.reduce((a, b) => a + b.kcal, 0);
+  const left = goals.kcal + burned - tot.kcal;
   const hr = new Date().getHours();
   const hello = hr < 12 ? t('gm') : hr < 18 ? t('ga') : t('ge');
   const water = day?.water ?? 0;
@@ -103,9 +108,16 @@ export default function Today() {
               <Txt style={st.small}>{t('goal')}</Txt>
               <Num style={st.smallV}>{fmt(goals.kcal)}</Num>
             </View>
+            {burned > 0 && <>
+              <View style={st.vsep} />
+              <View>
+                <Txt style={st.small}>{t('burned')}</Txt>
+                <Num style={[st.smallV, { color: '#FF9F5C' }]}>+{fmt(burned)}</Num>
+              </View>
+            </>}
           </Row>
         </View>
-        <Ring size={128} stroke={12} value={tot.kcal} max={goals.kcal} color={left < 0 ? C.red : C.green}>
+        <Ring size={128} stroke={12} value={tot.kcal} max={goals.kcal + burned} color={left < 0 ? C.red : C.green}>
           <View style={st.flame}><Icon name="flame" size={30} color="#fff" fill="rgba(255,255,255,0.12)" /></View>
         </Ring>
       </Card>
@@ -132,6 +144,7 @@ export default function Today() {
 
       <Row style={{ gap: 10, marginTop: 10 }}>
         <QuickBtn icon="camera" label={t('scanNow')} color={C.green} onPress={() => openScan()} />
+        <QuickBtn icon="barcode" label={t('barcode')} color="#9C8CFF" onPress={() => router.push('/barcode')} />
         <QuickBtn icon="search" label={t('addFood')} color={C.water} onPress={() => openFood()} />
         <QuickBtn icon="share" label={t('shareDay')} color={C.carb} onPress={shareDay} />
       </Row>
@@ -165,6 +178,26 @@ export default function Today() {
             </Pressable>
           ))}
         </Row>
+      </Card>
+
+      <Card style={{ marginTop: 10 }}>
+        <Row style={{ gap: 12 }}>
+          <IconBadge name="run" color="#FF9F5C" size={44} />
+          <View style={{ flex: 1 }}>
+            <Txt style={{ fontWeight: '800', fontSize: 16 }}>{t('exT')}</Txt>
+            {burned > 0
+              ? <Num style={{ color: '#FF9F5C', fontSize: 13, fontWeight: '700', textAlign: rtl ? 'right' : 'left' }}>{fmt(burned)} kcal</Num>
+              : <Txt style={{ color: C.mut, fontSize: 12 }}>{t('exNone')}</Txt>}
+          </View>
+          <Pressable hitSlop={8} style={[st.round, { backgroundColor: '#FF9F5C' }]} onPress={() => setExOpen(true)}><Icon name="plus" size={18} color="#000" stroke={2.8} /></Pressable>
+        </Row>
+        {burnList.map((b) => (
+          <Pressable key={b.id} onLongPress={() => removeBurn(dk, b.id)} style={st.exRow}>
+            <Txt style={{ flex: 1, fontWeight: '700', fontSize: 14 }}>{b.name}</Txt>
+            <Num style={{ color: C.mut, fontSize: 12 }}>{b.min} min</Num>
+            <Num style={{ fontWeight: '900', color: '#FF9F5C', width: 70, textAlign: rtl ? 'left' : 'right' }}>-{fmt(b.kcal)}</Num>
+          </Pressable>
+        ))}
       </Card>
 
       <Pressable onPress={() => router.push('/pro')} style={({ pressed }) => [{ marginTop: 10 }, pressed && { opacity: 0.9 }]}>
@@ -255,6 +288,7 @@ export default function Today() {
       </ScrollView>
 
       <MealSheet meal={edit} dayK={dk} onClose={() => setEdit(null)} />
+      <ExerciseSheet open={exOpen} onClose={() => setExOpen(false)} />
     </Screen>
   );
 }
@@ -307,6 +341,7 @@ const st = StyleSheet.create({
   proBan: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: R.lg, padding: 16, borderWidth: 1, borderColor: 'rgba(57,230,140,0.35)' },
   crown: { width: 42, height: 42, borderRadius: 14, backgroundColor: '#FFD45C', alignItems: 'center', justifyContent: 'center' },
   meal: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: C.stroke },
+  exRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 10, paddingTop: 10, borderTopWidth: 1, borderTopColor: C.stroke },
   thumb: { width: 48, height: 48, borderRadius: 14 },
   tile: { width: 140, height: 176, borderRadius: R.md, overflow: 'hidden', borderWidth: 1, borderColor: C.stroke },
 });

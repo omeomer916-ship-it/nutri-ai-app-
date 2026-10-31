@@ -67,7 +67,7 @@ export default function Coach() {
       setMsgs([...next, { role: 'assistant', content: a }]);
     } catch (e) {
       const code = e instanceof AiError ? e.code : 'network';
-      setMsgs([...next, { role: 'assistant', content: code === 'no_api' ? t('noApi') : t('aiErr') }]);
+      setMsgs([...next, { role: 'assistant', content: code === 'no_api' ? t('noApi') : code === 'rate' ? t('aiRate') : t('aiErr') }]);
     } finally {
       setBusy(false);
       setTimeout(() => sv.current?.scrollToEnd({ animated: true }), 80);

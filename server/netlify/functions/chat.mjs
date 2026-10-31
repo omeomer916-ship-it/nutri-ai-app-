@@ -1,4 +1,4 @@
 import handler from '../../api/chat.js';
 import { adapt } from './_adapt.mjs';
-export default adapt(handler);
+export default adapt(handler, 'chat');
 export const config = { path: '/api/chat' };

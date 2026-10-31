@@ -74,6 +74,9 @@ export default function FoodSearch() {
             <View style={{ transform: [{ scaleX: rtl ? 1 : -1 }] }}><Icon name="chevron" size={20} /></View>
           </Pressable>
           <Txt style={{ fontSize: 24, fontWeight: '900', flex: 1 }}>{t('addFood')}</Txt>
+          <Pressable onPress={() => router.push({ pathname: '/barcode', params: { cat } })} style={st.bcBtn}>
+            <Icon name="barcode" size={18} color={C.green} />
+          </Pressable>
           <Pressable onPress={() => setManual(true)} style={st.manualBtn}>
             <Icon name="edit" size={15} color="#000" stroke={2.4} />
             <Txt style={{ color: '#000', fontWeight: '800', fontSize: 13 }}>{t('manual')}</Txt>
@@ -187,6 +190,7 @@ export default function FoodSearch() {
 }
 
 const st = StyleSheet.create({
+  bcBtn: { width: 38, height: 38, borderRadius: 19, backgroundColor: C.surface2, alignItems: 'center', justifyContent: 'center' },
   manualBtn: { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: '#fff', borderRadius: 999, paddingHorizontal: 12, paddingVertical: 7 },
   field: { height: 50, borderRadius: 14, backgroundColor: C.surface2, borderWidth: 1, borderColor: C.stroke, color: '#fff', paddingHorizontal: 14, fontSize: 16, paddingVertical: 0 },
   back: { width: 40, height: 40, borderRadius: 20, backgroundColor: C.surface2, alignItems: 'center', justifyContent: 'center' },

@@ -1,4 +1,5 @@
-import { Alert, Image, Linking, Pressable, Share, StyleSheet, TextInput, View } from 'react-native';
+import { Alert, Image, Linking, Pressable, Share, StyleSheet, Switch, TextInput, View } from 'react-native';
+import { applyReminders } from '../../src/reminders';
 import { router } from 'expo-router';
 import Constants from 'expo-constants';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -9,11 +10,25 @@ import { Card, H2, IconBadge, Num, Row, Screen, Txt } from '../../src/components
 import { Leaf } from '../../src/components/Leaf';
 import { Icon, IconName } from '../../src/components/Icon';
 import { googleSignOut } from '../../src/GoogleButton';
+import { API } from '../../src/ai';
 import { LangPicker } from '../../src/components/LangPicker';
 
 export default function Profile() {
   const { t, lang, rtl } = useT();
-  const { account, goals, profile, setGoals, signOut, resetAll, days, weights } = useApp();
+  const { account, goals, profile, setGoals, signOut, resetAll, days, weights, remind, setRemind } = useApp();
+  const toggle = async (k: 'meals' | 'water', on: boolean) => {
+    const next = { ...remind, [k]: on };
+    setRemind({ [k]: on });
+    const ok = await applyReminders(next, lang);
+    if (!ok) { setRemind({ [k]: false }); Alert.alert(t('remT'), t('remNo')); }
+  };
+  const sw = (ic: IconName, col: string, label: string, k: 'meals' | 'water') => (
+    <Row key={k} style={st.row}>
+      <IconBadge name={ic} color={col} size={38} icon={18} />
+      <Txt style={{ flex: 1, fontWeight: '700' }}>{label}</Txt>
+      <Switch value={remind[k]} onValueChange={(v) => toggle(k, v)} trackColor={{ false: C.surface3, true: C.green }} thumbColor="#fff" />
+    </Row>
+  );
   const all = Object.values(days);
   const mealsN = all.reduce((a, d) => a + d.meals.length, 0);
   const streak = streakOf(days);
@@ -134,6 +149,12 @@ export default function Profile() {
         <View style={{ marginBottom: -1 }}>{field('F', 'F', 'avocado', C.fat, 'g')}</View>
       </Card>
 
+      <H2>{t('remT')}</H2>
+      <Card style={{ paddingVertical: 2 }}>
+        {sw('bell', '#FF9F5C', t('remMeals'), 'meals')}
+        <View style={{ marginBottom: -1 }}>{sw('drop', C.water, t('remWater'), 'water')}</View>
+      </Card>
+
       <H2>{t('settings')}</H2>
       <Card style={{ paddingVertical: 2 }}>
         <Row style={st.row}>
@@ -144,6 +165,8 @@ export default function Profile() {
         {item('refresh', t('redo'), () => router.push('/onboarding'))}
         {item('share', t('share'), () => { Share.share({ message: t('shareMsg') }).catch(() => {}); })}
         {item('star', t('rate'), () => { Linking.openURL('market://details?id=com.nutriai.app').catch(() => Linking.openURL('https://play.google.com/store/apps/details?id=com.nutriai.app').catch(() => {})); })}
+        {item('info', t('privacy'), () => { Linking.openURL(`${API ?? 'https://nutri-ai-server.netlify.app'}/privacy`).catch(() => {}); })}
+        {item('info', t('termsL'), () => { Linking.openURL(`${API ?? 'https://nutri-ai-server.netlify.app'}/terms`).catch(() => {}); })}
         {item('logout', account?.guest ? t('signIn') : t('signOut'), () => { googleSignOut(); signOut(); router.replace('/intro'); })}
         {item('trash', t('reset'), () =>
           Alert.alert(t('reset'), t('resetQ'), [

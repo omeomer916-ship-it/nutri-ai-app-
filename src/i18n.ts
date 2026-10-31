@@ -77,7 +77,10 @@ const en = {
   tryFree: 'Start 7-day free trial', soon: 'Pro subscriptions open soon with the Google Play release.',
   restore: 'Restore purchase', cancelAny: 'Cancel anytime', goPro: 'Upgrade to Pro', proBan: 'Unlimited scans, smart coach and reports',
   share: 'Share the app', shareMsg: 'I track my calories with Nutri AI. Snap a meal and get calories instantly.',
-  rate: 'Rate the app', shareDay: 'Share my day', bmi: 'BMI', bUnder: 'Underweight', bNormal: 'Healthy', bOver: 'Overweight', bObese: 'Obese',
+  barcode: 'Barcode', bcHint: 'Point the camera at the barcode', bcNotFound: 'Product not found. Try another one or add it manually.', per100: 'per 100 g', serving: 'serving', camAsk: 'Allow camera', scanAgain: 'Scan again', amount: 'Amount',
+  remT: 'Reminders', remMeals: 'Meal reminders (8:30, 13:30, 19:30)', remWater: 'Water reminders (5 a day)', remNo: 'Allow notifications for Nutri AI in your phone settings.',
+  exT: 'Exercise', exAdd: 'Add exercise', burned: 'Burned', minutes: 'Minutes', exNone: 'Log a workout and its calories are added to your day.',
+  rate: 'Rate the app', aiRate: 'Too many requests right now. Try again in a few minutes.', privacy: 'Privacy policy', termsL: 'Terms of use', shareDay: 'Share my day', bmi: 'BMI', bUnder: 'Underweight', bNormal: 'Healthy', bOver: 'Overweight', bObese: 'Obese',
 };
 
 export type Dict = typeof en;
@@ -152,7 +155,10 @@ const ar: Dict = {
   tryFree: 'ابدأ تجربة مجانية 7 أيام', soon: 'اشتراك Pro رح يتفعّل قريباً مع نزول التطبيق على Google Play.',
   restore: 'استرجاع الشراء', cancelAny: 'ألغِ بأي وقت', goPro: 'اشترك بـ Pro', proBan: 'مسح بلا حدود، مدرب ذكي وتقارير',
   share: 'شارك التطبيق', shareMsg: 'بتابع سعراتي مع Nutri AI. صوّر وجبتك واعرف سعراتها فوراً.',
-  rate: 'قيّم التطبيق', shareDay: 'شارك يومي', bmi: 'مؤشر كتلة الجسم', bUnder: 'نحافة', bNormal: 'طبيعي', bOver: 'وزن زائد', bObese: 'سمنة',
+  barcode: 'باركود', bcHint: 'وجّه الكاميرا على الباركود', bcNotFound: 'المنتج مش موجود. جرّب غيره أو أضفه يدوياً.', per100: 'لكل 100 غ', serving: 'حصة', camAsk: 'اسمح بالكاميرا', scanAgain: 'امسح مرة ثانية', amount: 'الكمية',
+  remT: 'التذكيرات', remMeals: 'تذكير بالوجبات (8:30، 13:30، 19:30)', remWater: 'تذكير بشرب المي (5 مرات باليوم)', remNo: 'اسمح بإشعارات Nutri AI من إعدادات التلفون.',
+  exT: 'الرياضة', exAdd: 'أضف تمرين', burned: 'حرقت', minutes: 'الدقائق', exNone: 'سجّل تمرينك وسعراته بتنضاف ليومك.',
+  rate: 'قيّم التطبيق', aiRate: 'في طلبات كتير هلأ. جرّب بعد كم دقيقة.', privacy: 'سياسة الخصوصية', termsL: 'شروط الاستخدام', shareDay: 'شارك يومي', bmi: 'مؤشر كتلة الجسم', bUnder: 'نحافة', bNormal: 'طبيعي', bOver: 'وزن زائد', bObese: 'سمنة',
 };
 
 import { de, es, fr, id, ru, tr, ur } from './locales';

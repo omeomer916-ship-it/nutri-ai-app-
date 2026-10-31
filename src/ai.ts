@@ -1,6 +1,8 @@
 import type { Cat } from './store';
 
-const API = process.env.EXPO_PUBLIC_API_URL?.replace(/\/$/, '');
+export const API = process.env.EXPO_PUBLIC_API_URL?.replace(/\/$/, '');
+// Identifies the app to our server (set the same value as APP_KEY in Netlify).
+const APP_KEY = 'nai_2fe1587a7b743bca6647c099';
 
 export type ScanResult = {
   name: string;
@@ -12,7 +14,7 @@ export type ScanResult = {
 };
 
 export class AiError extends Error {
-  constructor(public code: 'no_api' | 'network' | 'no_food' | 'server', msg?: string) { super(msg ?? code); }
+  constructor(public code: 'no_api' | 'network' | 'no_food' | 'server' | 'rate', msg?: string) { super(msg ?? code); }
 }
 
 async function post<T>(path: string, body: unknown): Promise<T> {
@@ -21,12 +23,13 @@ async function post<T>(path: string, body: unknown): Promise<T> {
   try {
     r = await fetch(`${API}${path}`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'x-app-key': APP_KEY },
       body: JSON.stringify(body),
     });
   } catch {
     throw new AiError('network');
   }
+  if (r.status === 429) throw new AiError('rate');
   if (!r.ok) throw new AiError('server', `HTTP ${r.status}`);
   return (await r.json()) as T;
 }

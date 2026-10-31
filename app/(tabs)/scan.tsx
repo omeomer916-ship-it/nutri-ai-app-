@@ -100,7 +100,7 @@ export default function Scan() {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
     } catch (e) {
       const code = e instanceof AiError ? e.code : 'network';
-      setS((p) => ({ k: 'err', uri: 'uri' in p ? p.uri : undefined, msg: code === 'no_api' ? t('noApi') : code === 'no_food' ? t('noFood') : t('aiErr') }));
+      setS((p) => ({ k: 'err', uri: 'uri' in p ? p.uri : undefined, msg: code === 'no_api' ? t('noApi') : code === 'no_food' ? t('noFood') : code === 'rate' ? t('aiRate') : t('aiErr') }));
     }
   };
 
@@ -164,14 +164,14 @@ export default function Scan() {
         <Pressable style={({ pressed }) => [st.shutterOut, pressed && { transform: [{ scale: 0.94 }] }]} onPress={() => pick(true)} disabled={s.k === 'busy'}>
           <View style={st.shutterIn}><Icon name="camera" size={30} color="#000" /></View>
         </Pressable>
-        <Pressable style={st.side} onPress={() => router.navigate('/(tabs)/coach')}>
-          <Icon name="sparkle" size={22} color={C.green} />
+        <Pressable style={st.side} onPress={() => router.push({ pathname: '/barcode', params: { cat } })}>
+          <Icon name="barcode" size={22} color={C.green} />
         </Pressable>
       </Row>
       <Row style={{ justifyContent: 'center', gap: 34, marginTop: 6 }}>
         <Txt center style={st.sideL}>{t('gallery')}</Txt>
         <Txt center style={[st.sideL, { width: 84 }]}>{t('camera')}</Txt>
-        <Txt center style={st.sideL}>{t('tCoach')}</Txt>
+        <Txt center style={st.sideL}>{t('barcode')}</Txt>
       </Row>
 
       {s.k === 'done' && (

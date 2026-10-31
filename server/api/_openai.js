@@ -60,11 +60,12 @@ async function gemini({ system, messages, image, json }) {
   const started = Date.now();
   const budget = 24000; // stay inside the function time limit
   let lastErr = 'no model';
+  const tried = [];
   // Try each model; on "busy" (429/500/503) move to the next one, with one short retry.
   for (const model of await geminiModels(key)) {
     for (let attempt = 0; attempt < 2; attempt++) {
       const left = budget - (Date.now() - started);
-      if (left < 2500) throw new Error(`Gemini busy: ${lastErr}`);
+      if (left < 2500) throw new Error(`Gemini busy [${tried.join(', ')}] ${lastErr}`);
       const ctl = new AbortController();
       const timer = setTimeout(() => ctl.abort(), left - 500);
       try {
@@ -76,17 +77,19 @@ async function gemini({ system, messages, image, json }) {
           lastModel = model;
           return (j.candidates?.[0]?.content?.parts || []).map((p) => p.text || '').filter(Boolean).join('');
         }
-        lastErr = `${r.status} (${model}): ${(await r.text()).slice(0, 300)}`;
+        lastErr = `${r.status} (${model}): ${(await r.text()).slice(0, 200)}`;
+        tried.push(`${model}:${r.status}`);
         if (r.status === 404 || r.status === 400 || r.status === 403) break; // not usable: next model
         if (attempt === 0) await sleep(700);
       } catch (e) {
         lastErr = `${model}: ${String(e?.message || e)}`;
+        tried.push(`${model}:err`);
       } finally {
         clearTimeout(timer);
       }
     }
   }
-  throw new Error(`Gemini ${lastErr}`);
+  throw new Error(`Gemini [${tried.join(', ')}] ${lastErr}`);
 }
 
 let lastModel = null;

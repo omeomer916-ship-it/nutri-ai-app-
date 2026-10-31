@@ -12,6 +12,8 @@ export default async function handler(req, res) {
     return res.status(200).json({ ok: true, provider, model: await currentModel(), keyLength: keyLen, reply: String(text).slice(0, 40) });
   } catch (e) {
     const msg = String(e?.message || e).replace(/key=[^&\s"]+/g, 'key=***').slice(0, 600);
-    return res.status(200).json({ ok: false, provider, keyLength: keyLen, problem: msg });
+    let models = null;
+    try { models = await currentModel(); } catch {}
+    return res.status(200).json({ ok: false, provider, keyLength: keyLen, models, problem: msg });
   }
 }

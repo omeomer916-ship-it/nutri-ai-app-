@@ -68,6 +68,6 @@ const st = StyleSheet.create({
   av: { width: 76, height: 76, borderRadius: 38 },
   avG: { backgroundColor: C.green, alignItems: 'center', justifyContent: 'center', shadowColor: C.green, shadowOpacity: 0.5, shadowRadius: 18 },
   row: { flexDirection: 'row', alignItems: 'center', paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.06)', gap: 12 },
-  in: { width: 96, height: 42, color: '#fff', backgroundColor: '#000', borderWidth: 1, borderColor: C.line, borderRadius: R.sm, textAlign: 'center', fontSize: 16 },
+  in: { width: 100, height: 46, paddingVertical: 0, paddingHorizontal: 8, color: '#fff', backgroundColor: '#000', borderWidth: 1, borderColor: C.line, borderRadius: R.sm, textAlign: 'center', textAlignVertical: 'center', includeFontPadding: false, fontSize: 17, fontWeight: '700' },
   pill: { borderWidth: 1, borderColor: C.line, borderRadius: R.pill, paddingHorizontal: 14, paddingVertical: 7 },
 });

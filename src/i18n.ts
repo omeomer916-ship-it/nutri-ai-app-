@@ -35,7 +35,7 @@ const en = {
   save: 'Save to today', retake: 'Retake', saved: 'Saved to today',
   conf: 'Confidence', high: 'high', medium: 'medium', low: 'low', items: 'Ingredients',
   noFood: "I couldn't find food in this photo.", aiErr: 'Analysis failed. Check your connection and try again.',
-  noApi: 'AI server is not set. Add EXPO_PUBLIC_API_URL to your .env file.',
+  noApi: 'AI is not switched on yet. It will work in the next update.',
   camDenied: 'Camera permission is needed to scan meals.',
   recent: 'Recent scans', noScans: 'Your scanned meals will show here.',
   // coach
@@ -87,7 +87,7 @@ const ar: Dict = {
   save: 'احفظ في يومي', retake: 'أعد التصوير', saved: 'تم الحفظ في يومك',
   conf: 'الثقة', high: 'عالية', medium: 'متوسطة', low: 'منخفضة', items: 'المكوّنات',
   noFood: 'لم أجد طعاماً في هذه الصورة.', aiErr: 'تعذّر التحليل. تأكد من الإنترنت وحاول مرة أخرى.',
-  noApi: 'خادم الذكاء الاصطناعي غير مضبوط. أضف EXPO_PUBLIC_API_URL في ملف ‎.env',
+  noApi: 'الذكاء الاصطناعي غير مفعّل بعد. سيعمل في التحديث القادم.',
   camDenied: 'نحتاج إذن الكاميرا لمسح الوجبات.',
   recent: 'آخر عمليات المسح', noScans: 'وجباتك الممسوحة ستظهر هنا.',
   coachS: 'اسألني عن أي شيء', ask: 'اكتب سؤالك…', hello: 'أهلاً! أنا مدربك في Nutri. اسألني عن الأكل أو السعرات أو أهدافك.',

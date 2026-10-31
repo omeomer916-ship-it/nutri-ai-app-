@@ -117,6 +117,6 @@ const styles = StyleSheet.create({
   opt: { backgroundColor: C.card, borderWidth: 1, borderColor: C.line, borderRadius: R.md, padding: 20 },
   optOn: { borderColor: C.green, backgroundColor: '#0f2a1b' },
   inputRow: { backgroundColor: C.card, borderWidth: 1, borderColor: C.line, borderRadius: R.md, paddingHorizontal: 20, gap: 10 },
-  input: { flex: 1, color: '#fff', fontSize: 34, fontWeight: '800', paddingVertical: 18, textAlign: 'center' },
+  input: { flex: 1, color: '#fff', fontSize: 34, fontWeight: '800', height: 84, paddingVertical: 0, textAlign: 'center', textAlignVertical: 'center', includeFontPadding: false },
   mac: { flex: 1, alignItems: 'center', backgroundColor: C.card2, borderRadius: R.md, paddingVertical: 14 },
 });

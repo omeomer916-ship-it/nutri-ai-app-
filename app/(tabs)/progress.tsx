@@ -187,5 +187,5 @@ const st = StyleSheet.create({
   dayOn: { borderColor: C.green },
   tl: { width: 46, height: 46, borderRadius: 14, backgroundColor: '#14331f', alignItems: 'center', justifyContent: 'center' },
   goalLine: { position: 'absolute', left: 0, right: 0, borderTopWidth: 1, borderStyle: 'dashed', borderColor: 'rgba(255,255,255,0.4)' },
-  in: { flex: 1, height: 52, color: '#fff', backgroundColor: '#000', borderWidth: 1, borderColor: C.line, borderRadius: R.md, paddingHorizontal: 16, fontSize: 18, textAlign: 'center' },
+  in: { flex: 1, height: 52, paddingVertical: 0, textAlignVertical: 'center', includeFontPadding: false, color: '#fff', backgroundColor: '#000', borderWidth: 1, borderColor: C.line, borderRadius: R.md, paddingHorizontal: 16, fontSize: 18, textAlign: 'center' },
 });

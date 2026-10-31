@@ -97,7 +97,7 @@ export default function Intro() {
         key={i}
         source={sl.img}
         resizeMode="cover"
-        style={[StyleSheet.absoluteFill, { transform: [{ scale: zoom.interpolate({ inputRange: [0, 1], outputRange: [1.02, 1.13] }) }] }]}
+        style={[StyleSheet.absoluteFill, { transform: [{ scale: zoom.interpolate({ inputRange: [0, 1], outputRange: [1, 1.05] }) }] }]}
       />
       <LinearGradient
         colors={['rgba(0,0,0,0.45)', 'rgba(0,0,0,0)', 'rgba(0,0,0,0.1)', 'rgba(0,0,0,0.88)', '#000']}

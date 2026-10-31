@@ -20,9 +20,29 @@ export async function ask({ system, messages, image, json = false, scan = false 
   return useGemini() ? gemini({ system, messages, image, json, scan }) : openai({ system, messages, image, json, scan });
 }
 
-async function gemini({ system, messages, image, json, scan }) {
+// Pick a Gemini model: env override, else the newest "flash" model this key can use.
+let cachedModel = null;
+async function geminiModel(key) {
+  if (process.env.GEMINI_MODEL) return process.env.GEMINI_MODEL;
+  if (cachedModel) return cachedModel;
+  try {
+    const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?pageSize=200&key=${key}`);
+    if (r.ok) {
+      const j = await r.json();
+      const ok = (j.models || [])
+        .filter((m) => (m.supportedGenerationMethods || []).includes('generateContent'))
+        .map((m) => String(m.name).replace(/^models\//, ''))
+        .filter((n) => /flash/.test(n) && !/(lite|tts|image|live|audio|embedding|thinking|exp|preview)/.test(n));
+      const ver = (n) => parseFloat((n.match(/gemini-(\d+(?:\.\d+)?)/) || [])[1] || '0');
+      ok.sort((a, b) => ver(b) - ver(a) || a.length - b.length);
+      if (ok[0]) return (cachedModel = ok[0]);
+    }
+  } catch {}
+  return (cachedModel = 'gemini-flash-latest');
+}
+
+async function gemini({ system, messages, image, json }) {
   const key = (process.env.GEMINI_API_KEY || '').trim();
-  const model = (scan && process.env.GEMINI_SCAN_MODEL) || process.env.GEMINI_MODEL || 'gemini-2.5-flash';
   const contents = messages.map((m, i) => {
     const parts = [{ text: m.content }];
     if (image && i === messages.length - 1) parts.push({ inline_data: { mime_type: 'image/jpeg', data: image } });
@@ -33,14 +53,26 @@ async function gemini({ system, messages, image, json, scan }) {
     contents,
     generationConfig: { temperature: json ? 0.2 : 0.5, ...(json ? { responseMimeType: 'application/json' } : {}) },
   };
-  const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  });
-  if (!r.ok) throw new Error(`Gemini ${r.status}: ${await r.text()}`);
+  const call = (model) =>
+    fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+  let model = await geminiModel(key);
+  let r = await call(model);
+  if (r.status === 404 && model !== 'gemini-flash-latest') {
+    cachedModel = model = 'gemini-flash-latest';
+    r = await call(model);
+  }
+  if (!r.ok) throw new Error(`Gemini ${r.status} (${model}): ${await r.text()}`);
   const j = await r.json();
-  return (j.candidates?.[0]?.content?.parts || []).map((p) => p.text || '').join('');
+  return (j.candidates?.[0]?.content?.parts || []).map((p) => p.text || '').filter(Boolean).join('');
+}
+
+export async function currentModel() {
+  const key = (process.env.GEMINI_API_KEY || '').trim();
+  return key ? geminiModel(key) : process.env.OPENAI_MODEL || 'gpt-4o-mini';
 }
 
 async function openai({ system, messages, image, json, scan }) {

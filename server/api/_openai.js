@@ -42,8 +42,10 @@ async function geminiModels(key) {
       list.sort((x, y) => score(y) - score(x) || x.length - y.length);
     }
   } catch {}
+  // Lite "latest" alias answered reliably on the free tier: always try it first.
+  list = ['gemini-flash-lite-latest', ...list.filter((m) => m !== 'gemini-flash-lite-latest')];
   if (!list.includes('gemini-flash-latest')) list.push('gemini-flash-latest');
-  return (cachedModels = list.slice(0, 5));
+  return (cachedModels = list.slice(0, 4));
 }
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -61,17 +63,20 @@ async function gemini({ system, messages, image, json }) {
     generationConfig: { temperature: json ? 0.2 : 0.5, ...(json ? { responseMimeType: 'application/json' } : {}) },
   });
   const started = Date.now();
-  const budget = 24000; // stay inside the function time limit
+  // Netlify ends a function after ~10 s, so keep every try short and leave room to answer.
+  const budget = 9300;
   let lastErr = 'no model';
   const tried = [];
   // Try each model; on "busy" (429/500/503) move to the next one, with one short retry.
-  for (const model of await geminiModels(key)) {
+  const models = await geminiModels(key);
+  const order = lastModel ? [lastModel, ...models.filter((m) => m !== lastModel)] : models;
+  for (const model of order) {
     for (let attempt = 0; attempt < 2; attempt++) {
       const left = budget - (Date.now() - started);
-      if (left < 2500) throw new Error(`Gemini busy [${tried.join(', ')}] ${lastErr}`);
+      if (left < 1500) throw new Error(`Gemini busy [${tried.join(', ')}] ${lastErr}`);
       const ctl = new AbortController();
       // Cap each try so one slow model can't use the whole time; images get a bit longer.
-      const cap = image ? 12000 : 8000;
+      const cap = image ? 7500 : 4500;
       const timer = setTimeout(() => ctl.abort(), Math.min(cap, left - 500));
       try {
         const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`, {
@@ -85,7 +90,7 @@ async function gemini({ system, messages, image, json }) {
         lastErr = `${r.status} (${model}): ${(await r.text()).slice(0, 200)}`;
         tried.push(`${model}:${r.status}`);
         if (r.status === 404 || r.status === 400 || r.status === 403) break; // not usable: next model
-        if (attempt === 0) await sleep(700);
+        if (attempt === 0) await sleep(300);
       } catch (e) {
         lastErr = `${model}: ${String(e?.message || e)}`;
         tried.push(`${model}:timeout`);

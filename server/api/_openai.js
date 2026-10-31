@@ -21,7 +21,7 @@ export async function ask({ system, messages, image, json = false, scan = false 
 }
 
 async function gemini({ system, messages, image, json, scan }) {
-  const key = process.env.GEMINI_API_KEY;
+  const key = (process.env.GEMINI_API_KEY || '').trim();
   const model = (scan && process.env.GEMINI_SCAN_MODEL) || process.env.GEMINI_MODEL || 'gemini-2.5-flash';
   const contents = messages.map((m, i) => {
     const parts = [{ text: m.content }];

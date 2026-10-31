@@ -10,7 +10,7 @@ import { C, IMG } from '../src/theme';
 import { Btn, Txt } from '../src/components/ui';
 import { Leaf } from '../src/components/Leaf';
 
-const { height: H } = Dimensions.get('window');
+const { width: W, height: H } = Dimensions.get('screen');
 
 function GoogleG() {
   return (
@@ -93,12 +93,13 @@ export default function Intro() {
 
   return (
     <View style={[st.wrap, { direction: rtl ? 'rtl' : 'ltr' }]}>
-      <Animated.Image
+      <Animated.View
         key={i}
-        source={sl.img}
-        resizeMode="cover"
         style={[StyleSheet.absoluteFill, { transform: [{ scale: zoom.interpolate({ inputRange: [0, 1], outputRange: [1, 1.05] }) }] }]}
-      />
+      >
+        {/* Explicit size: Android otherwise drew the photo at its pixel size (zoomed in). */}
+        <Image source={sl.img} resizeMode="cover" style={{ width: W, height: H }} />
+      </Animated.View>
       <LinearGradient
         colors={['rgba(0,0,0,0.45)', 'rgba(0,0,0,0)', 'rgba(0,0,0,0.1)', 'rgba(0,0,0,0.88)', '#000']}
         locations={[0, 0.22, 0.45, 0.7, 0.88]}

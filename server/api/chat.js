@@ -1,4 +1,4 @@
-import { cors, openai } from './_openai.js';
+import { cors, ask } from './_openai.js';
 import { CUISINE_GUIDE, LANGS } from './_food.js';
 
 // POST /api/chat  { messages: [{role, content}], lang, context }
@@ -22,7 +22,7 @@ export default async function handler(req, res) {
       .filter((m) => m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string')
       .slice(-12)
       .map((m) => ({ role: m.role, content: m.content.slice(0, 4000) }));
-    const text = await openai({ temperature: 0.5, messages: [{ role: 'system', content: sys }, ...clean] });
+    const text = await ask({ system: sys, messages: clean });
     return res.status(200).json({ text });
   } catch (e) {
     console.error(e);

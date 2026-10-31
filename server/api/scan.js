@@ -1,4 +1,4 @@
-import { cors, openai } from './_openai.js';
+import { cors, ask, parseJson } from './_openai.js';
 import { CUISINE_GUIDE, LANGS } from './_food.js';
 
 // POST /api/scan  { image: base64 jpeg, lang: 'ar'|'en', kind: 'food'|'drink', cat }
@@ -22,19 +22,14 @@ export default async function handler(req, res) {
       `"confidence": "high"|"medium"|"low", "items": [{"name": string, "grams": number, "kcal": number}], ` +
       `"note": one short helpful sentence (portion assumption, hidden calories or a tip)}. ` +
       `Write name, item names and note in ${L}. If there is no food or drink in the photo return {"error":"no_food"}.`;
-    const out = await openai({
-      model: process.env.OPENAI_SCAN_MODEL || 'gpt-4o', // stronger vision model for food photos
-      response_format: { type: 'json_object' },
-      temperature: 0.2,
-      messages: [
-        { role: 'system', content: sys },
-        { role: 'user', content: [
-          { type: 'text', text: 'Analyze this photo.' },
-          { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${image}`, detail: 'high' } },
-        ] },
-      ],
+    const out = await ask({
+      system: sys,
+      messages: [{ role: 'user', content: 'Analyze this photo and answer with the JSON object only.' }],
+      image,
+      json: true,
+      scan: true,
     });
-    const data = JSON.parse(out);
+    const data = parseJson(out);
     return res.status(200).json(data);
   } catch (e) {
     console.error(e);

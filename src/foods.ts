@@ -1,6 +1,8 @@
 // Common Arab + world dishes, values per typical portion (approximate).
-export type FoodGroup = 'bf' | 'main' | 'grill' | 'bread' | 'sweet' | 'drink' | 'snack';
-export type Food = { id: string; ar: string; en: string; pa: string; pe: string; g: FoodGroup; k: number; P: number; C: number; F: number };
+import type { IconName } from './components/Icon';
+
+export type FoodGroup = 'intl' | 'healthy' | 'bf' | 'main' | 'grill' | 'bread' | 'sweet' | 'drink' | 'snack';
+export type Food = { id: string; ar: string; en: string; pa: string; pe: string; g: FoodGroup | 'mine'; k: number; P: number; C: number; F: number };
 
 const f = (id: string, g: FoodGroup, ar: string, en: string, pa: string, pe: string, k: number, P: number, C: number, F: number): Food =>
   ({ id, g, ar, en, pa, pe, k, P, C, F });
@@ -83,10 +85,70 @@ export const FOODS: Food[] = [
   f('yogurt', 'snack', 'لبن زبادي', 'Plain yogurt', 'علبة 170 غ', 'cup 170 g', 105, 6, 8, 5),
   f('chips', 'snack', 'شيبس', 'Potato chips', 'كيس صغير', 'small bag', 160, 2, 15, 10),
   f('choc', 'snack', 'لوح شوكولا', 'Chocolate bar', 'لوح', '1 bar', 230, 3, 26, 13),
+  // world dishes
+  f('spag_bol', 'intl', 'سباغيتي بولونيز', 'Spaghetti bolognese', 'صحن', '1 plate', 650, 30, 80, 22),
+  f('lasagna', 'intl', 'لازانيا', 'Lasagna', 'قطعة 300 غ', '300 g piece', 600, 32, 45, 32),
+  f('alfredo', 'intl', 'فيتوتشيني ألفريدو', 'Fettuccine alfredo', 'صحن', '1 plate', 900, 25, 85, 50),
+  f('pizza2', 'intl', 'بيتزا مارغريتا', 'Margherita pizza', 'قطعتين', '2 slices', 500, 20, 62, 18),
+  f('sushi', 'intl', 'سوشي سلمون', 'Salmon sushi roll', '8 قطع', '8 pieces', 350, 15, 55, 8),
+  f('ramen', 'intl', 'رامن', 'Ramen', 'صحن', '1 bowl', 550, 22, 70, 20),
+  f('padthai', 'intl', 'باد تاي', 'Pad thai', 'صحن', '1 plate', 650, 25, 80, 25),
+  f('friedrice', 'intl', 'رز مقلي صيني', 'Fried rice', 'صحن', '1 plate', 550, 15, 75, 20),
+  f('dumplings', 'intl', 'دامبلنغ', 'Dumplings', '6 حبات', '6 pieces', 300, 12, 36, 11),
+  f('curry', 'intl', 'كاري دجاج مع رز', 'Chicken curry with rice', 'صحن', '1 plate', 700, 35, 85, 22),
+  f('butterchicken', 'intl', 'بتر تشكن', 'Butter chicken', '300 غ', '300 g', 490, 35, 14, 33),
+  f('biryani', 'intl', 'برياني', 'Biryani', 'صحن', '1 plate', 700, 30, 90, 22),
+  f('tacos', 'intl', 'تاكو لحمة', 'Beef tacos', 'حبتين', '2 tacos', 420, 22, 36, 20),
+  f('burrito', 'intl', 'بوريتو', 'Burrito', 'حبة', '1 burrito', 750, 35, 85, 28),
+  f('quesadilla', 'intl', 'كاساديا', 'Quesadilla', 'حبة', '1 piece', 520, 25, 40, 28),
+  f('doner', 'intl', 'دونر كباب', 'Döner kebab wrap', 'ساندويش', '1 wrap', 600, 32, 50, 28),
+  f('lahmacun', 'intl', 'لحم بعجين تركي', 'Lahmacun', 'حبة', '1 piece', 280, 12, 38, 9),
+  f('caesar', 'intl', 'سلطة سيزر بالدجاج', 'Chicken caesar salad', 'صحن', '1 bowl', 450, 30, 20, 28),
+  f('greek', 'intl', 'سلطة يونانية', 'Greek salad', 'صحن', '1 bowl', 250, 6, 12, 20),
+  f('fishchips', 'intl', 'سمك وبطاطا', 'Fish & chips', 'صحن', '1 plate', 840, 35, 80, 42),
+  f('steak', 'intl', 'ستيك', 'Steak', '250 غ', '250 g', 550, 62, 0, 33),
+  f('friedchicken', 'intl', 'دجاج مقلي (بروستد)', 'Fried chicken', 'قطعتين', '2 pieces', 480, 38, 16, 30),
+  f('hotdog', 'intl', 'هوت دوغ', 'Hot dog', 'حبة', '1 hot dog', 300, 11, 24, 18),
+  f('club', 'intl', 'كلوب ساندويش', 'Club sandwich', 'ساندويش', '1 sandwich', 600, 30, 45, 33),
+  f('macncheese', 'intl', 'ماك آند تشيز', 'Mac and cheese', 'صحن', '1 bowl', 500, 18, 55, 23),
+  f('poke', 'intl', 'بوكي بول', 'Poke bowl', 'صحن', '1 bowl', 550, 30, 65, 18),
+  f('croissant', 'intl', 'كرواسون', 'Croissant', 'حبة', '1 piece', 270, 5, 31, 14),
+  f('pancakes', 'intl', 'بان كيك مع شراب', 'Pancakes with syrup', '3 حبات', '3 pancakes', 520, 10, 88, 14),
+  f('waffle', 'intl', 'وافل', 'Waffle', 'حبة', '1 waffle', 310, 8, 38, 15),
+  f('bagel', 'intl', 'بيغل بجبنة كريمية', 'Bagel with cream cheese', 'حبة', '1 bagel', 380, 12, 55, 12),
+  f('cheesecake', 'intl', 'تشيز كيك', 'Cheesecake', 'قطعة', '1 slice', 400, 7, 32, 28),
+  f('icecream', 'intl', 'آيس كريم', 'Ice cream', 'كرتين', '2 scoops', 270, 5, 32, 14),
+  f('donut', 'intl', 'دونات', 'Donut', 'حبة', '1 donut', 260, 4, 31, 14),
+  // healthy basics
+  f('avotoast', 'healthy', 'توست أفوكادو', 'Avocado toast', 'شريحة', '1 slice', 300, 8, 30, 17),
+  f('greekyog', 'healthy', 'زبادي يوناني', 'Greek yogurt', '170 غ', '170 g', 100, 17, 6, 1),
+  f('shake', 'healthy', 'بروتين شيك', 'Protein shake', 'سكوب مع ماء', '1 scoop in water', 160, 25, 8, 3),
+  f('quinoa', 'healthy', 'كينوا', 'Quinoa', 'كوب', '1 cup', 222, 8, 39, 4),
+  f('sweetpotato', 'healthy', 'بطاطا حلوة', 'Sweet potato', 'حبة وسط', '1 medium', 115, 2, 27, 0),
+  f('salmon', 'healthy', 'فيليه سلمون', 'Salmon fillet', '150 غ', '150 g', 310, 34, 0, 19),
+  f('tuna', 'healthy', 'تونة بالماء', 'Tuna in water', 'علبة', '1 can', 130, 29, 0, 1),
+  f('brownrice', 'healthy', 'رز بني', 'Brown rice', 'كوب', '1 cup', 215, 5, 45, 2),
+  f('broccoli', 'healthy', 'بروكلي', 'Broccoli', 'كوب', '1 cup', 55, 4, 11, 1),
+  f('granola', 'healthy', 'غرانولا بالحليب', 'Granola with milk', 'صحن', '1 bowl', 400, 11, 55, 15),
+  f('pb', 'healthy', 'زبدة فول سوداني', 'Peanut butter', 'معلقتين', '2 tbsp', 190, 8, 6, 16),
+  f('almonds', 'healthy', 'لوز', 'Almonds', '30 غ', '30 g', 170, 6, 6, 15),
+  f('smoothiebowl', 'healthy', 'سموذي بول', 'Smoothie bowl', 'صحن', '1 bowl', 350, 8, 65, 7),
+  f('salad', 'healthy', 'سلطة خضرا بزيت زيتون', 'Green salad with olive oil', 'صحن', '1 bowl', 150, 2, 8, 13),
+  f('eggwhites', 'healthy', 'بياض بيض', 'Egg whites', '4 بيضات', '4 eggs', 70, 15, 1, 0),
+  // more drinks
+  f('milk', 'drink', 'حليب كامل الدسم', 'Whole milk', 'كاسة', '1 cup', 150, 8, 12, 8),
+  f('oj', 'drink', 'عصير برتقال', 'Orange juice', 'كاسة', '1 glass', 110, 2, 26, 0),
+  f('cola', 'drink', 'كولا', 'Cola', 'علبة', '1 can', 140, 0, 39, 0),
+  f('energy', 'drink', 'مشروب طاقة', 'Energy drink', 'علبة', '1 can', 110, 0, 28, 0),
+  f('icedcoffee', 'drink', 'آيس كوفي', 'Iced coffee', 'وسط', 'medium', 200, 4, 30, 7),
+  f('espresso', 'drink', 'إسبريسو', 'Espresso', 'شوت', '1 shot', 3, 0, 0, 0),
 ];
 
-export const GROUPS: { id: FoodGroup | 'all'; icon: 'sparkle' | 'sun' | 'bowl' | 'flame' | 'wheat' | 'cake' | 'cup' | 'cookie'; color: string }[] = [
+export const GROUPS: { id: FoodGroup | 'all' | 'mine'; icon: IconName; color: string }[] = [
   { id: 'all', icon: 'sparkle', color: '#39E68C' },
+  { id: 'mine', icon: 'star', color: '#FFD45C' },
+  { id: 'intl', icon: 'globe', color: '#6CB6FF' },
+  { id: 'healthy', icon: 'target', color: '#39E68C' },
   { id: 'bf', icon: 'sun', color: '#FFC35C' },
   { id: 'main', icon: 'bowl', color: '#39E68C' },
   { id: 'grill', icon: 'flame', color: '#FF9F5C' },

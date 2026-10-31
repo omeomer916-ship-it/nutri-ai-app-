@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { Image, Pressable, StyleSheet, TextInput, View } from 'react-native';
 import Svg, { Circle, Defs, Line, LinearGradient as SvgGrad, Path, Stop } from 'react-native-svg';
 import { useT, TKey } from '../../src/i18n';
-import { dayKey, streakOf, totals, useApp } from '../../src/store';
+import { Meal, dayKey, streakOf, totals, useApp } from '../../src/store';
+import { MealSheet } from '../../src/components/MealSheet';
 import { fmt } from '../../src/calc';
 import { C, CAT_ICON, R, fontFor } from '../../src/theme';
 import { Bar, Btn, Card, H2, IconBadge, Num, Row, Screen, Segmented, Txt } from '../../src/components/ui';
@@ -27,6 +28,7 @@ function Daily() {
   const days = useApp((s) => s.days);
   const goals = useApp((s) => s.goals);
   const [sel, setSel] = useState(6);
+  const [edit, setEdit] = useState<Meal | null>(null);
   const now = Date.now();
   const loc = lang === 'ar' ? 'ar-u-nu-latn' : lang;
   const week = [0, 1, 2, 3, 4, 5, 6].map((i) => {
@@ -113,7 +115,8 @@ function Daily() {
           {d.day.meals.map((m) => {
             const ci = CAT_ICON[m.cat];
             return (
-              <Card key={m.id} style={{ padding: 10 }}>
+              <Pressable key={m.id} onPress={() => setEdit(m)}>
+              <Card style={{ padding: 10 }}>
                 <Row style={{ gap: 12 }}>
                   {m.photo ? <Image source={{ uri: m.photo }} style={st.thumb} /> : <View style={[st.thumb, { backgroundColor: ci.color + '22', alignItems: 'center', justifyContent: 'center' }]}><Icon name={ci.icon} size={22} color={ci.color} /></View>}
                   <View style={{ flex: 1 }}>
@@ -121,14 +124,17 @@ function Daily() {
                     <Txt style={{ color: C.mut, fontSize: 12 }}>{t(m.cat)}</Txt>
                   </View>
                   <Num style={{ color: C.green, fontWeight: '900' }}>{fmt(m.kcal)} kcal</Num>
+                  <Icon name="edit" size={15} color={C.dim} />
                 </Row>
               </Card>
+              </Pressable>
             );
           })}
         </View>
       ) : (
         <Card><Txt style={{ color: C.mut }}>{t('noLog')}</Txt></Card>
       )}
+      <MealSheet meal={edit} dayK={d.k} onClose={() => setEdit(null)} />
     </>
   );
 }

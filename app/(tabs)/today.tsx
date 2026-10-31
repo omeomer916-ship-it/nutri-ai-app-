@@ -1,15 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
-import { Alert, Image, ImageBackground, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Image, ImageBackground, Pressable, ScrollView, Share, StyleSheet, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import { useT } from '../../src/i18n';
-import { CATS, Cat, dayKey, streakOf, totals, useApp } from '../../src/store';
+import { useT, TKey } from '../../src/i18n';
+import { CATS, Cat, Meal, dayKey, streakOf, totals, useApp } from '../../src/store';
 import { fmt } from '../../src/calc';
 import { C, CAT_ICON, IMG, R } from '../../src/theme';
 import { Btn, Card, H2, IconBadge, Num, Row, Screen, Txt } from '../../src/components/ui';
 import { Ring } from '../../src/components/Ring';
 import { Brand } from '../../src/components/Brand';
 import { Icon, IconName } from '../../src/components/Icon';
+import { MealSheet } from '../../src/components/MealSheet';
 
 export default function Today() {
   const { t, lang, rtl } = useT();
@@ -17,12 +18,9 @@ export default function Today() {
   const days = useApp((s) => s.days);
   const account = useApp((s) => s.account);
   const setWater = useApp((s) => s.setWater);
-  const removeMeal = useApp((s) => s.removeMeal);
-  const del = (id: string) => Alert.alert(t('delQ'), '', [
-    { text: t('cancel'), style: 'cancel' },
-    { text: t('del'), style: 'destructive', onPress: () => removeMeal(dayKey(), id) },
-  ]);
-  const day = days[dayKey()];
+  const [edit, setEdit] = useState<Meal | null>(null);
+  const dk = dayKey();
+  const day = days[dk];
   const tot = totals(day);
   const left = goals.kcal - tot.kcal;
   const hr = new Date().getHours();
@@ -39,34 +37,55 @@ export default function Today() {
   });
 
   const openScan = (cat?: Cat) => router.push({ pathname: '/(tabs)/scan', params: cat ? { cat } : {} });
+  const openFood = (cat?: Cat) => router.push({ pathname: '/food', params: cat ? { cat } : {} });
   const macros: [string, number, number, string, IconName][] = [
     [t('P'), tot.P, goals.P, C.pro, 'drumstick'],
     [t('Cb'), tot.C, goals.C, C.carb, 'wheat'],
     [t('F'), tot.F, goals.F, C.fat, 'avocado'],
   ];
 
+  // One simple, honest tip for right now.
+  const tip: TKey = !meals.length ? 'in0'
+    : left < -100 ? 'inOver'
+    : hr >= 14 && water < 4 ? 'inW'
+    : hr >= 15 && tot.P < goals.P * 0.5 ? 'inP'
+    : tot.kcal >= goals.kcal * 0.85 ? 'inGood' : 'inLeft';
+
+  const shareDay = () => Share.share({
+    message: `Nutri AI · ${new Date().toLocaleDateString(loc, { weekday: 'long', day: 'numeric', month: 'long' })}\n` +
+      `${fmt(tot.kcal)} / ${fmt(goals.kcal)} kcal\n${t('P')} ${Math.round(tot.P)}g · ${t('Cb')} ${Math.round(tot.C)}g · ${t('F')} ${Math.round(tot.F)}g`,
+  }).catch(() => {});
+
+  const sections = CATS.filter((c) => ['bf', 'ln', 'dn', 'sn'].includes(c) || meals.some((m) => m.cat === c));
+
   return (
     <Screen>
       <Row style={{ justifyContent: 'space-between', marginTop: 10 }}>
         <Brand />
-        <View style={st.streak}>
-          <Icon name="flame" size={17} color="#FF9F5C" fill="#FF9F5C33" />
-          <Num style={{ fontWeight: '800', fontSize: 15 }}>{streak}</Num>
-        </View>
+        <Row style={{ gap: 8 }}>
+          <Pressable onPress={() => router.push('/pro')} style={st.pro}>
+            <Icon name="crown" size={15} color="#000" stroke={2.4} />
+            <Num style={{ fontWeight: '900', fontSize: 13, color: '#000' }}>PRO</Num>
+          </Pressable>
+          <Pressable onPress={() => router.navigate('/(tabs)/progress')} style={st.streak}>
+            <Icon name="flame" size={17} color="#FF9F5C" fill="#FF9F5C33" />
+            <Num style={{ fontWeight: '800', fontSize: 15 }}>{streak}</Num>
+          </Pressable>
+        </Row>
       </Row>
 
       <Txt style={{ fontSize: 26, fontWeight: '900', marginTop: 22, lineHeight: 36 }}>{hello}{first ? `${rtl ? '،' : ','} ${first}` : ''}</Txt>
 
       <Row style={{ justifyContent: 'space-between', marginTop: 14 }}>
         {week.map((w) => (
-          <View key={w.k} style={{ alignItems: 'center', gap: 6 }}>
+          <Pressable key={w.k} onPress={() => router.navigate('/(tabs)/progress')} style={{ alignItems: 'center', gap: 6 }}>
             <Txt center style={{ fontSize: 11, color: w.today ? '#fff' : C.dim, fontWeight: '700' }}>
               {new Date(w.ts).toLocaleDateString(loc, { weekday: 'short' })}
             </Txt>
             <View style={[st.day, w.has && st.dayHas, w.today && st.dayToday]}>
               <Num style={{ fontWeight: '800', fontSize: 14, color: w.today ? '#000' : '#fff' }}>{new Date(w.ts).getDate()}</Num>
             </View>
-          </View>
+          </Pressable>
         ))}
       </Row>
 
@@ -111,6 +130,24 @@ export default function Today() {
         })}
       </Row>
 
+      <Row style={{ gap: 10, marginTop: 10 }}>
+        <QuickBtn icon="camera" label={t('scanNow')} color={C.green} onPress={() => openScan()} />
+        <QuickBtn icon="search" label={t('addFood')} color={C.water} onPress={() => openFood()} />
+        <QuickBtn icon="share" label={t('shareDay')} color={C.carb} onPress={shareDay} />
+      </Row>
+
+      <Card style={{ marginTop: 10, flexDirection: 'row', gap: 12, alignItems: 'flex-start' }}>
+        <IconBadge name="sparkle" color={C.green} size={42} />
+        <View style={{ flex: 1 }}>
+          <Txt style={{ fontWeight: '900' }}>{t('tipTitle')}</Txt>
+          <Txt style={{ color: C.mut, fontSize: 14, lineHeight: 22, marginTop: 2 }}>{t(tip)}</Txt>
+          <Pressable onPress={() => router.navigate('/(tabs)/coach')} style={{ marginTop: 8, flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+            <Txt style={{ color: C.green, fontWeight: '800', fontSize: 13 }}>{t('askCoach')}</Txt>
+            <View style={{ transform: [{ scaleX: rtl ? -1 : 1 }] }}><Icon name="chevron" size={15} color={C.green} stroke={2.6} /></View>
+          </Pressable>
+        </View>
+      </Card>
+
       <Card style={{ marginTop: 10 }}>
         <Row style={{ gap: 12 }}>
           <IconBadge name="drop" color={C.water} size={44} />
@@ -130,56 +167,74 @@ export default function Today() {
         </Row>
       </Card>
 
-      <H2 right={
-        <Pressable onPress={() => router.push({ pathname: '/food', params: {} })} style={st.addBtn}>
-          <Icon name="plus" size={16} color="#000" stroke={2.8} />
-          <Txt style={{ color: '#000', fontWeight: '800', fontSize: 13 }}>{t('addFood')}</Txt>
-        </Pressable>
-      }>{t('recentLog')}</H2>
-      {meals.length ? (
-        <View style={{ gap: 10 }}>
-          {meals.map((m) => {
-            const ci = CAT_ICON[m.cat];
-            return (
-              <Pressable key={m.id} onLongPress={() => del(m.id)} delayLongPress={350}>
-              <Card style={st.mealCard}>
-                {m.photo ? <Image source={{ uri: m.photo }} style={st.thumb} /> : <View style={[st.thumb, { alignItems: 'center', justifyContent: 'center', backgroundColor: ci.color + '22' }]}><Icon name={ci.icon} size={30} color={ci.color} /></View>}
-                <View style={{ flex: 1, paddingVertical: 12, paddingHorizontal: 14 }}>
-                  <Row style={{ justifyContent: 'space-between', gap: 8 }}>
-                    <Txt numberOfLines={1} style={{ fontWeight: '800', fontSize: 15, flex: 1 }}>{m.name}</Txt>
-                    <Num style={{ color: C.dim, fontSize: 12 }}>{new Date(m.t).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}</Num>
-                  </Row>
-                  <Row style={{ gap: 5, marginTop: 2 }}>
-                    <Icon name="flame" size={15} color="#fff" />
-                    <Num style={{ fontWeight: '800', fontSize: 15 }}>{fmt(m.kcal)} kcal</Num>
-                  </Row>
-                  <Row style={{ gap: 12, marginTop: 6 }}>
-                    {([['drumstick', m.P, C.pro], ['wheat', m.C, C.carb], ['avocado', m.F, C.fat]] as [IconName, number, string][]).map(([ic, v, col]) => (
-                      <Row key={ic} style={{ gap: 4 }}>
-                        <Icon name={ic} size={13} color={col} />
-                        <Num style={{ color: C.mut, fontSize: 12, fontWeight: '700' }}>{Math.round(v)}g</Num>
-                      </Row>
-                    ))}
-                  </Row>
-                </View>
-              </Card>
-              </Pressable>
-            );
-          })}
-        </View>
-      ) : (
-        <Card style={{ padding: 0, overflow: 'hidden' }}>
-          <ImageBackground source={IMG.scan} style={{ height: 160 }} resizeMode="cover">
+      <Pressable onPress={() => router.push('/pro')} style={({ pressed }) => [{ marginTop: 10 }, pressed && { opacity: 0.9 }]}>
+        <LinearGradient colors={['#1d3b2b', '#0e1a14']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={st.proBan}>
+          <View style={st.crown}><Icon name="crown" size={22} color="#000" stroke={2.2} /></View>
+          <View style={{ flex: 1 }}>
+            <Txt style={{ fontWeight: '900', fontSize: 16 }}>{t('goPro')}</Txt>
+            <Txt style={{ color: C.mut, fontSize: 12 }}>{t('proBan')}</Txt>
+          </View>
+          <View style={{ transform: [{ scaleX: rtl ? -1 : 1 }] }}><Icon name="chevron" size={20} color={C.green} stroke={2.6} /></View>
+        </LinearGradient>
+      </Pressable>
+
+      <H2>{t('meals')}</H2>
+      {!meals.length && (
+        <Card style={{ padding: 0, overflow: 'hidden', marginBottom: 10 }}>
+          <ImageBackground source={IMG.scan} style={{ height: 150 }} resizeMode="cover">
             <LinearGradient colors={['rgba(13,20,17,0)', C.surface]} style={StyleSheet.absoluteFill} />
           </ImageBackground>
-          <View style={{ padding: 18, paddingTop: 4 }}>
+          <View style={{ padding: 18, paddingTop: 2 }}>
             <Txt style={{ fontWeight: '900', fontSize: 18 }}>{t('emptyT')}</Txt>
             <Txt style={{ color: C.mut, marginTop: 4, lineHeight: 22 }}>{t('emptyS')}</Txt>
-            <Btn title={t('scanNow')} style={{ marginTop: 16 }} icon={<Icon name="camera" size={20} color="#000" />} onPress={() => openScan()} />
-            <Btn kind="soft" title={t('addFood')} style={{ marginTop: 10 }} icon={<Icon name="search" size={19} />} onPress={() => router.push({ pathname: '/food', params: {} })} />
+            <Row style={{ gap: 10, marginTop: 16 }}>
+              <Btn title={t('scanNow')} style={{ flex: 1 }} icon={<Icon name="camera" size={19} color="#000" />} onPress={() => openScan()} />
+              <Btn kind="soft" title={t('addFood')} style={{ flex: 1 }} icon={<Icon name="search" size={18} />} onPress={() => openFood()} />
+            </Row>
           </View>
         </Card>
       )}
+      <View style={{ gap: 10 }}>
+        {sections.map((c) => {
+          const it = meals.filter((m) => m.cat === c);
+          const k = it.reduce((a, m) => a + m.kcal, 0);
+          const ci = CAT_ICON[c];
+          return (
+            <Card key={c} style={{ padding: 14 }}>
+              <Row style={{ gap: 12 }}>
+                <IconBadge name={ci.icon} color={ci.color} size={40} />
+                <View style={{ flex: 1 }}>
+                  <Txt style={{ fontWeight: '900', fontSize: 16 }}>{t(c)}</Txt>
+                  <Num style={{ color: C.mut, fontSize: 12, textAlign: rtl ? 'right' : 'left' }}>{fmt(k)} kcal</Num>
+                </View>
+                <Pressable hitSlop={6} onPress={() => openScan(c)} style={st.round}><Icon name="camera" size={17} /></Pressable>
+                <Pressable hitSlop={6} onPress={() => openFood(c)} style={[st.round, { backgroundColor: C.green }]}><Icon name="plus" size={18} color="#000" stroke={2.8} /></Pressable>
+              </Row>
+              {it.map((m) => (
+                <Pressable key={m.id} onPress={() => setEdit(m)} style={({ pressed }) => [st.meal, pressed && { opacity: 0.7 }]}>
+                  {m.photo ? <Image source={{ uri: m.photo }} style={st.thumb} /> : <View style={[st.thumb, { alignItems: 'center', justifyContent: 'center', backgroundColor: C.surface2 }]}><Icon name={ci.icon} size={22} color={ci.color} /></View>}
+                  <View style={{ flex: 1 }}>
+                    <Txt numberOfLines={1} style={{ fontWeight: '800', fontSize: 14 }}>{m.name}</Txt>
+                    <Row style={{ gap: 10, marginTop: 3 }}>
+                      {([['drumstick', m.P, C.pro], ['wheat', m.C, C.carb], ['avocado', m.F, C.fat]] as [IconName, number, string][]).map(([ic, v, col]) => (
+                        <Row key={ic} style={{ gap: 3 }}>
+                          <Icon name={ic} size={12} color={col} />
+                          <Num style={{ color: C.mut, fontSize: 11, fontWeight: '700' }}>{Math.round(v)}g</Num>
+                        </Row>
+                      ))}
+                    </Row>
+                  </View>
+                  <View style={{ alignItems: 'flex-end' }}>
+                    <Num style={{ fontWeight: '900', fontSize: 15 }}>{fmt(m.kcal)}</Num>
+                    <Num style={{ color: C.dim, fontSize: 10 }}>kcal</Num>
+                  </View>
+                  <Icon name="edit" size={15} color={C.dim} />
+                </Pressable>
+              ))}
+            </Card>
+          );
+        })}
+      </View>
 
       <H2>{t('types')}</H2>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginHorizontal: -20 }} contentContainerStyle={{ gap: 10, paddingHorizontal: 20 }}>
@@ -198,7 +253,18 @@ export default function Today() {
           );
         })}
       </ScrollView>
+
+      <MealSheet meal={edit} dayK={dk} onClose={() => setEdit(null)} />
     </Screen>
+  );
+}
+
+function QuickBtn({ icon, label, color, onPress }: { icon: IconName; label: string; color: string; onPress: () => void }) {
+  return (
+    <Pressable onPress={onPress} style={({ pressed }) => [st.quick, pressed && { transform: [{ scale: 0.97 }] }]}>
+      <IconBadge name={icon} color={color} size={38} icon={19} />
+      <Txt center numberOfLines={1} adjustsFontSizeToFit style={{ fontSize: 12, fontWeight: '800', marginTop: 6 }}>{label}</Txt>
+    </Pressable>
   );
 }
 
@@ -223,7 +289,7 @@ function CountUp({ value, style }: { value: number; style: object }) {
 }
 
 const st = StyleSheet.create({
-  addBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: C.green, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 6 },
+  pro: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: '#FFD45C', borderRadius: R.pill, paddingHorizontal: 10, paddingVertical: 6 },
   streak: { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: C.surface2, borderRadius: R.pill, paddingHorizontal: 12, paddingVertical: 6, borderWidth: 1, borderColor: C.stroke },
   day: { width: 38, height: 38, borderRadius: 19, alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.12)', borderStyle: 'dashed' },
   dayHas: { borderStyle: 'solid', borderColor: C.green },
@@ -235,9 +301,12 @@ const st = StyleSheet.create({
   vsep: { width: 1, height: 28, backgroundColor: C.stroke },
   flame: { width: 56, height: 56, borderRadius: 28, backgroundColor: C.surface2, alignItems: 'center', justifyContent: 'center' },
   macro: { flex: 1, padding: 14 },
-  round: { width: 38, height: 38, borderRadius: 19, backgroundColor: C.surface2, alignItems: 'center', justifyContent: 'center' },
+  quick: { flex: 1, alignItems: 'center', backgroundColor: C.surface, borderWidth: 1, borderColor: C.stroke, borderRadius: R.md, paddingVertical: 12, paddingHorizontal: 6 },
+  round: { width: 36, height: 36, borderRadius: 18, backgroundColor: C.surface2, alignItems: 'center', justifyContent: 'center' },
   glass: { height: 26, borderRadius: 7, backgroundColor: 'rgba(79,195,255,0.12)' },
-  mealCard: { padding: 0, flexDirection: 'row', alignItems: 'center', overflow: 'hidden' },
-  thumb: { width: 92, height: 96 },
+  proBan: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: R.lg, padding: 16, borderWidth: 1, borderColor: 'rgba(57,230,140,0.35)' },
+  crown: { width: 42, height: 42, borderRadius: 14, backgroundColor: '#FFD45C', alignItems: 'center', justifyContent: 'center' },
+  meal: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: C.stroke },
+  thumb: { width: 48, height: 48, borderRadius: 14 },
   tile: { width: 140, height: 176, borderRadius: R.md, overflow: 'hidden', borderWidth: 1, borderColor: C.stroke },
 });

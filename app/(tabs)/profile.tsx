@@ -1,9 +1,9 @@
-import { Alert, Image, Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { Alert, Image, Linking, Pressable, Share, StyleSheet, TextInput, View } from 'react-native';
 import { router } from 'expo-router';
 import Constants from 'expo-constants';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useT, TKey } from '../../src/i18n';
-import { Goals, useApp } from '../../src/store';
+import { Goals, dayKey, streakOf, totals, useApp } from '../../src/store';
 import { C, R, fontFor } from '../../src/theme';
 import { Card, H2, IconBadge, Num, Row, Screen, Txt } from '../../src/components/ui';
 import { Leaf } from '../../src/components/Leaf';
@@ -13,7 +13,29 @@ import { LangPicker } from '../../src/components/LangPicker';
 
 export default function Profile() {
   const { t, lang, rtl } = useT();
-  const { account, goals, profile, setGoals, signOut, resetAll } = useApp();
+  const { account, goals, profile, setGoals, signOut, resetAll, days, weights } = useApp();
+  const all = Object.values(days);
+  const mealsN = all.reduce((a, d) => a + d.meals.length, 0);
+  const streak = streakOf(days);
+  let best = 0;
+  for (let i = 0, run = 0; i < 400; i++) {
+    run = (days[dayKey(Date.now() - i * 864e5)]?.meals.length ?? 0) > 0 ? run + 1 : 0;
+    best = Math.max(best, run);
+  }
+  const onGoal = all.some((d) => { const k = totals(d).kcal; return k >= goals.kcal * 0.9 && k <= goals.kcal * 1.1; });
+  const ach: [IconName, TKey, boolean, string][] = [
+    ['bowl', 'a_first', mealsN > 0, C.green],
+    ['flame', 'a_s3', best >= 3, '#FF9F5C'],
+    ['bolt', 'a_s7', best >= 7, C.carb],
+    ['trophy', 'a_s30', best >= 30, '#FFD45C'],
+    ['star', 'a_m50', mealsN >= 50, C.pro],
+    ['drop', 'a_water', all.some((d) => d.water >= 8), C.water],
+    ['scale', 'a_weight', weights.length > 1, '#9C8CFF'],
+    ['target', 'a_goal', onGoal, C.green],
+  ];
+  const bmi = profile ? profile.w / Math.pow(profile.h / 100, 2) : 0;
+  const bmiK: TKey = bmi < 18.5 ? 'bUnder' : bmi < 25 ? 'bNormal' : bmi < 30 ? 'bOver' : 'bObese';
+  const bmiC = bmi < 18.5 ? C.water : bmi < 25 ? C.green : bmi < 30 ? C.carb : C.red;
 
   const field = (k: keyof Goals, label: TKey, ic: IconName, col: string, unit: string) => (
     <Row key={k} style={st.row}>
@@ -67,6 +89,43 @@ export default function Profile() {
         )}
       </View>
 
+      <Pressable onPress={() => router.push('/pro')} style={({ pressed }) => [{ marginTop: 16 }, pressed && { opacity: 0.9 }]}>
+        <LinearGradient colors={['#3a3010', '#14120a']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={st.proBan}>
+          <View style={st.crown}><Icon name="crown" size={22} color="#000" stroke={2.2} /></View>
+          <View style={{ flex: 1 }}>
+            <Txt style={{ fontWeight: '900', fontSize: 16 }}>{t('goPro')}</Txt>
+            <Txt style={{ color: C.mut, fontSize: 12 }}>{t('proBan')}</Txt>
+          </View>
+          <View style={{ transform: [{ scaleX: rtl ? -1 : 1 }] }}><Icon name="chevron" size={20} color="#FFD45C" stroke={2.6} /></View>
+        </LinearGradient>
+      </Pressable>
+
+      {profile && (
+        <Card style={{ marginTop: 10 }}>
+          <Row style={{ justifyContent: 'space-between' }}>
+            <Txt style={{ fontWeight: '800' }}>{t('bmi')}</Txt>
+            <View style={[st.bmiTag, { backgroundColor: bmiC + '22' }]}><Txt style={{ color: bmiC, fontWeight: '800', fontSize: 12 }}>{t(bmiK)}</Txt></View>
+          </Row>
+          <Num style={{ fontSize: 34, fontWeight: '900', marginTop: 4, textAlign: rtl ? 'right' : 'left' }}>{bmi.toFixed(1)}</Num>
+          <View style={st.bmiBar}>
+            {[C.water, C.green, C.carb, C.red].map((c, i) => <View key={i} style={{ flex: [18.5 - 15, 25 - 18.5, 30 - 25, 40 - 30][i], backgroundColor: c, opacity: 0.85 }} />)}
+            <View style={[st.bmiDot, { left: `${Math.max(0, Math.min(100, ((bmi - 15) / 25) * 100))}%` }]} />
+          </View>
+        </Card>
+      )}
+
+      <H2 right={<Num style={{ color: C.mut, fontWeight: '800' }}>{ach.filter((a) => a[2]).length}/{ach.length}</Num>}>{t('achT')}</H2>
+      <View style={st.achGrid}>
+        {ach.map(([ic, k, on, col]) => (
+          <View key={k} style={st.ach}>
+            <View style={[st.achI, on ? { backgroundColor: col + '26', borderColor: col } : null]}>
+              <Icon name={on ? ic : 'lock'} size={22} color={on ? col : 'rgba(255,255,255,0.3)'} />
+            </View>
+            <Txt center numberOfLines={2} style={{ fontSize: 11, fontWeight: '700', color: on ? '#fff' : C.dim, marginTop: 6 }}>{t(k)}</Txt>
+          </View>
+        ))}
+      </View>
+
       <H2>{t('goals')}</H2>
       <Card style={{ paddingVertical: 2 }}>
         {field('kcal', 'kcal', 'flame', '#FF9F5C', 'kcal')}
@@ -83,6 +142,8 @@ export default function Profile() {
           <LangPicker style={st.pill} textStyle={{ color: '#fff', fontWeight: '700', fontSize: 13 }} />
         </Row>
         {item('refresh', t('redo'), () => router.push('/onboarding'))}
+        {item('share', t('share'), () => { Share.share({ message: t('shareMsg') }).catch(() => {}); })}
+        {item('star', t('rate'), () => { Linking.openURL('market://details?id=com.nutriai.app').catch(() => Linking.openURL('https://play.google.com/store/apps/details?id=com.nutriai.app').catch(() => {})); })}
         {item('logout', account?.guest ? t('signIn') : t('signOut'), () => { googleSignOut(); signOut(); router.replace('/intro'); })}
         {item('trash', t('reset'), () =>
           Alert.alert(t('reset'), t('resetQ'), [
@@ -102,5 +163,13 @@ const st = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: C.stroke, gap: 12 },
   inWrap: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: C.surface2, borderRadius: R.pill, paddingHorizontal: 12, height: 42 },
   in: { width: 62, height: 42, paddingVertical: 0, color: '#fff', textAlign: 'center', textAlignVertical: 'center', includeFontPadding: false, fontSize: 16 },
+  proBan: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: R.lg, padding: 16, borderWidth: 1, borderColor: 'rgba(255,212,92,0.4)' },
+  crown: { width: 42, height: 42, borderRadius: 14, backgroundColor: '#FFD45C', alignItems: 'center', justifyContent: 'center' },
+  bmiTag: { borderRadius: 999, paddingHorizontal: 10, paddingVertical: 3 },
+  bmiBar: { flexDirection: 'row', height: 8, borderRadius: 4, overflow: 'visible', marginTop: 10, direction: 'ltr' },
+  bmiDot: { position: 'absolute', top: -5, width: 18, height: 18, marginLeft: -9, borderRadius: 9, backgroundColor: '#fff', borderWidth: 3, borderColor: '#000' },
+  achGrid: { flexDirection: 'row', flexWrap: 'wrap', rowGap: 14 },
+  ach: { width: '25%', alignItems: 'center', paddingHorizontal: 4 },
+  achI: { width: 56, height: 56, borderRadius: 18, alignItems: 'center', justifyContent: 'center', backgroundColor: C.surface, borderWidth: 1, borderColor: C.stroke },
   pill: { backgroundColor: C.surface2, borderRadius: R.pill, paddingHorizontal: 12, paddingVertical: 7 },
 });

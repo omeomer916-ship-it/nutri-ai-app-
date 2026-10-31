@@ -3,7 +3,7 @@ import Svg, { Circle, Path, Rect } from 'react-native-svg';
 export type IconName =
   | 'flame' | 'wheat' | 'drumstick' | 'avocado' | 'drop' | 'camera' | 'image' | 'plus' | 'minus' | 'chevron'
   | 'send' | 'sparkle' | 'home' | 'chart' | 'user' | 'chat' | 'globe' | 'refresh' | 'logout' | 'trash'
-  | 'target' | 'scale' | 'check' | 'x' | 'bolt' | 'sun' | 'moon' | 'bowl' | 'cookie' | 'cake' | 'cup' | 'scan' | 'info' | 'search';
+  | 'target' | 'scale' | 'check' | 'x' | 'bolt' | 'sun' | 'moon' | 'bowl' | 'cookie' | 'cake' | 'cup' | 'scan' | 'info' | 'search' | 'crown' | 'share' | 'star' | 'edit' | 'copy' | 'lock' | 'trophy';
 
 const P: Record<IconName, (c: string) => React.ReactNode> = {
   flame: () => <Path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z" />,
@@ -96,6 +96,18 @@ const P: Record<IconName, (c: string) => React.ReactNode> = {
   cake: () => <Path d="M7 10a5 5 0 0 1 10 0zM7 10l5 11 5-11" />,
   cup: () => <Path d="M5.5 8h13l-1.6 12.2a1 1 0 0 1-1 .8H8.1a1 1 0 0 1-1-.8zM9 8l1.2-5H14" />,
   scan: () => <Path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M7 12h10" />,
+  crown: () => <Path d="M3 18h18M4 8l4.5 4L12 5l3.5 7L20 8l-1.6 10H5.6z" />,
+  share: () => <Path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7M16 6l-4-4-4 4M12 2v13" />,
+  star: () => <Path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z" />,
+  edit: () => <Path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z" />,
+  copy: () => <Path d="M9 9h11v11H9zM5 15H4V4h11v1" />,
+  lock: () => (
+    <>
+      <Rect x={5} y={11} width={14} height={10} rx={2} />
+      <Path d="M8 11V7a4 4 0 0 1 8 0v4" />
+    </>
+  ),
+  trophy: () => <Path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3" />,
   search: () => (
     <>
       <Circle cx={11} cy={11} r={7} />

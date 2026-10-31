@@ -17,6 +17,11 @@ export default function FoodSearch() {
   const { t, lang, rtl } = useT();
   const params = useLocalSearchParams<{ cat?: string }>();
   const addMeal = useApp((s) => s.addMeal);
+  const myFoods = useApp((s) => s.myFoods);
+  const addMyFood = useApp((s) => s.addMyFood);
+  const removeMyFood = useApp((s) => s.removeMyFood);
+  const [manual, setManual] = useState(false);
+  const [mf, setMf] = useState({ name: '', k: '', P: '', C: '', F: '' });
   const [q, setQ] = useState('');
   const [g, setG] = useState<string>('all');
   const [pick, setPick] = useState<Food | null>(null);
@@ -28,8 +33,24 @@ export default function FoodSearch() {
 
   const list = useMemo(() => {
     const n = norm(q);
-    return FOODS.filter((f) => (g === 'all' || f.g === g) && (!n || norm(f.ar).includes(n) || norm(f.en).includes(n)));
-  }, [q, g]);
+    const mine: Food[] = myFoods.map((m) => ({ id: 'my_' + m.id, ar: m.name, en: m.name, pa: '', pe: '', g: 'mine', k: m.k, P: m.P, C: m.C, F: m.F }));
+    // Arabic users see Arab dishes first; everyone else sees world dishes first.
+    const base = ar ? FOODS : [...FOODS.filter((f) => f.g === 'intl' || f.g === 'healthy'), ...FOODS.filter((f) => f.g !== 'intl' && f.g !== 'healthy')];
+    return [...mine, ...base].filter((f) => (g === 'all' || f.g === g) && (!n || norm(f.ar).includes(n) || norm(f.en).includes(n)));
+  }, [q, g, myFoods, ar]);
+
+  const num = (x: string) => Math.max(0, parseFloat(x.replace(',', '.')) || 0);
+  const saveManual = () => {
+    const k = num(mf.k);
+    if (!mf.name.trim() || !k) return;
+    const item = { name: mf.name.trim(), k: Math.round(k), P: Math.round(num(mf.P)), C: Math.round(num(mf.C)), F: Math.round(num(mf.F)) };
+    addMyFood(item);
+    addMeal({ name: item.name, cat, kcal: item.k, P: item.P, C: item.C, F: item.F });
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+    setManual(false);
+    setMf({ name: '', k: '', P: '', C: '', F: '' });
+    router.back();
+  };
 
   const add = () => {
     if (!pick) return;
@@ -53,6 +74,10 @@ export default function FoodSearch() {
             <View style={{ transform: [{ scaleX: rtl ? 1 : -1 }] }}><Icon name="chevron" size={20} /></View>
           </Pressable>
           <Txt style={{ fontSize: 24, fontWeight: '900', flex: 1 }}>{t('addFood')}</Txt>
+          <Pressable onPress={() => setManual(true)} style={st.manualBtn}>
+            <Icon name="edit" size={15} color="#000" stroke={2.4} />
+            <Txt style={{ color: '#000', fontWeight: '800', fontSize: 13 }}>{t('manual')}</Txt>
+          </Pressable>
         </Row>
         <View style={st.search}>
           <Icon name="search" size={19} color={C.dim} />
@@ -75,11 +100,11 @@ export default function FoodSearch() {
           renderItem={({ item: f }) => {
             const x = gi(f.g);
             return (
-              <Pressable onPress={() => { setPick(f); setMult(1); }} style={({ pressed }) => [st.row, pressed && { opacity: 0.75 }]}>
+              <Pressable onPress={() => { setPick(f); setMult(1); }} onLongPress={() => f.g === 'mine' && removeMyFood(f.id.slice(3))} style={({ pressed }) => [st.row, pressed && { opacity: 0.75 }]}>
                 <IconBadge name={x.icon as IconName} color={x.color} size={44} />
                 <View style={{ flex: 1 }}>
                   <Txt numberOfLines={1} style={{ fontWeight: '800', fontSize: 15 }}>{name(f)}</Txt>
-                  <Txt numberOfLines={1} style={{ color: C.mut, fontSize: 12 }}>{ar ? f.pa : f.pe}</Txt>
+                  {!!(ar ? f.pa : f.pe) && <Txt numberOfLines={1} style={{ color: C.mut, fontSize: 12 }}>{ar ? f.pa : f.pe}</Txt>}
                 </View>
                 <View style={{ alignItems: 'flex-end' }}>
                   <Num style={{ fontWeight: '900', fontSize: 16 }}>{fmt(f.k)}</Num>
@@ -133,11 +158,37 @@ export default function FoodSearch() {
           </View>
         )}
       </Modal>
+
+      <Modal visible={manual} transparent animationType="slide" onRequestClose={() => setManual(false)}>
+        <Pressable style={st.dim} onPress={() => setManual(false)} />
+        <View style={[st.sheet, { direction: rtl ? 'rtl' : 'ltr' }]}>
+          <View style={st.grab} />
+          <Txt style={{ fontSize: 20, fontWeight: '900', marginBottom: 12 }}>{t('manual')}</Txt>
+          <TextInput value={mf.name} onChangeText={(v) => setMf({ ...mf, name: v })} placeholder={t('fName')} placeholderTextColor={C.dim}
+            style={[st.field, { textAlign: rtl ? 'right' : 'left', fontFamily: fontFor(700, lang) }]} />
+          <Row style={{ gap: 8, marginTop: 8 }}>
+            {([['k', 'kcal', '#FF9F5C'], ['P', t('P'), C.pro], ['C', t('Cb'), C.carb], ['F', t('F'), C.fat]] as ['k' | 'P' | 'C' | 'F', string, string][]).map(([key, lab, col]) => (
+              <View key={key} style={{ flex: 1 }}>
+                <TextInput value={mf[key]} onChangeText={(v) => setMf({ ...mf, [key]: v })} keyboardType="decimal-pad" placeholder="0" placeholderTextColor={C.dim}
+                  style={[st.field, { textAlign: 'center', fontFamily: fontFor(800, lang), borderColor: col + '55' }]} />
+                <Txt center numberOfLines={1} style={{ color: col, fontSize: 11, fontWeight: '700', marginTop: 4 }}>{lab}</Txt>
+              </View>
+            ))}
+          </Row>
+          <Txt style={st.lab}>{t('addTo')}</Txt>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
+            {CATS.map((c) => <Chip key={c} title={t(c)} icon={CAT_ICON[c].icon as IconName} on={cat === c} onPress={() => setCat(c)} />)}
+          </ScrollView>
+          <Btn title={`${t('addTo')} ${t(cat)}`} style={{ marginTop: 20 }} disabled={!mf.name.trim() || !num(mf.k)} icon={<Icon name="check" size={18} color="#000" stroke={2.6} />} onPress={saveManual} />
+        </View>
+      </Modal>
     </View>
   );
 }
 
 const st = StyleSheet.create({
+  manualBtn: { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: '#fff', borderRadius: 999, paddingHorizontal: 12, paddingVertical: 7 },
+  field: { height: 50, borderRadius: 14, backgroundColor: C.surface2, borderWidth: 1, borderColor: C.stroke, color: '#fff', paddingHorizontal: 14, fontSize: 16, paddingVertical: 0 },
   back: { width: 40, height: 40, borderRadius: 20, backgroundColor: C.surface2, alignItems: 'center', justifyContent: 'center' },
   search: { flexDirection: 'row', alignItems: 'center', gap: 10, marginHorizontal: 20, marginTop: 16, marginBottom: 12, backgroundColor: C.surface, borderWidth: 1, borderColor: C.stroke, borderRadius: R.pill, paddingHorizontal: 16, height: 52 },
   input: { flex: 1, color: '#fff', fontSize: 15, paddingVertical: 0 },

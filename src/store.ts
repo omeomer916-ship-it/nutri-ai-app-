@@ -25,6 +25,7 @@ export type Profile = {
   sex: 'm' | 'f'; age: number; h: number; w: number; gw: number;
   goal: 'lose' | 'keep' | 'gain'; act: 1 | 2 | 3 | 4;
 };
+export type MyFood = { id: string; name: string; k: number; P: number; C: number; F: number };
 export type Account = { name: string; email?: string; photo?: string; guest: boolean };
 
 export const dayKey = (t: number = Date.now()) => {
@@ -60,6 +61,10 @@ type State = {
   goals: Goals;
   days: Record<string, Day>;
   weights: { t: number; w: number }[];
+  myFoods: MyFood[];
+  addMyFood: (f: Omit<MyFood, 'id'>) => void;
+  removeMyFood: (id: string) => void;
+  updateMeal: (key: string, id: string, patch: Partial<Omit<Meal, 'id'>>) => void;
   setLang: (l: Lang) => void;
   finishIntro: (a: Account) => void;
   signOut: () => void;
@@ -72,7 +77,7 @@ type State = {
   resetAll: () => void;
 };
 
-const initial: Pick<State, 'lang' | 'seenIntro' | 'account' | 'profile' | 'goals' | 'days' | 'weights'> = {
+const initial: Pick<State, 'lang' | 'seenIntro' | 'account' | 'profile' | 'goals' | 'days' | 'weights' | 'myFoods'> = {
   lang: deviceLang(),
   seenIntro: false,
   account: null,
@@ -80,6 +85,7 @@ const initial: Pick<State, 'lang' | 'seenIntro' | 'account' | 'profile' | 'goals
   goals: { kcal: 2000, P: 130, C: 220, F: 65 },
   days: {},
   weights: [],
+  myFoods: [],
 };
 
 export const useApp = create<State>()(
@@ -100,6 +106,15 @@ export const useApp = create<State>()(
         const d = days[k] ?? { meals: [], water: 0 };
         const meal: Meal = { ...m, id: Math.random().toString(36).slice(2), t: Date.now() };
         days[k] = { ...d, meals: [meal, ...d.meals] };
+        set({ days });
+      },
+      addMyFood: (f) => set({ myFoods: [{ ...f, id: Math.random().toString(36).slice(2) }, ...get().myFoods] }),
+      removeMyFood: (id) => set({ myFoods: get().myFoods.filter((x) => x.id !== id) }),
+      updateMeal: (key, id, patch) => {
+        const days = { ...get().days };
+        const d = days[key];
+        if (!d) return;
+        days[key] = { ...d, meals: d.meals.map((x) => (x.id === id ? { ...x, ...patch } : x)) };
         set({ days });
       },
       removeMeal: (key, id) => {

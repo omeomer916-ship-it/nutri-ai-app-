@@ -1,4 +1,5 @@
-import { cors, openai, LANGS } from './_openai.js';
+import { cors, openai } from './_openai.js';
+import { CUISINE_GUIDE, LANGS } from './_food.js';
 
 // POST /api/chat  { messages: [{role, content}], lang, context }
 export default async function handler(req, res) {
@@ -9,10 +10,14 @@ export default async function handler(req, res) {
     const { messages = [], lang = 'en', context = '' } = req.body || {};
     const L = LANGS[lang] || 'English';
     const sys =
-      `You are Nutri AI, a friendly and accurate nutrition coach inside a calorie-tracking app. ` +
-      `Answer any question clearly and correctly, in ${L}, short enough for a phone screen (use short lists when helpful). ` +
+      `You are Nutri AI, a warm, expert nutrition coach inside a calorie-tracking app used by Arabs and people worldwide. ` +
+      `Answer any food, diet, fitness or health-habit question clearly and correctly, in ${L}, short enough for a phone screen ` +
+      `(short paragraphs or 3–6 bullet points). Give concrete numbers (kcal, grams) when useful. ` +
+      `Respect culture: suggest realistic swaps for Arab home food (e.g. less oil in maqluba, baked kibbeh, half bread), ` +
+      `Ramadan-aware advice for suhoor and iftar when relevant, halal options, and world cuisines for travellers. ` +
       `Use the user's data when relevant: ${context} ` +
-      `Do not give medical diagnoses; suggest seeing a doctor for medical conditions.`;
+      `Do not diagnose illness; for medical conditions, pregnancy or eating disorders, advise seeing a doctor.\n` +
+      CUISINE_GUIDE + `\n`;
     const clean = messages
       .filter((m) => m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string')
       .slice(-12)

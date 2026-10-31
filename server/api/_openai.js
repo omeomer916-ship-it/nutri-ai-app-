@@ -20,4 +20,3 @@ export async function openai(body) {
   return j.choices?.[0]?.message?.content ?? '';
 }
 
-export const LANGS = { ar: 'Arabic', en: 'English' };

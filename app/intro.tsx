@@ -9,6 +9,7 @@ import { useApp } from '../src/store';
 import { C, IMG } from '../src/theme';
 import { Btn, Txt } from '../src/components/ui';
 import { Leaf } from '../src/components/Leaf';
+import { GoogleButton, googleReady } from '../src/GoogleButton';
 
 const { width: W, height: H } = Dimensions.get('screen');
 
@@ -131,7 +132,11 @@ export default function Intro() {
             <Btn title={i === 2 ? t('start') : t('next')} onPress={() => setI(i + 1)} />
           ) : (
             <>
-              <Btn kind="white" title={t('google')} icon={<GoogleG />} onPress={onGoogle} />
+              {googleReady ? (
+                <GoogleButton title={t('google')} icon={<GoogleG />} failMsg={t('googleFail')} onUser={(u) => done({ ...u, guest: false })} />
+              ) : (
+                <Btn kind="white" title={t('google')} icon={<GoogleG />} onPress={onGoogle} />
+              )}
               <Btn kind="ghost" title={t('guest')} style={{ marginTop: 12 }} onPress={() => done({ name: t('guestName'), guest: true })} />
               <Txt center style={st.terms}>{t('terms')}</Txt>
             </>

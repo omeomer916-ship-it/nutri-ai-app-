@@ -11,6 +11,7 @@ const en = {
   google: 'Continue with Google', guest: 'Continue as guest',
   terms: 'By continuing you agree to the Terms of Service and Privacy Policy.',
   googleOff: 'Google sign-in is not set up yet. Continuing as guest.',
+  googleFail: 'Google sign-in did not finish. Please try again.',
   // onboarding
   obT: "Let's set your goal", back: 'Back', finish: 'See my plan',
   qSex: 'What is your sex?', male: 'Male', female: 'Female',
@@ -66,6 +67,7 @@ const ar: Dict = {
   google: 'المتابعة عبر Google', guest: 'المتابعة كضيف',
   terms: 'بالمتابعة أنت توافق على شروط الخدمة وسياسة الخصوصية.',
   googleOff: 'تسجيل الدخول بـ Google غير مفعّل بعد. سنتابع كضيف.',
+  googleFail: 'لم يكتمل تسجيل الدخول بـ Google. حاول مرة أخرى.',
   obT: 'لنحدد هدفك', back: 'رجوع', finish: 'اعرض خطتي',
   qSex: 'ما جنسك؟', male: 'ذكر', female: 'أنثى',
   qAge: 'كم عمرك؟', years: 'سنة',

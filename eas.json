@@ -8,16 +8,31 @@
       "distribution": "internal",
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "",
+        "EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID": "",
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": ""
       }
     },
     "production": {
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "",
+        "EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID": "",
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": ""
       }
     },
     "store": {
       "android": {
         "buildType": "app-bundle"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "",
+        "EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID": "",
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": ""
       }
     }
   }

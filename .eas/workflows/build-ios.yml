@@ -1,0 +1,15 @@
+# Builds the iPhone app for TestFlight / App Store when code is pushed to the "ios" branch.
+# Needs an Apple Developer account connected in Expo (credentials are set up on the first build).
+name: Build iOS
+
+on:
+  push:
+    branches: ['ios']
+
+jobs:
+  build_ios:
+    name: Build iOS app
+    type: build
+    params:
+      platform: ios
+      profile: store

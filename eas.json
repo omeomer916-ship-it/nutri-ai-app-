@@ -19,7 +19,11 @@
       },
       "env": {
         "EXPO_PUBLIC_API_URL": "https://nutri-ai-server.netlify.app"
-      }
+      },
+      "ios": {
+        "resourceClass": "m-medium"
+      },
+      "autoIncrement": false
     },
     "store": {
       "android": {
@@ -27,7 +31,13 @@
       },
       "env": {
         "EXPO_PUBLIC_API_URL": "https://nutri-ai-server.netlify.app"
+      },
+      "ios": {
+        "resourceClass": "m-medium"
       }
     }
+  },
+  "submit": {
+    "production": {}
   }
 }

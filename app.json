@@ -14,7 +14,12 @@
       "bundleIdentifier": "com.nutriai.app",
       "infoPlist": {
         "NSCameraUsageDescription": "Nutri AI uses the camera to photograph your meals and estimate their calories.",
-        "NSPhotoLibraryUsageDescription": "Nutri AI lets you pick a meal photo from your library."
+        "NSPhotoLibraryUsageDescription": "Nutri AI lets you pick a meal photo from your library.",
+        "NSUserNotificationsUsageDescription": "Nutri AI sends the meal and water reminders you turn on."
+      },
+      "buildNumber": "1",
+      "config": {
+        "usesNonExemptEncryption": false
       }
     },
     "android": {

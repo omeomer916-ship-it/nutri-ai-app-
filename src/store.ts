@@ -42,6 +42,16 @@ export const totals = (day?: Day) => {
   };
 };
 
+export function streakOf(days: Record<string, Day>) {
+  let n = 0;
+  for (let i = 0; i < 365; i++) {
+    const has = (days[dayKey(Date.now() - i * 864e5)]?.meals.length ?? 0) > 0;
+    if (has) n++;
+    else if (i > 0) break;
+  }
+  return n;
+}
+
 type State = {
   lang: Lang;
   seenIntro: boolean;

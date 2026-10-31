@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { Stack } from 'expo-router';
+import { useFonts } from 'expo-font';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useApp } from '../src/store';
-import { C } from '../src/theme';
+import { C, FONTS } from '../src/theme';
 
 // Show any startup error on screen instead of closing the app.
 export function ErrorBoundary({ error, retry }: { error: Error; retry: () => Promise<void> }) {
@@ -22,7 +23,11 @@ export function ErrorBoundary({ error, retry }: { error: Error; retry: () => Pro
 }
 
 export default function RootLayout() {
-  const [ready, setReady] = useState(useApp.persist.hasHydrated());
+  const [hydrated, setReady] = useState(useApp.persist.hasHydrated());
+  const [fontsOk, fontErr] = useFonts(FONTS);
+  const [late, setLate] = useState(false);
+  useEffect(() => { const id = setTimeout(() => setLate(true), 4000); return () => clearTimeout(id); }, []);
+  const ready = hydrated && (fontsOk || !!fontErr || late);
   useEffect(() => {
     const unsub = useApp.persist.onFinishHydration(() => setReady(true));
     if (useApp.persist.hasHydrated()) setReady(true);

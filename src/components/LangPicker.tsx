@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Modal, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Txt } from './ui';
+import { Icon } from './Icon';
 import { LANGS, langName, useT } from '../i18n';
 import { useApp } from '../store';
 import { C, R } from '../theme';
@@ -12,17 +14,17 @@ export function LangPicker({ style, textStyle }: { style?: object; textStyle?: o
   return (
     <>
       <Pressable style={style} onPress={() => setOpen(true)}>
-        <Text style={textStyle}>🌐 {langName(lang)}</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}><Icon name="globe" size={16} color={(textStyle as { color?: string })?.color ?? '#fff'} /><Txt style={textStyle}>{langName(lang)}</Txt></View>
       </Pressable>
       <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
         <Pressable style={st.back} onPress={() => setOpen(false)}>
           <View style={st.sheet}>
-            <Text style={st.title}>{t('language')}</Text>
+            <Txt center style={st.title}>{t('language')}</Txt>
             <ScrollView style={{ maxHeight: 420 }}>
               {LANGS.map((l) => (
                 <Pressable key={l.code} onPress={() => { setLang(l.code); setOpen(false); }} style={[st.row, l.code === lang && st.on]}>
-                  <Text style={[st.name, l.code === lang && { color: '#000' }]}>{l.name}</Text>
-                  {l.code === lang && <Text style={{ color: '#000', fontWeight: '900' }}>✓</Text>}
+                  <Txt style={[st.name, l.code === lang && { color: '#000' }]}>{l.name}</Txt>
+                  {l.code === lang && <Icon name="check" size={20} color="#000" stroke={2.6} />}
                 </Pressable>
               ))}
             </ScrollView>
@@ -35,9 +37,9 @@ export function LangPicker({ style, textStyle }: { style?: object; textStyle?: o
 
 const st = StyleSheet.create({
   back: { flex: 1, backgroundColor: 'rgba(0,0,0,0.7)', justifyContent: 'center', padding: 24 },
-  sheet: { backgroundColor: C.card, borderRadius: R.lg, borderWidth: 1, borderColor: C.line, padding: 16 },
+  sheet: { backgroundColor: C.surface, borderRadius: R.lg, borderWidth: 1, borderColor: C.stroke, padding: 16 },
   title: { color: '#fff', fontSize: 20, fontWeight: '800', marginBottom: 10, textAlign: 'center' },
-  row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 14, paddingHorizontal: 16, borderRadius: R.md, marginBottom: 6, backgroundColor: C.card2 },
+  row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 14, paddingHorizontal: 16, borderRadius: R.md, marginBottom: 6, backgroundColor: C.surface2 },
   on: { backgroundColor: C.green },
   name: { color: '#fff', fontSize: 17, fontWeight: '700' },
 });

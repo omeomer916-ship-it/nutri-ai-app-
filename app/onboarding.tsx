@@ -1,11 +1,15 @@
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 import { router } from 'expo-router';
 import { useT, TKey } from '../src/i18n';
 import { Profile, useApp } from '../src/store';
 import { computePlan, fmt } from '../src/calc';
-import { C, R } from '../src/theme';
-import { Btn, Card, Row, Screen, Txt } from '../src/components/ui';
+import { C, R, fontFor } from '../src/theme';
+import { Btn, Card, IconBadge, Num, Row, Screen, Txt } from '../src/components/ui';
+import { Ring } from '../src/components/Ring';
+import { Icon, IconName } from '../src/components/Icon';
+
+const OPT_ICON: Record<string, IconName> = { m: 'user', f: 'user', lose: 'flame', keep: 'target', gain: 'drumstick', 1: 'moon', 2: 'sun', 3: 'bolt', 4: 'flame' };
 
 type Step =
   | { k: 'sex' | 'goal' | 'act'; q: TKey; opts: [string | number, TKey][] }
@@ -22,7 +26,7 @@ const STEPS: Step[] = [
 ];
 
 export default function Onboarding() {
-  const { t } = useT();
+  const { t, lang, rtl } = useT();
   const old = useApp((s) => s.profile);
   const setProfile = useApp((s) => s.setProfile);
   const [a, setA] = useState<Partial<Profile>>(old ?? {});
@@ -49,12 +53,16 @@ export default function Onboarding() {
         <Txt style={styles.q}>{t('planT')}</Txt>
         <Txt style={styles.sub}>{t('planS')}</Txt>
         <Card style={{ alignItems: 'center', paddingVertical: 28 }}>
-          <Text style={{ color: C.green, fontSize: 56, fontWeight: '800' }}>{fmt(plan.kcal)}</Text>
-          <Txt center style={{ color: C.mut }}>kcal / {t('goal')}</Txt>
+          <Ring size={200} stroke={16} value={1} max={1} segments={[plan.P * 4, plan.C * 4, plan.F * 9]}>
+            <Icon name="flame" size={22} color="#fff" />
+            <Num style={{ fontSize: 46, fontWeight: '900', lineHeight: 56 }}>{fmt(plan.kcal)}</Num>
+            <Num style={{ color: C.mut, fontSize: 13 }}>kcal</Num>
+          </Ring>
           <Row style={{ gap: 10, marginTop: 22 }}>
-            {([['P', plan.P], ['Cb', plan.C], ['F', plan.F]] as [TKey, number][]).map(([k, v]) => (
+            {([['P', plan.P, C.pro, 'drumstick'], ['Cb', plan.C, C.carb, 'wheat'], ['F', plan.F, C.fat, 'avocado']] as [TKey, number, string, IconName][]).map(([k, v, col, ic]) => (
               <View key={k} style={styles.mac}>
-                <Text style={{ color: '#fff', fontSize: 20, fontWeight: '800' }}>{v} g</Text>
+                <Icon name={ic} size={20} color={col} />
+                <Num style={{ fontSize: 20, fontWeight: '900', marginTop: 4 }}>{v}g</Num>
                 <Txt center style={{ color: C.mut, fontSize: 12 }}>{t(k)}</Txt>
               </View>
             ))}
@@ -74,17 +82,29 @@ export default function Onboarding() {
   const ok = num ? val >= st.min && val <= st.max : false;
   return (
     <Screen scroll={false}>
-      <View style={styles.prog}><View style={[styles.progIn, { width: `${((i + 1) / steps.length) * 100}%` }]} /></View>
+      <Row style={{ gap: 12, marginTop: 12 }}>
+        {i > 0 ? (
+          <Pressable onPress={() => setI(i - 1)} style={styles.backBtn}>
+            <View style={{ transform: [{ scaleX: rtl ? 1 : -1 }] }}><Icon name="chevron" size={20} /></View>
+          </Pressable>
+        ) : <View style={{ width: 40 }} />}
+        <View style={[styles.prog, { flex: 1 }]}><View style={[styles.progIn, { width: `${((i + 1) / steps.length) * 100}%` }]} /></View>
+      </Row>
       <Txt style={styles.kicker}>{t('obT')}</Txt>
       <Txt style={styles.q}>{t(st.q)}</Txt>
       {'opts' in st ? (
         <View style={{ gap: 12, marginTop: 10 }}>
-          {st.opts.map(([v, k]) => (
-            <Pressable key={String(v)} onPress={() => go(v)}
-              style={({ pressed }) => [styles.opt, (a as Record<string, unknown>)[st.k] === v && styles.optOn, pressed && { opacity: 0.8 }]}>
-              <Txt style={{ fontSize: 17, fontWeight: '700' }}>{t(k)}</Txt>
-            </Pressable>
-          ))}
+          {st.opts.map(([v, k]) => {
+            const on = (a as Record<string, unknown>)[st.k] === v;
+            return (
+              <Pressable key={String(v)} onPress={() => go(v)}
+                style={({ pressed }) => [styles.opt, on && styles.optOn, pressed && { transform: [{ scale: 0.98 }] }]}>
+                <IconBadge name={OPT_ICON[String(v)] ?? 'check'} color={on ? '#000' : C.green} size={42} />
+                <Txt style={{ fontSize: 17, fontWeight: '800', flex: 1, color: on ? '#000' : '#fff' }}>{t(k)}</Txt>
+                <View style={[styles.radio, on && { borderColor: '#000', backgroundColor: '#000' }]}>{on && <Icon name="check" size={14} color="#fff" stroke={3} />}</View>
+              </Pressable>
+            );
+          })}
         </View>
       ) : (
         <View style={{ marginTop: 10 }}>
@@ -96,27 +116,28 @@ export default function Onboarding() {
               autoFocus
               placeholder={String((a as Record<string, unknown>)[st.k] ?? '')}
               placeholderTextColor={C.dim}
-              style={styles.input}
+              style={[styles.input, { fontFamily: fontFor(900, lang) }]}
             />
-            <Text style={{ color: C.mut, fontSize: 18 }}>{st.unit === 'years' ? t('years') : st.unit === 'kg' ? t('kg') : st.unit}</Text>
+            <Txt style={{ color: C.mut, fontSize: 18, fontWeight: '700' }}>{st.unit === 'years' ? t('years') : st.unit === 'kg' ? t('kg') : st.unit}</Txt>
           </Row>
           <Btn style={{ marginTop: 20 }} title={t('next')} disabled={!ok} onPress={() => go(val)} />
         </View>
       )}
-      {i > 0 && <Btn kind="ghost" style={{ marginTop: 'auto', marginBottom: 20 }} title={t('back')} onPress={() => setI(i - 1)} />}
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  prog: { height: 6, borderRadius: 6, backgroundColor: 'rgba(255,255,255,0.08)', marginTop: 12, overflow: 'hidden' },
+  prog: { height: 6, borderRadius: 6, backgroundColor: 'rgba(255,255,255,0.08)', overflow: 'hidden' },
+  backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: C.surface2, alignItems: 'center', justifyContent: 'center' },
+  radio: { width: 24, height: 24, borderRadius: 12, borderWidth: 2, borderColor: 'rgba(255,255,255,0.25)', alignItems: 'center', justifyContent: 'center' },
   progIn: { height: 6, borderRadius: 6, backgroundColor: C.green },
   kicker: { color: C.green, fontWeight: '700', marginTop: 28 },
-  q: { fontSize: 30, fontWeight: '800', marginTop: 8, marginBottom: 18 },
+  q: { fontSize: 30, fontWeight: '900', marginTop: 8, marginBottom: 18, lineHeight: 42 },
   sub: { color: C.mut, marginBottom: 18, lineHeight: 22 },
-  opt: { backgroundColor: C.card, borderWidth: 1, borderColor: C.line, borderRadius: R.md, padding: 20 },
-  optOn: { borderColor: C.green, backgroundColor: '#0f2a1b' },
-  inputRow: { backgroundColor: C.card, borderWidth: 1, borderColor: C.line, borderRadius: R.md, paddingHorizontal: 20, gap: 10 },
-  input: { flex: 1, color: '#fff', fontSize: 34, fontWeight: '800', height: 84, paddingVertical: 0, textAlign: 'center', textAlignVertical: 'center', includeFontPadding: false },
-  mac: { flex: 1, alignItems: 'center', backgroundColor: C.card2, borderRadius: R.md, paddingVertical: 14 },
+  opt: { flexDirection: 'row', alignItems: 'center', gap: 14, backgroundColor: C.surface, borderWidth: 1, borderColor: C.stroke, borderRadius: R.lg, padding: 14 },
+  optOn: { borderColor: '#fff', backgroundColor: '#fff' },
+  inputRow: { backgroundColor: C.surface, borderWidth: 1, borderColor: C.stroke, borderRadius: R.lg, paddingHorizontal: 20, gap: 10 },
+  input: { flex: 1, color: '#fff', fontSize: 34, height: 84, paddingVertical: 0, textAlign: 'center', textAlignVertical: 'center', includeFontPadding: false },
+  mac: { flex: 1, alignItems: 'center', backgroundColor: C.surface2, borderRadius: R.md, paddingVertical: 14 },
 });

@@ -53,6 +53,10 @@ const en = {
   settings: 'Settings', language: 'Language', redo: 'Redo my plan', signOut: 'Sign out', signIn: 'Sign in',
   reset: 'Delete all my data', resetQ: 'This deletes all meals, weights and settings on this phone.',
   cancel: 'Cancel', del: 'Delete', version: 'Version',
+  kLeft: 'Calories left', kOver: 'Calories over', leftS: 'left', overS: 'over', recentLog: 'Recently logged',
+  emptyT: "You haven't logged food today", emptyS: 'Tap the scan button and snap your first meal.', scanNow: 'Scan a meal',
+  glasses: 'glasses', online: 'Online now', plan: 'Your plan', account: 'Account', tipT: 'Tip for better results',
+  tipD: 'Shoot from above in good light, with the whole plate in frame.',
 };
 
 export type Dict = typeof en;
@@ -103,6 +107,10 @@ const ar: Dict = {
   settings: 'الإعدادات', language: 'اللغة', redo: 'أعد حساب خطتي', signOut: 'تسجيل الخروج', signIn: 'تسجيل الدخول',
   reset: 'احذف كل بياناتي', resetQ: 'هذا يحذف كل الوجبات والأوزان والإعدادات من هذا الجوال.',
   cancel: 'إلغاء', del: 'حذف', version: 'الإصدار',
+  kLeft: 'سعرات متبقية', kOver: 'سعرات زيادة', leftS: 'متبقي', overS: 'زيادة', recentLog: 'آخر ما أكلت',
+  emptyT: 'ما سجّلت أكل اليوم', emptyS: 'اضغط زر المسح وصوّر أول وجبة.', scanNow: 'صوّر وجبة',
+  glasses: 'أكواب', online: 'متصل الآن', plan: 'خطتك', account: 'الحساب', tipT: 'لنتيجة أدق',
+  tipD: 'صوّر من فوق بإضاءة جيدة، وخلّي الصحن كامل داخل الإطار.',
 };
 
 import { de, es, fr, id, ru, tr, ur } from './locales';

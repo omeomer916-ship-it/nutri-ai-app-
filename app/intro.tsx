@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Alert, Animated, Dimensions, Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Alert, Animated, Dimensions, Image, Pressable, StyleSheet, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -7,7 +7,8 @@ import Svg, { Path } from 'react-native-svg';
 import { useT } from '../src/i18n';
 import { useApp } from '../src/store';
 import { C, IMG } from '../src/theme';
-import { Btn, Txt } from '../src/components/ui';
+import { Btn, Num, Txt } from '../src/components/ui';
+import { Icon } from '../src/components/Icon';
 import { Leaf } from '../src/components/Leaf';
 import { GoogleButton, googleReady } from '../src/GoogleButton';
 import { Brand } from '../src/components/Brand';
@@ -75,23 +76,24 @@ export default function Intro() {
     done({ name: t('guestName'), guest: true });
   };
 
+  const ar = lang === 'ar';
   const chips: React.ReactNode[] = [
     <>
-      <Chip key="a" top={50} side="end" delay={600}><Text style={st.ct}>🥭 {lang === 'ar' ? 'مانجا طازجة' : 'Fresh mango'}  <Text style={st.cg}>{'\u2066200 g\u2069'}</Text></Text></Chip>
-      <Chip key="b" top={59} side="end" delay={1000}><Text style={st.ct}>🔥 <Text style={st.cg}>{'\u2066120 kcal\u2069'}</Text>  {lang === 'ar' ? 'ثقة عالية' : 'high confidence'}</Text></Chip>
+      <Chip key="a" top={50} side="end" delay={600}><Icon name="sparkle" size={16} color={C.green} /><Txt style={st.ct}>{ar ? 'مانجا طازجة' : 'Fresh mango'}</Txt><Num style={st.cg}>200 g</Num></Chip>
+      <Chip key="b" top={59} side="end" delay={1000}><Icon name="flame" size={16} color="#FF9F5C" /><Num style={st.cg}>120 kcal</Num><Txt style={st.ct}>{ar ? 'ثقة عالية' : 'high confidence'}</Txt></Chip>
     </>,
     <>
-      <Chip key="a" top={14} side="start" delay={400}><Text style={st.ct}>💪 {t('P')} <Text style={st.cg}>34 g</Text></Text></Chip>
-      <Chip key="b" top={26} side="end" delay={700}><Text style={st.ct}>🥑 {t('F')} <Text style={st.cg}>22 g</Text></Text></Chip>
-      <Chip key="c" top={38} side="start" delay={1000}><Text style={st.ct}>🔥 <Text style={st.cg}>412</Text> kcal</Text></Chip>
+      <Chip key="a" top={14} side="start" delay={400}><Icon name="drumstick" size={16} color={C.pro} /><Txt style={st.ct}>{t('P')}</Txt><Num style={st.cg}>34 g</Num></Chip>
+      <Chip key="b" top={26} side="end" delay={700}><Icon name="avocado" size={16} color={C.fat} /><Txt style={st.ct}>{t('F')}</Txt><Num style={st.cg}>22 g</Num></Chip>
+      <Chip key="c" top={38} side="start" delay={1000}><Icon name="flame" size={16} color="#FF9F5C" /><Num style={st.cg}>412 kcal</Num></Chip>
     </>,
     <>
-      <Chip key="a" top={13} side="end" delay={400}><Text style={[st.ct, { maxWidth: 220 }]}>{lang === 'ar' ? 'هل الماء مع الليمون مفيد؟' : 'Is lemon water good for me?'}</Text></Chip>
-      <Chip key="b" top={42} side="start" delay={1100}><Text style={[st.ct, { maxWidth: 240, fontWeight: '500' }]}>🍋 {lang === 'ar' ? 'يساعدك تشرب ماء أكثر بسعرات شبه صفر.' : 'It helps you drink more water with almost 0 kcal.'}</Text></Chip>
+      <Chip key="a" top={13} side="end" delay={400}><Txt style={[st.ct, { maxWidth: 220 }]}>{ar ? 'هل الماء مع الليمون مفيد؟' : 'Is lemon water good for me?'}</Txt></Chip>
+      <Chip key="b" top={42} side="start" delay={1100}><Icon name="sparkle" size={16} color={C.green} /><Txt style={[st.ct, { maxWidth: 230, fontWeight: '600' }]}>{ar ? 'يساعدك تشرب ماء أكثر بسعرات شبه صفر.' : 'It helps you drink more water with almost 0 kcal.'}</Txt></Chip>
     </>,
     <>
-      <Chip key="a" top={16} side="end" delay={500}><Text style={st.ct}>✅ {t('goal')} <Text style={st.cg}>2,100</Text></Text></Chip>
-      <Chip key="b" top={28} side="start" delay={900}><Text style={st.ct}>🔥 {lang === 'ar' ? '5 أيام متتالية' : '5-day streak'}</Text></Chip>
+      <Chip key="a" top={16} side="end" delay={500}><Icon name="target" size={16} color={C.green} /><Txt style={st.ct}>{t('goal')}</Txt><Num style={st.cg}>2,100</Num></Chip>
+      <Chip key="b" top={28} side="start" delay={900}><Icon name="flame" size={16} color="#FF9F5C" /><Txt style={st.ct}>{ar ? '5 أيام متتالية' : '5-day streak'}</Txt></Chip>
     </>,
   ];
 
@@ -115,7 +117,7 @@ export default function Intro() {
           <LangPicker style={st.pill} textStyle={st.pillT} />
           {i < 3 && (
             <Pressable style={st.pill} onPress={() => setI(3)}>
-              <Text style={st.pillT}>{t('skip')}</Text>
+              <Txt style={st.pillT}>{t('skip')}</Txt>
             </Pressable>
           )}
         </View>
@@ -151,17 +153,17 @@ export default function Intro() {
 const st = StyleSheet.create({
   wrap: { flex: 1, backgroundColor: '#000', overflow: 'hidden' },
   top: { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 18, paddingTop: 8 },
-  pill: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 999, backgroundColor: 'rgba(0,0,0,0.45)', borderWidth: 1, borderColor: C.line },
-  pillT: { color: C.green, fontWeight: '600' },
+  pill: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 999, backgroundColor: 'rgba(0,0,0,0.5)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.16)' },
+  pillT: { color: '#fff', fontWeight: '700', fontSize: 13 },
   body: { marginTop: 'auto', paddingHorizontal: 24, paddingBottom: 24 },
   dots: { flexDirection: 'row', gap: 7, justifyContent: 'center', marginBottom: 18 },
   dot: { width: 8, height: 8, borderRadius: 8, backgroundColor: 'rgba(255,255,255,0.3)' },
   dotOn: { width: 26, backgroundColor: C.green },
   logo: { alignSelf: 'center', flexDirection: 'row', gap: 8, alignItems: 'center', paddingHorizontal: 14, paddingVertical: 8, borderRadius: 999, backgroundColor: 'rgba(0,0,0,0.45)', borderWidth: 1, borderColor: C.line, marginBottom: 14 },
-  title: { fontSize: H < 700 ? 28 : 32, fontWeight: '800', marginBottom: 10 },
+  title: { fontSize: H < 700 ? 28 : 32, fontWeight: '900', marginBottom: 8, lineHeight: H < 700 ? 40 : 46 },
   desc: { color: C.mut, fontSize: 16, lineHeight: 25, marginBottom: 24 },
   terms: { color: C.dim, fontSize: 12, marginTop: 14 },
-  chip: { position: 'absolute', flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(6,18,11,0.82)', borderWidth: 1, borderColor: 'rgba(57,230,140,0.5)', borderRadius: 16, paddingHorizontal: 14, paddingVertical: 10 },
+  chip: { position: 'absolute', flexDirection: 'row', alignItems: 'center', gap: 7, backgroundColor: 'rgba(14,20,17,0.86)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.14)', borderRadius: 18, paddingHorizontal: 14, paddingVertical: 10 },
   ct: { color: '#fff', fontWeight: '700', fontSize: 14 },
-  cg: { color: C.green },
+  cg: { color: C.green, fontWeight: '800', fontSize: 14 },
 });

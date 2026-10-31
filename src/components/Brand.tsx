@@ -1,4 +1,5 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Num } from './ui';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Leaf } from './Leaf';
 import { C } from '../theme';
@@ -12,9 +13,9 @@ export function Brand({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) {
         style={[st.badge, { width: 34 * s, height: 34 * s, borderRadius: 11 * s }]}>
         <Leaf size={20 * s} color="#03140b" />
       </LinearGradient>
-      <Text style={[st.word, { fontSize: 22 * s }]}>
-        Nutri<Text style={{ color: C.green }}> AI</Text>
-      </Text>
+      <Num style={[st.word, { fontSize: 22 * s }]}>
+        Nutri<Num style={{ color: C.green, fontSize: 22 * s, fontWeight: '900' }}> AI</Num>
+      </Num>
     </View>
   );
 }
@@ -22,5 +23,5 @@ export function Brand({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) {
 const st = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center', gap: 9 },
   badge: { alignItems: 'center', justifyContent: 'center', shadowColor: C.green, shadowOpacity: 0.6, shadowRadius: 12, elevation: 6 },
-  word: { color: '#fff', fontWeight: '900', letterSpacing: -0.4 },
+  word: { color: '#fff', fontWeight: '900' },
 });

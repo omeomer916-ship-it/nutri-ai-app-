@@ -1,54 +1,89 @@
 import { Tabs } from 'expo-router';
-import { Platform } from 'react-native';
-import Svg, { Circle, Path } from 'react-native-svg';
-import { useT } from '../../src/i18n';
+import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
+import { useEffect, useState } from 'react';
+import { Keyboard, Pressable, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
+import * as Haptics from 'expo-haptics';
+import { useT, TKey } from '../../src/i18n';
 import { C } from '../../src/theme';
+import { Icon, IconName } from '../../src/components/Icon';
+import { Txt } from '../../src/components/ui';
 
-const icons: Record<string, string[]> = {
-  today: ['M4 11l8-7 8 7v9H4z'],
-  scan: ['M4 8V4h4M16 4h4v4M20 16v4h-4M8 20H4v-4', 'M8 12h8'],
-  coach: ['M4 5h16v11H9l-5 4z'],
-  progress: ['M5 20V10M12 20V4M19 20v-7'],
+const META: Record<string, { icon: IconName; label: TKey }> = {
+  today: { icon: 'home', label: 'tToday' },
+  progress: { icon: 'chart', label: 'tProgress' },
+  scan: { icon: 'camera', label: 'tScan' },
+  coach: { icon: 'chat', label: 'tCoach' },
+  profile: { icon: 'user', label: 'tProfile' },
 };
+const ORDER = ['today', 'progress', 'scan', 'coach', 'profile'];
 
-function Icon({ name, color }: { name: string; color: string }) {
+function Bar({ state, navigation }: BottomTabBarProps) {
+  const { t, rtl } = useT();
+  const ins = useSafeAreaInsets();
+  const routes = ORDER.map((n) => state.routes.find((r) => r.name === n)!).filter(Boolean);
+  const active = state.routes[state.index]?.name;
+  const [kb, setKb] = useState(false);
+  useEffect(() => {
+    const a = Keyboard.addListener('keyboardDidShow', () => setKb(true));
+    const b = Keyboard.addListener('keyboardDidHide', () => setKb(false));
+    return () => { a.remove(); b.remove(); };
+  }, []);
+  if (kb) return null;
+  const go = (name: string) => {
+    Haptics.selectionAsync().catch(() => {});
+    navigation.navigate(name);
+  };
   return (
-    <Svg width={24} height={24} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
-      {name === 'profile' ? (
-        <>
-          <Circle cx={12} cy={8} r={4} />
-          <Path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6" />
-        </>
-      ) : (
-        icons[name].map((d, i) => <Path key={i} d={d} />)
-      )}
-    </Svg>
+    <View pointerEvents="box-none" style={[st.wrap, { paddingBottom: Math.max(ins.bottom, 12) }]}>
+      <LinearGradient pointerEvents="none" colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.9)']} style={StyleSheet.absoluteFill} />
+      <View style={[st.bar, { flexDirection: rtl ? 'row-reverse' : 'row' }]}>
+        {routes.map((r) => {
+          const m = META[r.name];
+          const on = active === r.name;
+          if (r.name === 'scan') {
+            return (
+              <Pressable key={r.key} onPress={() => go(r.name)} style={st.fabWrap}>
+                <LinearGradient colors={['#7CF5B5', C.green, '#17A35B']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={st.fab}>
+                  <Icon name="scan" size={28} color="#03140b" stroke={2.4} />
+                </LinearGradient>
+              </Pressable>
+            );
+          }
+          return (
+            <Pressable key={r.key} onPress={() => go(r.name)} style={st.item}>
+              <Icon name={m.icon} size={23} color={on ? '#fff' : 'rgba(255,255,255,0.42)'} stroke={on ? 2.2 : 1.8} />
+              <Txt center numberOfLines={1} style={{ fontSize: 11, fontWeight: on ? '800' : '600', color: on ? '#fff' : 'rgba(255,255,255,0.42)', marginTop: 2 }}>{t(m.label)}</Txt>
+              <View style={[st.dot, on && { backgroundColor: C.green }]} />
+            </Pressable>
+          );
+        })}
+      </View>
+    </View>
   );
 }
 
 export default function TabsLayout() {
-  const { t, rtl } = useT();
-  const tabs = [
-    ['today', t('tToday')], ['scan', t('tScan')], ['coach', t('tCoach')], ['progress', t('tProgress')], ['profile', t('tProfile')],
-  ] as const;
-  const ordered = rtl ? [...tabs].reverse() : tabs;
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: C.green,
-        tabBarInactiveTintColor: 'rgba(255,255,255,0.6)',
-        tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
-        tabBarStyle: {
-          position: 'absolute', backgroundColor: 'rgba(8,16,11,0.97)', borderTopColor: C.line, borderTopWidth: 1,
-          height: Platform.OS === 'ios' ? 86 : 70, paddingTop: 8, paddingBottom: Platform.OS === 'ios' ? 26 : 10,
-        },
-        sceneStyle: { backgroundColor: C.bg },
-      }}
-    >
-      {ordered.map(([name, title]) => (
-        <Tabs.Screen key={name} name={name} options={{ title, tabBarIcon: ({ color }) => <Icon name={name} color={color} /> }} />
-      ))}
+    <Tabs tabBar={(p) => <Bar {...p} />} screenOptions={{ headerShown: false, sceneStyle: { backgroundColor: C.bg } }}>
+      {ORDER.map((n) => <Tabs.Screen key={n} name={n} />)}
     </Tabs>
   );
 }
+
+const st = StyleSheet.create({
+  wrap: { position: 'absolute', left: 0, right: 0, bottom: 0, paddingHorizontal: 14, paddingTop: 24 },
+  bar: {
+    height: 72, borderRadius: 36, backgroundColor: 'rgba(20,28,24,0.97)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)',
+    alignItems: 'center', paddingHorizontal: 6,
+    shadowColor: '#000', shadowOpacity: 0.6, shadowRadius: 24, shadowOffset: { width: 0, height: 10 }, elevation: 14,
+  },
+  item: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: 4 },
+  dot: { width: 4, height: 4, borderRadius: 2, marginTop: 3, backgroundColor: 'transparent' },
+  fabWrap: { flex: 1, alignItems: 'center' },
+  fab: {
+    width: 62, height: 62, borderRadius: 31, alignItems: 'center', justifyContent: 'center', marginTop: -30,
+    borderWidth: 4, borderColor: '#000', shadowColor: C.green, shadowOpacity: 0.7, shadowRadius: 18, elevation: 12,
+  },
+});

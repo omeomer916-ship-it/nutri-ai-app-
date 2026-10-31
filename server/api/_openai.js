@@ -67,7 +67,9 @@ async function gemini({ system, messages, image, json }) {
       const left = budget - (Date.now() - started);
       if (left < 2500) throw new Error(`Gemini busy [${tried.join(', ')}] ${lastErr}`);
       const ctl = new AbortController();
-      const timer = setTimeout(() => ctl.abort(), left - 500);
+      // Cap each try so one slow model can't use the whole time; images get a bit longer.
+      const cap = image ? 11000 : 7000;
+      const timer = setTimeout(() => ctl.abort(), Math.min(cap, left - 500));
       try {
         const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`, {
           method: 'POST', headers: { 'Content-Type': 'application/json' }, body, signal: ctl.signal,
@@ -83,7 +85,8 @@ async function gemini({ system, messages, image, json }) {
         if (attempt === 0) await sleep(700);
       } catch (e) {
         lastErr = `${model}: ${String(e?.message || e)}`;
-        tried.push(`${model}:err`);
+        tried.push(`${model}:timeout`);
+        break; // slow/hung: go to the next model instead of retrying
       } finally {
         clearTimeout(timer);
       }

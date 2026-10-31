@@ -55,7 +55,7 @@ const en = {
   cancel: 'Cancel', del: 'Delete', version: 'Version',
 };
 
-type Dict = typeof en;
+export type Dict = typeof en;
 
 const ar: Dict = {
   appName: 'Nutri AI',
@@ -105,13 +105,22 @@ const ar: Dict = {
   cancel: 'إلغاء', del: 'حذف', version: 'الإصدار',
 };
 
-export const DICT = { en, ar };
-export type Lang = keyof typeof DICT;
+import { de, es, fr, id, ru, tr, ur } from './locales';
+
+export const DICT: Record<string, Partial<Dict>> = { en, ar, fr, es, de, tr, ru, id, ur };
+export const LANGS: { code: Lang; name: string }[] = [
+  { code: 'ar', name: 'العربية' }, { code: 'en', name: 'English' }, { code: 'fr', name: 'Français' },
+  { code: 'es', name: 'Español' }, { code: 'de', name: 'Deutsch' }, { code: 'tr', name: 'Türkçe' },
+  { code: 'ru', name: 'Русский' }, { code: 'id', name: 'Bahasa Indonesia' }, { code: 'ur', name: 'اردو' },
+];
+export type Lang = 'en' | 'ar' | 'fr' | 'es' | 'de' | 'tr' | 'ru' | 'id' | 'ur';
 export type TKey = keyof Dict;
+export const RTL_LANGS: string[] = ['ar', 'ur'];
+export const langName = (c: string) => LANGS.find((l) => l.code === c)?.name ?? 'English';
 
 export function useT() {
   const lang = useApp((s) => s.lang);
   const d = DICT[lang] ?? en;
-  const rtl = lang === 'ar';
-  return { t: (k: TKey) => d[k] ?? en[k], lang, rtl };
+  const rtl = RTL_LANGS.includes(lang);
+  return { t: (k: TKey) => (d[k] as string | undefined) ?? en[k], lang, rtl };
 }

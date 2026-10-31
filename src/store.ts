@@ -2,9 +2,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { getLocales } from 'expo-localization';
+import type { Lang } from './i18n';
 
-const deviceLang = (): 'en' | 'ar' => {
-  try { return getLocales()[0]?.languageCode === 'ar' ? 'ar' : 'en'; } catch { return 'en'; }
+const SUPPORTED = ['en', 'ar', 'fr', 'es', 'de', 'tr', 'ru', 'id', 'ur'];
+const deviceLang = (): Lang => {
+  try {
+    const c = getLocales()[0]?.languageCode ?? 'en';
+    return (SUPPORTED.includes(c) ? c : 'en') as Lang;
+  } catch { return 'en'; }
 };
 
 export type Cat = 'bf' | 'ln' | 'dn' | 'sn' | 'ds' | 'dr';
@@ -38,14 +43,14 @@ export const totals = (day?: Day) => {
 };
 
 type State = {
-  lang: 'en' | 'ar';
+  lang: Lang;
   seenIntro: boolean;
   account: Account | null;
   profile: Profile | null;
   goals: Goals;
   days: Record<string, Day>;
   weights: { t: number; w: number }[];
-  setLang: (l: 'en' | 'ar') => void;
+  setLang: (l: Lang) => void;
   finishIntro: (a: Account) => void;
   signOut: () => void;
   setProfile: (p: Profile, g: Goals) => void;

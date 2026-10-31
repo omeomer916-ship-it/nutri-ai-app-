@@ -31,5 +31,6 @@ PORTION RULES:
 
 export const LANGS = {
   ar: 'Arabic (simple, friendly Levantine-style Arabic is fine)',
-  en: 'English',
+  en: 'English', fr: 'French', es: 'Spanish', de: 'German', tr: 'Turkish',
+  ru: 'Russian', id: 'Indonesian', ur: 'Urdu',
 };

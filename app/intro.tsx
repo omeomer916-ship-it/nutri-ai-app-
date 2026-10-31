@@ -11,6 +11,7 @@ import { Btn, Txt } from '../src/components/ui';
 import { Leaf } from '../src/components/Leaf';
 import { GoogleButton, googleReady } from '../src/GoogleButton';
 import { Brand } from '../src/components/Brand';
+import { LangPicker } from '../src/components/LangPicker';
 import { IntroVideo } from '../src/components/IntroVideo';
 
 const { width: W, height: H } = Dimensions.get('screen');
@@ -76,8 +77,8 @@ export default function Intro() {
 
   const chips: React.ReactNode[] = [
     <>
-      <Chip key="a" top={22} side="end" delay={600}><Text style={st.ct}>🥭 {rtl ? 'مانجا طازجة' : 'Fresh mango'} <Text style={st.cg}>· 200 g</Text></Text></Chip>
-      <Chip key="b" top={34} side="start" delay={1000}><Text style={st.ct}>🔥 <Text style={st.cg}>120</Text> kcal · {rtl ? 'ثقة عالية' : 'high confidence'}</Text></Chip>
+      <Chip key="a" top={50} side="end" delay={600}><Text style={st.ct}>🥭 {lang === 'ar' ? 'مانجا طازجة' : 'Fresh mango'}  <Text style={st.cg}>{'\u2066200 g\u2069'}</Text></Text></Chip>
+      <Chip key="b" top={59} side="end" delay={1000}><Text style={st.ct}>🔥 <Text style={st.cg}>{'\u2066120 kcal\u2069'}</Text>  {lang === 'ar' ? 'ثقة عالية' : 'high confidence'}</Text></Chip>
     </>,
     <>
       <Chip key="a" top={14} side="start" delay={400}><Text style={st.ct}>💪 {t('P')} <Text style={st.cg}>34 g</Text></Text></Chip>
@@ -85,12 +86,12 @@ export default function Intro() {
       <Chip key="c" top={38} side="start" delay={1000}><Text style={st.ct}>🔥 <Text style={st.cg}>412</Text> kcal</Text></Chip>
     </>,
     <>
-      <Chip key="a" top={13} side="end" delay={400}><Text style={[st.ct, { maxWidth: 220 }]}>{rtl ? 'هل الماء مع الليمون مفيد؟' : 'Is lemon water good for me?'}</Text></Chip>
-      <Chip key="b" top={42} side="start" delay={1100}><Text style={[st.ct, { maxWidth: 240, fontWeight: '500' }]}>🍋 {rtl ? 'يساعدك تشرب ماء أكثر بسعرات شبه صفر.' : 'It helps you drink more water with almost 0 kcal.'}</Text></Chip>
+      <Chip key="a" top={13} side="end" delay={400}><Text style={[st.ct, { maxWidth: 220 }]}>{lang === 'ar' ? 'هل الماء مع الليمون مفيد؟' : 'Is lemon water good for me?'}</Text></Chip>
+      <Chip key="b" top={42} side="start" delay={1100}><Text style={[st.ct, { maxWidth: 240, fontWeight: '500' }]}>🍋 {lang === 'ar' ? 'يساعدك تشرب ماء أكثر بسعرات شبه صفر.' : 'It helps you drink more water with almost 0 kcal.'}</Text></Chip>
     </>,
     <>
       <Chip key="a" top={16} side="end" delay={500}><Text style={st.ct}>✅ {t('goal')} <Text style={st.cg}>2,100</Text></Text></Chip>
-      <Chip key="b" top={28} side="start" delay={900}><Text style={st.ct}>🔥 {rtl ? '5 أيام متتالية' : '5-day streak'}</Text></Chip>
+      <Chip key="b" top={28} side="start" delay={900}><Text style={st.ct}>🔥 {lang === 'ar' ? '5 أيام متتالية' : '5-day streak'}</Text></Chip>
     </>,
   ];
 
@@ -111,9 +112,7 @@ export default function Intro() {
       <View key={'c' + i} style={StyleSheet.absoluteFill} pointerEvents="none">{chips[i]}</View>
       <SafeAreaView style={{ flex: 1 }}>
         <View style={st.top}>
-          <Pressable style={st.pill} onPress={() => setLang(lang === 'ar' ? 'en' : 'ar')}>
-            <Text style={st.pillT}>{lang === 'ar' ? 'English' : 'العربية'}</Text>
-          </Pressable>
+          <LangPicker style={st.pill} textStyle={st.pillT} />
           {i < 3 && (
             <Pressable style={st.pill} onPress={() => setI(3)}>
               <Text style={st.pillT}>{t('skip')}</Text>

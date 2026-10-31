@@ -7,6 +7,7 @@ import { C, R } from '../../src/theme';
 import { Card, H2, Row, Screen, Txt } from '../../src/components/ui';
 import { Leaf } from '../../src/components/Leaf';
 import { googleSignOut } from '../../src/GoogleButton';
+import { LangPicker } from '../../src/components/LangPicker';
 
 export default function Profile() {
   const { t, lang } = useT();
@@ -51,7 +52,10 @@ export default function Profile() {
 
       <H2>{t('settings')}</H2>
       <Card style={{ paddingVertical: 4 }}>
-        {item(t('language'), lang === 'ar' ? 'English' : 'العربية', () => setLang(lang === 'ar' ? 'en' : 'ar'))}
+        <Row style={st.row}>
+          <Txt style={{ flex: 1, fontWeight: '700' }}>{t('language')}</Txt>
+          <LangPicker style={st.pill} textStyle={{ color: C.green, fontWeight: '700' }} />
+        </Row>
         {item(t('redo'), '↻', () => router.push('/onboarding'))}
         {item(account?.guest ? t('signIn') : t('signOut'), '→', () => { googleSignOut(); signOut(); router.replace('/intro'); })}
         {item(t('reset'), t('del'), () =>

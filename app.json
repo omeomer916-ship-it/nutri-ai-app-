@@ -3,7 +3,7 @@
     "name": "Nutri AI",
     "slug": "nutri-ai",
     "scheme": "nutriai",
-    "version": "1.9.0",
+    "version": "2.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
@@ -27,7 +27,7 @@
       "permissions": [
         "CAMERA"
       ],
-      "versionCode": 16,
+      "versionCode": 17,
       "predictiveBackGestureEnabled": false
     },
     "web": {

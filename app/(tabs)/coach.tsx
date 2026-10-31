@@ -92,6 +92,11 @@ export default function Coach() {
               <Txt style={{ fontSize: 20, fontWeight: '900' }}>{t('tCoach')}</Txt>
               <Txt style={{ color: C.green, fontSize: 12, fontWeight: '700' }}>{t('online')}</Txt>
             </View>
+            {msgs.length > 0 && (
+              <Pressable hitSlop={10} onPress={() => setMsgs([])} style={st.clear}>
+                <Icon name="refresh" size={18} color={C.mut} />
+              </Pressable>
+            )}
           </Row>
           <ScrollView ref={sv} style={{ flex: 1 }} contentContainerStyle={{ padding: 20, gap: 12, paddingBottom: 24 }} showsVerticalScrollIndicator={false}>
             <View style={[st.b, st.ai]}><Rich text={t('hello')} color="#fff" /></View>
@@ -141,6 +146,7 @@ export default function Coach() {
 const st = StyleSheet.create({
   head: { gap: 12, paddingHorizontal: 20, paddingTop: 12, paddingBottom: 12, borderBottomWidth: 1, borderBottomColor: C.stroke },
   av: { width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center' },
+  clear: { width: 40, height: 40, borderRadius: 20, backgroundColor: C.surface2, alignItems: 'center', justifyContent: 'center' },
   online: { position: 'absolute', bottom: 1, end: 1, width: 13, height: 13, borderRadius: 7, backgroundColor: C.green, borderWidth: 2.5, borderColor: '#000' },
   b: { maxWidth: '88%', borderRadius: 22, paddingHorizontal: 16, paddingVertical: 12 },
   ai: { alignSelf: 'flex-start', backgroundColor: C.surface, borderWidth: 1, borderColor: C.stroke, borderTopStartRadius: 6 },

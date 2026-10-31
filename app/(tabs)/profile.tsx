@@ -59,6 +59,7 @@ export default function Profile() {
       <Txt style={{ flex: 1, fontWeight: '700' }}>{t(label)}</Txt>
       <View style={st.inWrap}>
         <TextInput
+          key={`${k}-${goals[k]}`}
           defaultValue={String(goals[k])}
           keyboardType="number-pad"
           onEndEditing={(e) => { const n = parseInt(e.nativeEvent.text, 10); if (n > 0 && n < 10000) setGoals({ [k]: n }); }}

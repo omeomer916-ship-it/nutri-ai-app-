@@ -1,11 +1,12 @@
 import { StyleSheet } from 'react-native';
 import { useVideoPlayer, VideoView } from 'expo-video';
 
-const SRC = require('../../assets/intro-video.mp4');
+const INTRO = require('../../assets/intro-video.mp4');
+const SCAN = require('../../assets/scan-video.mp4');
 
-/** Silent looping background video for the first intro slide. */
-export function IntroVideo() {
-  const player = useVideoPlayer(SRC, (p) => {
+/** Silent looping background video (intro slide 1 or scanner). */
+export function IntroVideo({ which = 'intro' }: { which?: 'intro' | 'scan' }) {
+  const player = useVideoPlayer(which === 'scan' ? SCAN : INTRO, (p) => {
     p.loop = true;
     p.muted = true;
     p.play();

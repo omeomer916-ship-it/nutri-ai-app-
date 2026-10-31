@@ -13,6 +13,7 @@ import { fmt } from '../../src/calc';
 import { C, IMG, R } from '../../src/theme';
 import { Btn, Card, Chip, H2, Row, Screen, Txt } from '../../src/components/ui';
 import { Brand } from '../../src/components/Brand';
+import { IntroVideo } from '../../src/components/IntroVideo';
 
 type St = { k: 'idle' } | { k: 'busy'; uri: string } | { k: 'done'; uri: string; r: ScanResult } | { k: 'err'; uri?: string; msg: string };
 
@@ -125,7 +126,7 @@ export default function Scan() {
       )}
 
       <View style={[st.view, { height: VH }]}>
-        <ImageBackground source={uri ? { uri } : IMG.scan} style={StyleSheet.absoluteFill} resizeMode="cover" />
+        {uri ? <ImageBackground source={{ uri }} style={StyleSheet.absoluteFill} resizeMode="cover" /> : <IntroVideo which="scan" />}
         <LinearGradient colors={['rgba(0,0,0,0.45)', 'transparent', 'transparent', 'rgba(0,0,0,0.8)']} locations={[0, 0.25, 0.6, 1]} style={StyleSheet.absoluteFill} />
         <Corners />
         {(s.k === 'idle' || s.k === 'busy') && <ScanLine h={VH} />}
@@ -136,9 +137,9 @@ export default function Scan() {
         {s.k === 'idle' && (
           <View style={st.res}>
             <View style={st.ex}><Text style={{ fontSize: 10, fontWeight: '800' }}>{t('example')}</Text></View>
-            <Text style={st.kc}>520 <Text style={{ fontSize: 16 }}>kcal</Text></Text>
-            <Txt center style={{ color: 'rgba(255,255,255,0.85)', fontSize: 13, marginBottom: 10 }}>{rtl ? 'سلمون مشوي مع كينوا وخضار' : 'Grilled salmon, quinoa & vegetables'}</Txt>
-            <MacroTiles P={38} C={42} F={22} t={t} />
+            <Text style={st.kc}>210 <Text style={{ fontSize: 16 }}>kcal</Text></Text>
+            <Txt center style={{ color: 'rgba(255,255,255,0.85)', fontSize: 13, marginBottom: 10 }}>{rtl ? 'خضار طازجة مشكّلة للطبخ' : 'Fresh mixed vegetables'}</Txt>
+            <MacroTiles P={8} C={38} F={3} t={t} />
           </View>
         )}
         {s.k === 'busy' && <ActivityIndicator size="large" color={C.green} style={{ position: 'absolute', alignSelf: 'center', top: VH / 2 - 20 }} />}

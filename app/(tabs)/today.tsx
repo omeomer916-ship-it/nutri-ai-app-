@@ -1,4 +1,5 @@
-import { Image, ImageBackground, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { Alert, Image, ImageBackground, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useT } from '../../src/i18n';
@@ -16,6 +17,11 @@ export default function Today() {
   const days = useApp((s) => s.days);
   const account = useApp((s) => s.account);
   const setWater = useApp((s) => s.setWater);
+  const removeMeal = useApp((s) => s.removeMeal);
+  const del = (id: string) => Alert.alert(t('delQ'), '', [
+    { text: t('cancel'), style: 'cancel' },
+    { text: t('del'), style: 'destructive', onPress: () => removeMeal(dayKey(), id) },
+  ]);
   const day = days[dayKey()];
   const tot = totals(day);
   const left = goals.kcal - tot.kcal;
@@ -66,7 +72,7 @@ export default function Today() {
 
       <Card style={st.hero}>
         <View style={{ flex: 1 }}>
-          <Num style={st.big}>{fmt(Math.abs(left))}</Num>
+          <CountUp value={Math.abs(left)} style={st.big} />
           <Txt style={{ color: C.mut, fontSize: 15, fontWeight: '700', marginTop: -4 }}>{left >= 0 ? t('kLeft') : t('kOver')}</Txt>
           <Row style={{ gap: 14, marginTop: 14 }}>
             <View>
@@ -124,13 +130,19 @@ export default function Today() {
         </Row>
       </Card>
 
-      <H2>{t('recentLog')}</H2>
+      <H2 right={
+        <Pressable onPress={() => router.push({ pathname: '/food', params: {} })} style={st.addBtn}>
+          <Icon name="plus" size={16} color="#000" stroke={2.8} />
+          <Txt style={{ color: '#000', fontWeight: '800', fontSize: 13 }}>{t('addFood')}</Txt>
+        </Pressable>
+      }>{t('recentLog')}</H2>
       {meals.length ? (
         <View style={{ gap: 10 }}>
           {meals.map((m) => {
             const ci = CAT_ICON[m.cat];
             return (
-              <Card key={m.id} style={st.mealCard}>
+              <Pressable key={m.id} onLongPress={() => del(m.id)} delayLongPress={350}>
+              <Card style={st.mealCard}>
                 {m.photo ? <Image source={{ uri: m.photo }} style={st.thumb} /> : <View style={[st.thumb, { alignItems: 'center', justifyContent: 'center', backgroundColor: ci.color + '22' }]}><Icon name={ci.icon} size={30} color={ci.color} /></View>}
                 <View style={{ flex: 1, paddingVertical: 12, paddingHorizontal: 14 }}>
                   <Row style={{ justifyContent: 'space-between', gap: 8 }}>
@@ -151,6 +163,7 @@ export default function Today() {
                   </Row>
                 </View>
               </Card>
+              </Pressable>
             );
           })}
         </View>
@@ -163,6 +176,7 @@ export default function Today() {
             <Txt style={{ fontWeight: '900', fontSize: 18 }}>{t('emptyT')}</Txt>
             <Txt style={{ color: C.mut, marginTop: 4, lineHeight: 22 }}>{t('emptyS')}</Txt>
             <Btn title={t('scanNow')} style={{ marginTop: 16 }} icon={<Icon name="camera" size={20} color="#000" />} onPress={() => openScan()} />
+            <Btn kind="soft" title={t('addFood')} style={{ marginTop: 10 }} icon={<Icon name="search" size={19} />} onPress={() => router.push({ pathname: '/food', params: {} })} />
           </View>
         </Card>
       )}
@@ -188,7 +202,28 @@ export default function Today() {
   );
 }
 
+/** Number that counts up to its value. */
+function CountUp({ value, style }: { value: number; style: object }) {
+  const [n, setN] = useState(value);
+  const from = useRef(0);
+  useEffect(() => {
+    const start = Date.now(), a = from.current, b = value, dur = 700;
+    let id = 0;
+    const step = () => {
+      const p = Math.min(1, (Date.now() - start) / dur);
+      const e = 1 - Math.pow(1 - p, 3);
+      setN(Math.round(a + (b - a) * e));
+      if (p < 1) id = requestAnimationFrame(step);
+      else from.current = b;
+    };
+    id = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(id);
+  }, [value]);
+  return <Num style={style}>{fmt(n)}</Num>;
+}
+
 const st = StyleSheet.create({
+  addBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: C.green, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 6 },
   streak: { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: C.surface2, borderRadius: R.pill, paddingHorizontal: 12, paddingVertical: 6, borderWidth: 1, borderColor: C.stroke },
   day: { width: 38, height: 38, borderRadius: 19, alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.12)', borderStyle: 'dashed' },
   dayHas: { borderStyle: 'solid', borderColor: C.green },

@@ -57,6 +57,10 @@ const en = {
   emptyT: "You haven't logged food today", emptyS: 'Tap the scan button and snap your first meal.', scanNow: 'Scan a meal',
   glasses: 'glasses', online: 'Online now', plan: 'Your plan', account: 'Account', tipT: 'Tip for better results',
   tipD: 'Shoot from above in good light, with the whole plate in frame.',
+  addFood: 'Add food', searchF: 'Search 70+ foods…', gall: 'All', gbf: 'Breakfast & mezze', gmain: 'Main dishes', ggrill: 'Grill & sandwiches',
+  gbread: 'Bread', gsweet: 'Sweets', gdrink: 'Drinks', gsnack: 'Fruit & snacks', portion: 'Portion', addTo: 'Add to',
+  noRes: 'No results', added: 'Added', delQ: 'Delete this meal?', approx: 'Approximate values for a typical portion.',
+  orSearch: 'No photo? Search the food list', searchD: 'Arab and world dishes with ready calories.',
 };
 
 export type Dict = typeof en;
@@ -111,6 +115,10 @@ const ar: Dict = {
   emptyT: 'ما سجّلت أكل اليوم', emptyS: 'اضغط زر المسح وصوّر أول وجبة.', scanNow: 'صوّر وجبة',
   glasses: 'أكواب', online: 'متصل الآن', plan: 'خطتك', account: 'الحساب', tipT: 'لنتيجة أدق',
   tipD: 'صوّر من فوق بإضاءة جيدة، وخلّي الصحن كامل داخل الإطار.',
+  addFood: 'أضف أكلة', searchF: 'ابحث بين أكتر من 70 أكلة…', gall: 'الكل', gbf: 'فطور ومقبلات', gmain: 'أطباق رئيسية', ggrill: 'مشاوي وساندويشات',
+  gbread: 'خبز', gsweet: 'حلويات', gdrink: 'مشروبات', gsnack: 'فواكه وسناك', portion: 'الحصة', addTo: 'أضف إلى',
+  noRes: 'ما في نتائج', added: 'انضافت', delQ: 'تحذف هالوجبة؟', approx: 'قيم تقريبية لحصة عادية.',
+  orSearch: 'ما بدك تصوّر؟ ابحث بقائمة الأكلات', searchD: 'أكلات عربية وعالمية بسعراتها جاهزة.',
 };
 
 import { de, es, fr, id, ru, tr, ur } from './locales';

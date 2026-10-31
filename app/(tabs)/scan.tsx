@@ -65,6 +65,7 @@ export default function Scan() {
   const days = useApp((s) => s.days);
   const [cat, setCat] = useState<Cat>('ln');
   const [s, setS] = useState<St>({ k: 'idle' });
+  const [mult, setMult] = useState(1);
   const VH = Math.min(520, Dimensions.get('window').height * 0.56);
 
   useEffect(() => {
@@ -94,6 +95,7 @@ export default function Scan() {
         compress: 0.7, format: ImageManipulator.SaveFormat.JPEG, base64: true,
       });
       const r = await scanMeal(small.base64 ?? '', lang, cat === 'dr' ? 'drink' : 'food', cat);
+      setMult(1);
       setS({ k: 'done', uri: small.uri, r });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
     } catch (e) {
@@ -105,7 +107,7 @@ export default function Scan() {
   const save = () => {
     if (s.k !== 'done') return;
     const r = s.r;
-    addMeal({ name: r.name, kcal: Math.round(r.kcal), P: Math.round(r.protein), C: Math.round(r.carbs), F: Math.round(r.fat), cat, photo: s.uri });
+    addMeal({ name: r.name + (mult !== 1 ? ` ×${mult}` : ''), kcal: Math.round(r.kcal * mult), P: Math.round(r.protein * mult), C: Math.round(r.carbs * mult), F: Math.round(r.fat * mult), cat, photo: s.uri });
     setS({ k: 'idle' });
     router.navigate('/(tabs)/today');
   };
@@ -186,10 +188,18 @@ export default function Scan() {
           </Row>
           <View style={st.kcalBox}>
             <Icon name="flame" size={30} color="#fff" fill="rgba(255,255,255,0.1)" />
-            <Num style={{ fontSize: 44, fontWeight: '900' }}>{fmt(s.r.kcal)}</Num>
+            <Num style={{ fontSize: 44, fontWeight: '900' }}>{fmt(s.r.kcal * mult)}</Num>
             <Num style={{ fontSize: 16, color: C.mut, fontWeight: '700', marginTop: 14 }}>kcal</Num>
           </View>
-          <MacroTiles P={s.r.protein} C={s.r.carbs} F={s.r.fat} t={t} />
+          <MacroTiles P={s.r.protein * mult} C={s.r.carbs * mult} F={s.r.fat * mult} t={t} />
+          <Txt style={{ color: C.mut, fontWeight: '700', fontSize: 13, marginTop: 16, marginBottom: 8 }}>{t('portion')}</Txt>
+          <Row style={{ gap: 8 }}>
+            {[0.5, 1, 1.5, 2].map((m) => (
+              <Pressable key={m} onPress={() => setMult(m)} style={[st.mult, mult === m && { backgroundColor: '#fff' }]}>
+                <Num style={{ fontWeight: '900', fontSize: 15, color: mult === m ? '#000' : '#fff' }}>×{m}</Num>
+              </Pressable>
+            ))}
+          </Row>
           {!!s.r.items?.length && (
             <View style={{ marginTop: 18 }}>
               <Txt style={{ fontWeight: '800', marginBottom: 6, fontSize: 16 }}>{t('items')}</Txt>
@@ -219,7 +229,16 @@ export default function Scan() {
         </Card>
       )}
 
-      <Card style={{ marginTop: 20 }}>
+      <Pressable onPress={() => router.push({ pathname: '/food', params: { cat } })} style={({ pressed }) => [st.search, pressed && { opacity: 0.8 }]}>
+        <IconBadge name="search" color={C.green} size={46} />
+        <View style={{ flex: 1 }}>
+          <Txt style={{ fontWeight: '800' }}>{t('orSearch')}</Txt>
+          <Txt style={{ color: C.mut, fontSize: 13 }}>{t('searchD')}</Txt>
+        </View>
+        <View style={{ transform: [{ scaleX: rtl ? -1 : 1 }] }}><Icon name="chevron" size={18} color={C.dim} /></View>
+      </Pressable>
+
+      <Card style={{ marginTop: 10 }}>
         <Row style={{ gap: 14 }}>
           <IconBadge name="sun" color={C.carb} size={46} />
           <View style={{ flex: 1 }}>
@@ -285,5 +304,7 @@ const st = StyleSheet.create({
   conf: { flexDirection: 'row', alignItems: 'center', gap: 4, alignSelf: 'flex-start', backgroundColor: 'rgba(57,230,140,0.12)', borderRadius: 999, paddingHorizontal: 9, paddingVertical: 3, marginTop: 4 },
   kcalBox: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 18, paddingVertical: 10, backgroundColor: C.surface2, borderRadius: 20 },
   item: { paddingVertical: 10, gap: 6 },
+  mult: { flex: 1, height: 44, borderRadius: 14, backgroundColor: C.surface2, alignItems: 'center', justifyContent: 'center' },
+  search: { flexDirection: 'row', alignItems: 'center', gap: 14, marginTop: 20, backgroundColor: C.surface, borderWidth: 1, borderColor: 'rgba(57,230,140,0.35)', borderRadius: R.lg, padding: 16 },
   rec: { width: 130, height: 150, borderRadius: R.md, overflow: 'hidden', borderWidth: 1, borderColor: C.stroke },
 });

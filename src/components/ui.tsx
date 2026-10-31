@@ -27,14 +27,15 @@ function logical(st: TextStyle, rtl: boolean) {
 }
 
 /** Numbers / Latin bits that must stay left-to-right inside Arabic text. */
-export function Num({ style, ...p }: TextProps) {
+export function Num({ style, children, ...p }: TextProps) {
   const { lang, rtl } = useT();
   const flat = (StyleSheet.flatten([{ color: C.white, fontSize: 15 }, style]) || {}) as TextStyle;
   const fam = fontFor(flat.fontWeight as string | undefined, lang);
   const out: TextStyle = { textAlign: 'left', writingDirection: 'ltr', ...flat };
   if (fam) { out.fontFamily = fam; delete out.fontWeight; }
   logical(out, rtl);
-  return <Text {...p} style={out} />;
+  // Unicode LTR isolate keeps "8:30", "120 kcal", "2,100" in order inside Arabic text on every platform.
+  return <Text {...p} style={out}>{'\u2066'}{children}{'\u2069'}</Text>;
 }
 
 /** Soft green light at the top of every screen. */

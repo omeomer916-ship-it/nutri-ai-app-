@@ -157,7 +157,16 @@ export default function Profile() {
 
       <H2>{t('remT')}</H2>
       <Card style={{ paddingVertical: 2 }}>
-        {sw('bell', '#7CF5B5', t('remMeals'), 'meals', <Num style={{ color: C.dim, fontSize: 12 }}>8:30 · 13:30 · 19:30</Num>)}
+        {sw('bell', '#7CF5B5', t('remMeals'), 'meals', (
+          <Row style={{ gap: 6, marginTop: 4, flexWrap: 'wrap' }}>
+            {([['bf', '8:30'], ['ln', '13:30'], ['dn', '19:30']] as const).map(([c, h]) => (
+              <View key={c} style={st.timePill}>
+                <Txt style={{ color: C.mut, fontSize: 11, fontWeight: '700' }}>{t(c)}</Txt>
+                <Num style={{ color: C.green, fontSize: 11, fontWeight: '900' }}>{h}</Num>
+              </View>
+            ))}
+          </Row>
+        ))}
         {sw('drop', C.water, t('remWater'), 'water', <Txt style={{ color: C.dim, fontSize: 12 }}>5 {t('perDay')}</Txt>)}
         <Row style={[st.row, { borderBottomWidth: 0 }]}>
           <IconBadge name="drop" color={C.water} size={38} icon={18} />
@@ -206,6 +215,7 @@ const st = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: C.stroke, gap: 12 },
   inWrap: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: C.surface2, borderRadius: R.pill, paddingHorizontal: 12, height: 42 },
   in: { width: 62, height: 42, paddingVertical: 0, color: '#fff', textAlign: 'center', textAlignVertical: 'center', includeFontPadding: false, fontSize: 16 },
+  timePill: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: C.surface2, borderRadius: 999, paddingHorizontal: 8, paddingVertical: 2 },
   step: { width: 32, height: 32, borderRadius: 16, backgroundColor: C.surface2, alignItems: 'center', justifyContent: 'center' },
   proBan: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: R.lg, padding: 16, borderWidth: 1, borderColor: 'rgba(57,230,140,0.4)' },
   crown: { width: 42, height: 42, borderRadius: 14, backgroundColor: '#39E68C', alignItems: 'center', justifyContent: 'center' },

@@ -10,6 +10,8 @@ import { C, IMG } from '../src/theme';
 import { Btn, Txt } from '../src/components/ui';
 import { Leaf } from '../src/components/Leaf';
 import { GoogleButton, googleReady } from '../src/GoogleButton';
+import { Brand } from '../src/components/Brand';
+import { IntroVideo } from '../src/components/IntroVideo';
 
 const { width: W, height: H } = Dimensions.get('screen');
 
@@ -74,8 +76,8 @@ export default function Intro() {
 
   const chips: React.ReactNode[] = [
     <>
-      <Chip key="a" top={16} side="start" delay={500}><Text style={st.ct}>🍽️ {rtl ? 'وعاء دجاج' : 'Chicken bowl'}</Text></Chip>
-      <Chip key="b" top={30} side="end" delay={900}><Text style={st.ct}>🔥 <Text style={st.cg}>420</Text> kcal</Text></Chip>
+      <Chip key="a" top={22} side="end" delay={600}><Text style={st.ct}>🥭 {rtl ? 'مانجا طازجة' : 'Fresh mango'} <Text style={st.cg}>· 200 g</Text></Text></Chip>
+      <Chip key="b" top={34} side="start" delay={1000}><Text style={st.ct}>🔥 <Text style={st.cg}>120</Text> kcal · {rtl ? 'ثقة عالية' : 'high confidence'}</Text></Chip>
     </>,
     <>
       <Chip key="a" top={14} side="start" delay={400}><Text style={st.ct}>💪 {t('P')} <Text style={st.cg}>34 g</Text></Text></Chip>
@@ -99,7 +101,7 @@ export default function Intro() {
         style={[StyleSheet.absoluteFill, { transform: [{ scale: zoom.interpolate({ inputRange: [0, 1], outputRange: [1, 1.05] }) }] }]}
       >
         {/* Explicit size: Android otherwise drew the photo at its pixel size (zoomed in). */}
-        <Image source={sl.img} resizeMode="cover" style={{ width: W, height: H }} />
+        {i === 0 ? <IntroVideo /> : <Image source={sl.img} resizeMode="cover" style={{ width: W, height: H }} />}
       </Animated.View>
       <LinearGradient
         colors={['rgba(0,0,0,0.45)', 'rgba(0,0,0,0)', 'rgba(0,0,0,0.1)', 'rgba(0,0,0,0.88)', '#000']}
@@ -124,7 +126,7 @@ export default function Intro() {
               {[0, 1, 2].map((d) => <View key={d} style={[st.dot, d === i && st.dotOn]} />)}
             </View>
           ) : (
-            <View style={st.logo}><Leaf /><Text style={{ color: '#fff', fontWeight: '800', fontSize: 15 }}>Nutri AI</Text></View>
+            <View style={{ alignSelf: 'center', marginBottom: 16 }}><Brand size="lg" /></View>
           )}
           <Txt center style={st.title}>{sl.title}</Txt>
           <Txt center style={st.desc}>{sl.desc}</Txt>

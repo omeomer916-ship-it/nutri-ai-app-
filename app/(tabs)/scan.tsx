@@ -12,6 +12,7 @@ import { AiError, ScanResult, scanMeal } from '../../src/ai';
 import { fmt } from '../../src/calc';
 import { C, IMG, R } from '../../src/theme';
 import { Btn, Card, Chip, H2, Row, Screen, Txt } from '../../src/components/ui';
+import { Brand } from '../../src/components/Brand';
 
 type St = { k: 'idle' } | { k: 'busy'; uri: string } | { k: 'done'; uri: string; r: ScanResult } | { k: 'err'; uri?: string; msg: string };
 
@@ -99,7 +100,8 @@ export default function Scan() {
 
   return (
     <Screen>
-      <Row style={{ justifyContent: 'center', gap: 12, marginTop: 14 }}>
+      <View style={{ alignItems: 'center', marginTop: 10, marginBottom: 6 }}><Brand size="sm" /></View>
+      <Row style={{ justifyContent: 'center', gap: 12, marginTop: 8 }}>
         <View style={st.rule} />
         <Text style={{ color: '#fff', fontSize: 25, fontWeight: '800' }}>{t('scanT')}</Text>
         <View style={st.rule} />
@@ -134,9 +136,9 @@ export default function Scan() {
         {s.k === 'idle' && (
           <View style={st.res}>
             <View style={st.ex}><Text style={{ fontSize: 10, fontWeight: '800' }}>{t('example')}</Text></View>
-            <Text style={st.kc}>420 <Text style={{ fontSize: 16 }}>kcal</Text></Text>
-            <Txt center style={{ color: 'rgba(255,255,255,0.85)', fontSize: 13, marginBottom: 10 }}>{rtl ? 'دجاج مشوي مع خضار ونودلز أرز' : 'Grilled chicken, greens & rice noodles'}</Txt>
-            <MacroTiles P={38} C={32} F={16} t={t} />
+            <Text style={st.kc}>520 <Text style={{ fontSize: 16 }}>kcal</Text></Text>
+            <Txt center style={{ color: 'rgba(255,255,255,0.85)', fontSize: 13, marginBottom: 10 }}>{rtl ? 'سلمون مشوي مع كينوا وخضار' : 'Grilled salmon, quinoa & vegetables'}</Txt>
+            <MacroTiles P={38} C={42} F={22} t={t} />
           </View>
         )}
         {s.k === 'busy' && <ActivityIndicator size="large" color={C.green} style={{ position: 'absolute', alignSelf: 'center', top: VH / 2 - 20 }} />}

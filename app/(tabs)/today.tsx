@@ -7,6 +7,7 @@ import { fmt } from '../../src/calc';
 import { C, ICO, IMG, R } from '../../src/theme';
 import { Bar, Card, H1, H2, Label, Row, Screen, Txt } from '../../src/components/ui';
 import { Ring } from '../../src/components/Ring';
+import { Brand } from '../../src/components/Brand';
 
 
 export default function Today() {
@@ -27,7 +28,8 @@ export default function Today() {
 
   return (
     <Screen>
-      <Txt style={{ color: C.mut, marginTop: 10 }}>{date}</Txt>
+      <View style={{ marginTop: 10, marginBottom: 14, alignItems: 'flex-start' }}><Brand /></View>
+      <Txt style={{ color: C.mut }}>{date}</Txt>
       <H1>{hello}{account && !account.guest ? `${lang === 'ar' ? '،' : ','} ${account.name.split(' ')[0]}` : ''} 👋</H1>
 
       <ImageBackground source={IMG.bf} style={st.hero} imageStyle={{ borderRadius: R.lg }}>

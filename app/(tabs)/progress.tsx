@@ -4,7 +4,7 @@ import Svg, { Circle, Defs, Line, LinearGradient as SvgGrad, Path, Stop } from '
 import { useT, TKey } from '../../src/i18n';
 import { Meal, dayKey, streakOf, totals, useApp } from '../../src/store';
 import { MealSheet } from '../../src/components/MealSheet';
-import { fmt } from '../../src/calc';
+import { KG_LB, fmt, wShow } from '../../src/calc';
 import { C, CAT_ICON, R, fontFor } from '../../src/theme';
 import { Bar, Btn, Card, H2, IconBadge, Num, Row, Screen, Segmented, Txt } from '../../src/components/ui';
 import { Ring } from '../../src/components/Ring';
@@ -226,14 +226,17 @@ function Weight() {
   const weights = useApp((s) => s.weights);
   const profile = useApp((s) => s.profile);
   const addWeight = useApp((s) => s.addWeight);
+  const imperial = useApp((s) => s.imperial);
+  const U = imperial ? 'lb' : t('kg');
   const [v, setV] = useState('');
   const save = () => {
     const n = parseFloat(v.replace(',', '.'));
-    if (n > 20 && n < 400) { addWeight(Math.round(n * 10) / 10); setV(''); }
+    const kg = imperial ? n / KG_LB : n;
+    if (kg > 20 && kg < 400) { addWeight(Math.round(kg * 10) / 10); setV(''); }
   };
   const input = (
     <Row style={{ gap: 10, marginTop: 16 }}>
-      <TextInput value={v} onChangeText={setV} keyboardType="decimal-pad" placeholder={t('kg')} placeholderTextColor={C.dim} style={[st.in, { fontFamily: fontFor(800, lang) }]} />
+      <TextInput value={v} onChangeText={setV} keyboardType="decimal-pad" placeholder={U} placeholderTextColor={C.dim} style={[st.in, { fontFamily: fontFor(800, lang) }]} />
       <Btn title={t('add')} onPress={save} style={{ height: 54, paddingHorizontal: 26 }} icon={<Icon name="plus" size={18} color="#000" stroke={2.6} />} />
     </Row>
   );
@@ -263,17 +266,17 @@ function Weight() {
       <Card>
         <Txt style={{ color: C.mut, fontWeight: '700' }}>{t('curW')}</Txt>
         <Row style={{ alignItems: 'flex-end', gap: 6, marginVertical: 4 }}>
-          <Num style={{ fontSize: 50, fontWeight: '900', lineHeight: 62 }}>{cur}</Num>
-          <Txt style={{ fontSize: 16, color: C.mut, marginBottom: 12, fontWeight: '700' }}>{t('kg')}</Txt>
+          <Num style={{ fontSize: 50, fontWeight: '900', lineHeight: 62 }}>{wShow(cur, imperial)}</Num>
+          <Txt style={{ fontSize: 16, color: C.mut, marginBottom: 12, fontWeight: '700' }}>{U}</Txt>
         </Row>
         <Bar value={pct} max={100} height={10} />
         <Row style={{ justifyContent: 'space-between', marginTop: 10 }}>
-          <Txt style={{ color: C.mut, fontSize: 13 }}>{t('startW')} {start}</Txt>
-          <Txt style={{ color: C.mut, fontSize: 13 }}>{t('goalW')} {goal}</Txt>
+          <Txt style={{ color: C.mut, fontSize: 13 }}>{t('startW')} {wShow(start, imperial)}</Txt>
+          <Txt style={{ color: C.mut, fontSize: 13 }}>{t('goalW')} {wShow(goal, imperial)}</Txt>
         </Row>
         <View style={st.toGo}>
           <Icon name="target" size={16} color={C.green} />
-          <Txt style={{ color: C.green, fontWeight: '800' }}>{Math.abs(cur - goal).toFixed(1)} {t('kg')} {t('toGo')}</Txt>
+          <Txt style={{ color: C.green, fontWeight: '800' }}>{wShow(Math.abs(cur - goal), imperial)} {U} {t('toGo')}</Txt>
         </View>
       </Card>
       <Card style={{ marginTop: 10 }}>

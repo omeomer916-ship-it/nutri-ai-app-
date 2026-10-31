@@ -24,6 +24,7 @@ export type Goals = { kcal: number; P: number; C: number; F: number };
 export type Profile = {
   sex: 'm' | 'f'; age: number; h: number; w: number; gw: number;
   goal: 'lose' | 'keep' | 'gain'; act: 1 | 2 | 3 | 4;
+  pace?: number; diet?: 'any' | 'veg' | 'vegan' | 'keto' | 'lowcarb' | 'highP' | 'medi';
 };
 export type MyFood = { id: string; name: string; k: number; P: number; C: number; F: number };
 export type Account = { name: string; email?: string; photo?: string; guest: boolean };
@@ -68,6 +69,8 @@ type State = {
   endFast: () => void;
   setFastHours: (h: number) => void;
   waterGoal: number;
+  imperial: boolean;
+  setImperial: (v: boolean) => void;
   setWaterGoal: (n: number) => void;
   copyDay: (from: string) => void;
   setRemind: (r: Partial<{ meals: boolean; water: boolean }>) => void;
@@ -89,7 +92,7 @@ type State = {
   resetAll: () => void;
 };
 
-const initial: Pick<State, 'lang' | 'seenIntro' | 'account' | 'profile' | 'goals' | 'days' | 'weights' | 'myFoods' | 'remind' | 'burn' | 'fast' | 'waterGoal'> = {
+const initial: Pick<State, 'lang' | 'seenIntro' | 'account' | 'profile' | 'goals' | 'days' | 'weights' | 'myFoods' | 'remind' | 'burn' | 'fast' | 'waterGoal' | 'imperial'> = {
   lang: deviceLang(),
   seenIntro: false,
   account: null,
@@ -102,6 +105,7 @@ const initial: Pick<State, 'lang' | 'seenIntro' | 'account' | 'profile' | 'goals
   burn: {},
   fast: { start: null, hours: 16, log: [] },
   waterGoal: 8,
+  imperial: false,
 };
 
 export const useApp = create<State>()(
@@ -131,6 +135,7 @@ export const useApp = create<State>()(
         set({ fast: { ...f, start: null, log: [{ s: f.start, e: Date.now(), h: f.hours }, ...f.log].slice(0, 60) } });
       },
       setFastHours: (h) => set({ fast: { ...get().fast, hours: h } }),
+      setImperial: (v) => set({ imperial: v }),
       setWaterGoal: (n) => set({ waterGoal: Math.max(4, Math.min(16, n)) }),
       copyDay: (from) => {
         const src = get().days[from];

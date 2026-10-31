@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Animated, Dimensions, Image, ImageBackground, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Animated, Dimensions, Image, ImageBackground, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as Haptics from 'expo-haptics';
 import * as ImageManipulator from 'expo-image-manipulator';
@@ -9,7 +9,7 @@ import { useT, TKey } from '../../src/i18n';
 import { CATS, Cat, useApp } from '../../src/store';
 import { AiError, ScanResult, scanMeal } from '../../src/ai';
 import { fmt } from '../../src/calc';
-import { C, CAT_ICON, IMG, R } from '../../src/theme';
+import { C, CAT_ICON, IMG, R, fontFor } from '../../src/theme';
 import { Btn, Card, Chip, H2, IconBadge, Num, Row, Screen, Segmented, Txt } from '../../src/components/ui';
 import { IntroVideo } from '../../src/components/IntroVideo';
 import { Icon, IconName } from '../../src/components/Icon';
@@ -66,6 +66,7 @@ export default function Scan() {
   const [cat, setCat] = useState<Cat>('ln');
   const [s, setS] = useState<St>({ k: 'idle' });
   const [mult, setMult] = useState(1);
+  const [fix, setFix] = useState<{ name: string; kcal: string } | null>(null);
   const VH = Math.min(520, Dimensions.get('window').height * 0.56);
 
   useEffect(() => {
@@ -96,6 +97,7 @@ export default function Scan() {
       });
       const r = await scanMeal(small.base64 ?? '', lang, cat === 'dr' ? 'drink' : 'food', cat);
       setMult(1);
+      setFix(null);
       setS({ k: 'done', uri: small.uri, r });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
     } catch (e) {
@@ -107,7 +109,11 @@ export default function Scan() {
   const save = () => {
     if (s.k !== 'done') return;
     const r = s.r;
-    addMeal({ name: r.name + (mult !== 1 ? ` ×${mult}` : ''), kcal: Math.round(r.kcal * mult), P: Math.round(r.protein * mult), C: Math.round(r.carbs * mult), F: Math.round(r.fat * mult), cat, photo: s.uri });
+    // A fixed calorie number scales the macros by the same ratio.
+    const k2 = fix && parseFloat(fix.kcal) > 0 ? parseFloat(fix.kcal) : r.kcal;
+    const f = (k2 / (r.kcal || 1)) * mult;
+    const nm = (fix?.name.trim() || r.name) + (mult !== 1 ? ` ×${mult}` : '');
+    addMeal({ name: nm, kcal: Math.round(k2 * mult), P: Math.round(r.protein * f), C: Math.round(r.carbs * f), F: Math.round(r.fat * f), cat, photo: s.uri });
     setS({ k: 'idle' });
     router.navigate('/(tabs)/today');
   };
@@ -179,7 +185,11 @@ export default function Scan() {
           <Row style={{ gap: 12 }}>
             <Image source={{ uri: s.uri }} style={{ width: 64, height: 64, borderRadius: 16 }} />
             <View style={{ flex: 1 }}>
-              <Txt style={{ fontSize: 19, fontWeight: '900', lineHeight: 28 }}>{s.r.name}</Txt>
+              {fix ? (
+                <TextInput value={fix.name} onChangeText={(v) => setFix({ ...fix, name: v })} style={[st.fixIn, { textAlign: rtl ? 'right' : 'left', fontFamily: fontFor(800, lang) }]} />
+              ) : (
+                <Txt style={{ fontSize: 19, fontWeight: '900', lineHeight: 28 }}>{s.r.name}</Txt>
+              )}
               <View style={st.conf}>
                 <Icon name="check" size={13} color={C.green} stroke={3} />
                 <Txt style={{ color: C.green, fontSize: 12, fontWeight: '700' }}>{t('conf')}: {t((s.r.confidence || 'medium') as TKey)}</Txt>
@@ -188,7 +198,11 @@ export default function Scan() {
           </Row>
           <View style={st.kcalBox}>
             <Icon name="flame" size={30} color="#fff" fill="rgba(255,255,255,0.1)" />
-            <Num style={{ fontSize: 44, fontWeight: '900' }}>{fmt(s.r.kcal * mult)}</Num>
+            {fix ? (
+              <TextInput value={fix.kcal} onChangeText={(v) => setFix({ ...fix, kcal: v })} keyboardType="number-pad" style={[st.fixIn, { fontSize: 34, width: 140, textAlign: 'center', fontFamily: fontFor(900, lang) }]} />
+            ) : (
+              <Num style={{ fontSize: 44, fontWeight: '900' }}>{fmt(s.r.kcal * mult)}</Num>
+            )}
             <Num style={{ fontSize: 16, color: C.mut, fontWeight: '700', marginTop: 14 }}>kcal</Num>
           </View>
           <MacroTiles P={s.r.protein * mult} C={s.r.carbs * mult} F={s.r.fat * mult} t={t} />
@@ -214,6 +228,9 @@ export default function Scan() {
           )}
           {!!s.r.note && <Txt style={{ color: C.dim, fontSize: 12, marginTop: 10, lineHeight: 19 }}>{s.r.note}</Txt>}
           <Row style={{ gap: 10, marginTop: 20 }}>
+            <Pressable onPress={() => setFix(fix ? null : { name: s.r.name, kcal: String(Math.round(s.r.kcal)) })} style={[st.fixBtn, fix && { backgroundColor: C.green }]}>
+              <Icon name="edit" size={18} color={fix ? '#000' : '#fff'} />
+            </Pressable>
             <Btn kind="soft" title={t('retake')} style={{ flex: 1 }} icon={<Icon name="refresh" size={18} />} onPress={() => setS({ k: 'idle' })} />
             <Btn title={t('save')} style={{ flex: 1.4 }} icon={<Icon name="check" size={18} color="#000" stroke={2.6} />} onPress={save} />
           </Row>
@@ -304,6 +321,8 @@ const st = StyleSheet.create({
   conf: { flexDirection: 'row', alignItems: 'center', gap: 4, alignSelf: 'flex-start', backgroundColor: 'rgba(57,230,140,0.12)', borderRadius: 999, paddingHorizontal: 9, paddingVertical: 3, marginTop: 4 },
   kcalBox: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 18, paddingVertical: 10, backgroundColor: C.surface2, borderRadius: 20 },
   item: { paddingVertical: 10, gap: 6 },
+  fixIn: { color: '#fff', fontSize: 18, backgroundColor: C.surface2, borderRadius: 12, paddingHorizontal: 12, paddingVertical: 6, borderWidth: 1, borderColor: C.green },
+  fixBtn: { width: 56, height: 56, borderRadius: 28, backgroundColor: C.surface2, alignItems: 'center', justifyContent: 'center' },
   mult: { flex: 1, height: 44, borderRadius: 14, backgroundColor: C.surface2, alignItems: 'center', justifyContent: 'center' },
   search: { flexDirection: 'row', alignItems: 'center', gap: 14, marginTop: 20, backgroundColor: C.surface, borderWidth: 1, borderColor: 'rgba(57,230,140,0.35)', borderRadius: R.lg, padding: 16 },
   rec: { width: 130, height: 150, borderRadius: R.md, overflow: 'hidden', borderWidth: 1, borderColor: C.stroke },

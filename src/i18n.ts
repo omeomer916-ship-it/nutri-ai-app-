@@ -85,6 +85,11 @@ const en = {
   ph1: 'Digesting', ph2: 'Blood sugar settles', ph3: 'Fat burning', ph4: 'Deep fast', fastNote: 'Not for pregnancy, diabetes on medication or eating disorders. Ask your doctor.',
   wk: 'Week', wkT: 'This week', onTarget: 'Days on target', bestDay: 'Closest to goal', vsLast: 'vs last week', mealsLogged: 'Meals logged', macroSplit: 'Macro split',
   quickAdd: 'Quick add', copyY: "Copy yesterday's meals", waterGoal: 'Daily water goal', glassesU: 'glasses',
+  qPace: 'How fast do you want to reach your goal?', p1: 'Slow and easy', p2: 'Recommended', p3: 'Fast', p4: 'Very fast', perWeek: '/ week',
+  qDiet: 'Do you follow a diet?', dAny: 'No, I eat everything', dVeg: 'Vegetarian', dVegan: 'Vegan', dKeto: 'Keto', dLow: 'Low carb', dHighP: 'High protein', dMedi: 'Mediterranean',
+  metric: 'Metric', imperialL: 'Imperial', units: 'Units',
+  bT: 'Building your plan…', b1: 'Calculating your metabolism', b2: 'Setting calories and macros', b3: 'Estimating your timeline', b4: 'Personalizing your tips',
+  reach: 'You can reach', byD: 'by', dailyCal: 'Daily calories', maintain: 'Maintenance',
   rate: 'Rate the app', aiRate: 'Too many requests right now. Try again in a few minutes.', privacy: 'Privacy policy', termsL: 'Terms of use', shareDay: 'Share my day', bmi: 'BMI', bUnder: 'Underweight', bNormal: 'Healthy', bOver: 'Overweight', bObese: 'Obese',
 };
 
@@ -168,6 +173,11 @@ const ar: Dict = {
   ph1: 'هضم', ph2: 'استقرار السكر', ph3: 'حرق الدهون', ph4: 'صيام عميق', fastNote: 'مش مناسب للحامل أو مريض السكري اللي بياخد دوا أو اللي عنده اضطراب أكل. استشير طبيبك.',
   wk: 'الأسبوع', wkT: 'هالأسبوع', onTarget: 'أيام بالهدف', bestDay: 'أقرب يوم للهدف', vsLast: 'مقارنة بالأسبوع الماضي', mealsLogged: 'وجبات مسجّلة', macroSplit: 'توزيع الماكروز',
   quickAdd: 'إضافة سريعة', copyY: 'انسخ أكل مبارح', waterGoal: 'هدف المي اليومي', glassesU: 'كاسات',
+  qPace: 'بأي سرعة بدك توصل لهدفك؟', p1: 'بطيء ومريح', p2: 'الأنسب', p3: 'سريع', p4: 'سريع جداً', perWeek: '/ أسبوع',
+  qDiet: 'بتتبع نظام أكل معيّن؟', dAny: 'لا، باكل كل شي', dVeg: 'نباتي', dVegan: 'نباتي صرف', dKeto: 'كيتو', dLow: 'قليل الكربوهيدرات', dHighP: 'عالي البروتين', dMedi: 'متوسطي',
+  metric: 'متري', imperialL: 'إمبراطوري', units: 'الوحدات',
+  bT: 'عم نجهّز خطتك…', b1: 'حساب معدل الحرق عندك', b2: 'تحديد السعرات والماكروز', b3: 'تقدير موعد وصولك', b4: 'تخصيص النصائح إلك',
+  reach: 'بتقدر توصل لـ', byD: 'بتاريخ', dailyCal: 'السعرات اليومية', maintain: 'سعرات الثبات',
   rate: 'قيّم التطبيق', aiRate: 'في طلبات كتير هلأ. جرّب بعد كم دقيقة.', privacy: 'سياسة الخصوصية', termsL: 'شروط الاستخدام', shareDay: 'شارك يومي', bmi: 'مؤشر كتلة الجسم', bUnder: 'نحافة', bNormal: 'طبيعي', bOver: 'وزن زائد', bObese: 'سمنة',
 };
 

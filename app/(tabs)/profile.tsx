@@ -5,8 +5,9 @@ import Constants from 'expo-constants';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useT, TKey } from '../../src/i18n';
 import { Goals, dayKey, streakOf, totals, useApp } from '../../src/store';
+import { hShow, wShow } from '../../src/calc';
 import { C, R, fontFor } from '../../src/theme';
-import { Card, H2, IconBadge, Num, Row, Screen, Txt } from '../../src/components/ui';
+import { Card, H2, IconBadge, Num, Row, Screen, Segmented, Txt } from '../../src/components/ui';
 import { Leaf } from '../../src/components/Leaf';
 import { Icon, IconName } from '../../src/components/Icon';
 import { googleSignOut } from '../../src/GoogleButton';
@@ -15,7 +16,7 @@ import { LangPicker } from '../../src/components/LangPicker';
 
 export default function Profile() {
   const { t, lang, rtl } = useT();
-  const { account, goals, profile, setGoals, signOut, resetAll, days, weights, remind, setRemind, waterGoal, setWaterGoal } = useApp();
+  const { account, goals, profile, setGoals, signOut, resetAll, days, weights, remind, setRemind, waterGoal, setWaterGoal, imperial, setImperial } = useApp();
   const toggle = async (k: 'meals' | 'water', on: boolean) => {
     const next = { ...remind, [k]: on };
     setRemind({ [k]: on });
@@ -77,7 +78,7 @@ export default function Profile() {
   );
 
   const stats: [string, string][] = profile
-    ? [[`${profile.w}`, t('kg')], [`${profile.h}`, 'cm'], [`${profile.age}`, t('years')]]
+    ? [[`${wShow(profile.w, imperial)}`, imperial ? 'lb' : t('kg')], [imperial ? hShow(profile.h, true) : `${profile.h}`, imperial ? '' : 'cm'], [`${profile.age}`, t('years')]]
     : [];
 
   return (
@@ -168,6 +169,13 @@ export default function Profile() {
           <IconBadge name="globe" color={C.water} size={38} icon={18} />
           <Txt style={{ flex: 1, fontWeight: '700' }}>{t('language')}</Txt>
           <LangPicker style={st.pill} textStyle={{ color: '#fff', fontWeight: '700', fontSize: 13 }} />
+        </Row>
+        <Row style={st.row}>
+          <IconBadge name="scale" color={C.green} size={38} icon={18} />
+          <Txt style={{ flex: 1, fontWeight: '700' }}>{t('units')}</Txt>
+          <View style={{ width: 170 }}>
+            <Segmented value={imperial ? 'i' : 'm'} options={[['m', 'kg · cm'], ['i', 'lb · ft']]} onChange={(v) => setImperial(v === 'i')} />
+          </View>
         </Row>
         {item('refresh', t('redo'), () => router.push('/onboarding'))}
         {item('share', t('share'), () => { Share.share({ message: t('shareMsg') }).catch(() => {}); })}

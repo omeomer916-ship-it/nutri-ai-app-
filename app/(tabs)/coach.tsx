@@ -51,7 +51,7 @@ export default function Coach() {
     const tot = totals(s.days[dayKey()]);
     const p = s.profile;
     return `Goals: ${s.goals.kcal} kcal, P ${s.goals.P}g, C ${s.goals.C}g, F ${s.goals.F}g. Eaten today: ${tot.kcal} kcal, P ${tot.P}g, C ${tot.C}g, F ${tot.F}g. ` +
-      (p ? `User: ${p.sex === 'm' ? 'male' : 'female'}, ${p.age}y, ${p.h}cm, ${p.w}kg, target ${p.gw}kg, goal ${p.goal}, activity ${p.act}/4.` : '');
+      (p ? `User: ${p.sex === 'm' ? 'male' : 'female'}, ${p.age}y, ${p.h}cm, ${p.w}kg, target ${p.gw}kg, goal ${p.goal}, activity ${p.act}/4${p.diet && p.diet !== 'any' ? `, diet ${p.diet}` : ''}${p.pace ? `, pace ${p.pace} kg/week` : ''}.` : '');
   };
 
   const send = async (text: string) => {

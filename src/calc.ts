@@ -37,3 +37,16 @@ export const hms = (ms: number) => {
   const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), x = s % 60;
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(x).padStart(2, '0')}`;
 };
+
+/** 12-hour clock in the app language, Latin digits: "8:30 ص", "1:30 PM". */
+export function time12(d: Date | number, lang: string) {
+  const loc = lang === 'ar' ? 'ar-u-nu-latn' : lang === 'ur' ? 'ur-u-nu-latn' : lang;
+  try {
+    return new Date(d).toLocaleTimeString(loc, { hour: 'numeric', minute: '2-digit', hour12: true });
+  } catch {
+    const x = new Date(d), h = x.getHours();
+    return `${h % 12 || 12}:${String(x.getMinutes()).padStart(2, '0')} ${h < 12 ? 'AM' : 'PM'}`;
+  }
+}
+/** Same, for an hour and minute of today. */
+export const at12 = (h: number, m: number, lang: string) => { const d = new Date(); d.setHours(h, m, 0, 0); return time12(d, lang); };

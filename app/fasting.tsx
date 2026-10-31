@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useT, TKey } from '../src/i18n';
 import { useApp } from '../src/store';
 import { C, R } from '../src/theme';
-import { hms } from '../src/calc';
+import { hms, time12 } from '../src/calc';
 import { Btn, Card, Glow, H2, Num, Row, Txt } from '../src/components/ui';
 import { Ring } from '../src/components/Ring';
 import { Icon } from '../src/components/Icon';
@@ -29,7 +29,7 @@ export default function Fasting() {
   const hrs = el / 3600e3;
   const phase = [...PH].reverse().find(([h]) => hrs >= h) ?? PH[0];
   const loc = lang === 'ar' ? 'ar-u-nu-latn' : lang;
-  const tm = (ts: number) => new Date(ts).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+  const tm = (ts: number) => time12(ts, lang);
 
   return (
     <View style={{ flex: 1, backgroundColor: C.bg }}>

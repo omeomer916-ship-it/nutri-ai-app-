@@ -6,7 +6,7 @@ import Constants from 'expo-constants';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useT, TKey } from '../../src/i18n';
 import { Goals, dayKey, streakOf, totals, useApp } from '../../src/store';
-import { hShow, wShow } from '../../src/calc';
+import { at12, hShow, wShow } from '../../src/calc';
 import { C, R, fontFor } from '../../src/theme';
 import { Card, H2, IconBadge, Num, Row, Screen, Segmented, Txt } from '../../src/components/ui';
 import { Leaf } from '../../src/components/Leaf';
@@ -159,7 +159,7 @@ export default function Profile() {
       <Card style={{ paddingVertical: 2 }}>
         {sw('bell', '#7CF5B5', t('remMeals'), 'meals', (
           <Row style={{ gap: 6, marginTop: 4, flexWrap: 'wrap' }}>
-            {([['bf', '8:30'], ['ln', '13:30'], ['dn', '19:30']] as const).map(([c, h]) => (
+            {([['bf', at12(8, 30, lang)], ['ln', at12(13, 30, lang)], ['dn', at12(19, 30, lang)]] as const).map(([c, h]) => (
               <View key={c} style={st.timePill}>
                 <Txt style={{ color: C.mut, fontSize: 11, fontWeight: '700' }}>{t(c)}</Txt>
                 <Num style={{ color: C.green, fontSize: 11, fontWeight: '900' }}>{h}</Num>

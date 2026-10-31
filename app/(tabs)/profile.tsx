@@ -111,7 +111,7 @@ export default function Profile() {
       </View>
 
       <Pressable onPress={() => router.push('/pro')} style={({ pressed }) => [{ marginTop: 16 }, pressed && { opacity: 0.9 }]}>
-        <LinearGradient colors={['#1d3b2b', '#0e1a14']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={st.proBan}>
+        <LinearGradient colors={['#3a3010', '#14120a']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={st.proBan}>
           <View style={st.crown}><Icon name="crown" size={22} color="#000" stroke={2.2} /></View>
           <View style={{ flex: 1 }}>
             <Txt style={{ fontWeight: '900', fontSize: 16 }}>{t('goPro')}</Txt>
@@ -217,8 +217,8 @@ const st = StyleSheet.create({
   in: { width: 62, height: 42, paddingVertical: 0, color: '#fff', textAlign: 'center', textAlignVertical: 'center', includeFontPadding: false, fontSize: 16 },
   timePill: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: C.surface2, borderRadius: 999, paddingHorizontal: 8, paddingVertical: 2 },
   step: { width: 32, height: 32, borderRadius: 16, backgroundColor: C.surface2, alignItems: 'center', justifyContent: 'center' },
-  proBan: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: R.lg, padding: 16, borderWidth: 1, borderColor: 'rgba(57,230,140,0.4)' },
-  crown: { width: 42, height: 42, borderRadius: 14, backgroundColor: '#39E68C', alignItems: 'center', justifyContent: 'center' },
+  proBan: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: R.lg, padding: 16, borderWidth: 1, borderColor: 'rgba(255,212,92,0.4)' },
+  crown: { width: 42, height: 42, borderRadius: 14, backgroundColor: '#FFD45C', alignItems: 'center', justifyContent: 'center' },
   bmiTag: { borderRadius: 999, paddingHorizontal: 10, paddingVertical: 3 },
   bmiBar: { flexDirection: 'row', height: 8, borderRadius: 4, overflow: 'visible', marginTop: 10, direction: 'ltr' },
   bmiDot: { position: 'absolute', top: -5, width: 18, height: 18, marginLeft: -9, borderRadius: 9, backgroundColor: '#fff', borderWidth: 3, borderColor: '#000' },

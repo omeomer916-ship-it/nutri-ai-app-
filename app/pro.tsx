@@ -11,7 +11,7 @@ import { Btn, Num, Row, Txt } from '../src/components/ui';
 import { Brand } from '../src/components/Brand';
 import { Icon, IconName } from '../src/components/Icon';
 
-const GOLD = '#39E68C';
+const GOLD = '#FFD45C';
 
 export default function Pro() {
   const { t, rtl } = useT();
@@ -85,7 +85,7 @@ function Hero() {
           </RadialGradient>
         </Defs>
         <Circle cx={(S + 120) / 2} cy={S / 2} r={S / 2} fill="url(#g)" />
-        <Circle cx={(S + 120) / 2} cy={S / 2} r={118} stroke="rgba(57,230,140,0.2)" strokeWidth={1} fill="none" strokeDasharray="3 7" />
+        <Circle cx={(S + 120) / 2} cy={S / 2} r={118} stroke="rgba(255,212,92,0.2)" strokeWidth={1} fill="none" strokeDasharray="3 7" />
         <Circle cx={(S + 120) / 2} cy={S / 2} r={78} stroke="rgba(57,230,140,0.25)" strokeWidth={1} fill="none" />
       </Svg>
       <Animated.View style={{ width: S, height: S, transform: [{ rotate: rot }] }}>
@@ -99,7 +99,7 @@ function Hero() {
         })}
       </Animated.View>
       <Animated.View style={[st.crownBig, { transform: [{ scale: pulse.interpolate({ inputRange: [0, 1], outputRange: [1, 1.06] }) }] }]}>
-        <LinearGradient colors={['#C8FFE2', GOLD, '#169a55']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={st.crownIn}>
+        <LinearGradient colors={['#FFF1B8', GOLD, '#C9971A']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={st.crownIn}>
           <Icon name="crown" size={50} color="#2a1d00" stroke={2.2} />
         </LinearGradient>
       </Animated.View>
@@ -134,7 +134,7 @@ const st = StyleSheet.create({
   badge: { alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: GOLD, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 5 },
   fi: { width: 36, height: 36, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
   plan: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 16, borderRadius: R.lg, backgroundColor: C.surface, borderWidth: 1.5, borderColor: C.stroke },
-  planOn: { borderColor: GOLD, backgroundColor: '#0f2a1b' },
+  planOn: { borderColor: GOLD, backgroundColor: '#1a1708' },
   radio: { width: 24, height: 24, borderRadius: 12, borderWidth: 2, borderColor: 'rgba(255,255,255,0.3)', alignItems: 'center', justifyContent: 'center' },
   tag: { backgroundColor: C.green, borderRadius: 999, paddingHorizontal: 8, paddingVertical: 2 },
 });

@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { Alert, Image, Linking, Pressable, Share, StyleSheet, Switch, TextInput, View } from 'react-native';
 import { applyReminders } from '../../src/reminders';
 import { router } from 'expo-router';
@@ -23,10 +24,13 @@ export default function Profile() {
     const ok = await applyReminders(next, lang);
     if (!ok) { setRemind({ [k]: false }); Alert.alert(t('remT'), t('remNo')); }
   };
-  const sw = (ic: IconName, col: string, label: string, k: 'meals' | 'water') => (
+  const sw = (ic: IconName, col: string, label: string, k: 'meals' | 'water', sub: ReactNode) => (
     <Row key={k} style={st.row}>
       <IconBadge name={ic} color={col} size={38} icon={18} />
-      <Txt style={{ flex: 1, fontWeight: '700' }}>{label}</Txt>
+      <View style={{ flex: 1 }}>
+        <Txt style={{ fontWeight: '700' }}>{label}</Txt>
+        {sub}
+      </View>
       <Switch value={remind[k]} onValueChange={(v) => toggle(k, v)} trackColor={{ false: C.surface3, true: C.green }} thumbColor="#fff" />
     </Row>
   );
@@ -153,8 +157,8 @@ export default function Profile() {
 
       <H2>{t('remT')}</H2>
       <Card style={{ paddingVertical: 2 }}>
-        {sw('bell', '#7CF5B5', t('remMeals'), 'meals')}
-        {sw('drop', C.water, t('remWater'), 'water')}
+        {sw('bell', '#7CF5B5', t('remMeals'), 'meals', <Num style={{ color: C.dim, fontSize: 12 }}>8:30 · 13:30 · 19:30</Num>)}
+        {sw('drop', C.water, t('remWater'), 'water', <Txt style={{ color: C.dim, fontSize: 12 }}>5 {t('perDay')}</Txt>)}
         <Row style={[st.row, { borderBottomWidth: 0 }]}>
           <IconBadge name="drop" color={C.water} size={38} icon={18} />
           <Txt style={{ flex: 1, fontWeight: '700' }}>{t('waterGoal')}</Txt>

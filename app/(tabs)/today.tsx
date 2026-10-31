@@ -150,7 +150,7 @@ export default function Today() {
                 <Num style={{ fontSize: 22, fontWeight: '900' }}>{Math.abs(rem)}</Num>
                 <Num style={{ fontSize: 13, color: C.mut, fontWeight: '700', marginBottom: 3 }}>g</Num>
               </Row>
-              <Txt numberOfLines={1} style={{ color: C.mut, fontSize: 12, fontWeight: '600' }}>{l} {rem >= 0 ? t('leftS') : t('overS')}</Txt>
+              <Txt numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7} style={{ color: C.mut, fontSize: 12, fontWeight: '600' }}>{l} {rem >= 0 ? t('leftS') : t('overS')}</Txt>
               <View style={{ alignItems: 'center', marginTop: 12 }}>
                 <Ring size={66} stroke={7} value={v} max={g} color={col}>
                   <Pop loop="pulse" delay={macros.findIndex((m) => m[0] === l) * 300}><Icon name={ic} size={22} color={col} fill={col + '2E'} /></Pop>

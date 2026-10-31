@@ -2,6 +2,7 @@
 import type { Dict } from './i18n';
 
 export const fr: Partial<Dict> = {
+ "perDay": "fois par jour",
  "deleted": "Supprimé",
  "waterDone": "Objectif eau atteint !",
  "fastOn": "Jeûne commencé",
@@ -78,8 +79,8 @@ export const fr: Partial<Dict> = {
  "scanAgain": "Scanner à nouveau",
  "amount": "Quantité",
  "remT": "Rappels",
- "remMeals": "Rappels repas (8:30, 13:30, 19:30)",
- "remWater": "Rappels eau (5 par jour)",
+ "remMeals": "Rappels repas",
+ "remWater": "Rappels eau",
  "remNo": "Autorisez les notifications de Nutri AI dans les réglages.",
  "exT": "Sport",
  "exAdd": "Ajouter une activité",
@@ -294,6 +295,7 @@ export const fr: Partial<Dict> = {
 };
 
 export const es: Partial<Dict> = {
+ "perDay": "veces al día",
  "deleted": "Eliminado",
  "waterDone": "¡Meta de agua lograda!",
  "fastOn": "Ayuno iniciado",
@@ -370,8 +372,8 @@ export const es: Partial<Dict> = {
  "scanAgain": "Escanear otra vez",
  "amount": "Cantidad",
  "remT": "Recordatorios",
- "remMeals": "Recordatorios de comidas (8:30, 13:30, 19:30)",
- "remWater": "Recordatorios de agua (5 al día)",
+ "remMeals": "Recordatorios de comidas",
+ "remWater": "Recordatorios de agua",
  "remNo": "Permite las notificaciones de Nutri AI en los ajustes.",
  "exT": "Ejercicio",
  "exAdd": "Añadir ejercicio",
@@ -586,6 +588,7 @@ export const es: Partial<Dict> = {
 };
 
 export const de: Partial<Dict> = {
+ "perDay": "mal am Tag",
  "deleted": "Gelöscht",
  "waterDone": "Wasserziel erreicht!",
  "fastOn": "Fasten gestartet",
@@ -662,8 +665,8 @@ export const de: Partial<Dict> = {
  "scanAgain": "Erneut scannen",
  "amount": "Menge",
  "remT": "Erinnerungen",
- "remMeals": "Mahlzeit-Erinnerungen (8:30, 13:30, 19:30)",
- "remWater": "Wasser-Erinnerungen (5 pro Tag)",
+ "remMeals": "Mahlzeit-Erinnerungen",
+ "remWater": "Wasser-Erinnerungen",
  "remNo": "Erlaube Benachrichtigungen für Nutri AI in den Einstellungen.",
  "exT": "Sport",
  "exAdd": "Training hinzufügen",
@@ -878,6 +881,7 @@ export const de: Partial<Dict> = {
 };
 
 export const tr: Partial<Dict> = {
+ "perDay": "kez günde",
  "deleted": "Silindi",
  "waterDone": "Su hedefine ulaştın!",
  "fastOn": "Oruç başladı",
@@ -954,8 +958,8 @@ export const tr: Partial<Dict> = {
  "scanAgain": "Tekrar tara",
  "amount": "Miktar",
  "remT": "Hatırlatıcılar",
- "remMeals": "Öğün hatırlatıcıları (8:30, 13:30, 19:30)",
- "remWater": "Su hatırlatıcıları (günde 5)",
+ "remMeals": "Öğün hatırlatıcıları",
+ "remWater": "Su hatırlatıcıları",
  "remNo": "Ayarlardan Nutri AI bildirimlerine izin ver.",
  "exT": "Egzersiz",
  "exAdd": "Egzersiz ekle",
@@ -1170,6 +1174,7 @@ export const tr: Partial<Dict> = {
 };
 
 export const ru: Partial<Dict> = {
+ "perDay": "раз в день",
  "deleted": "Удалено",
  "waterDone": "Цель по воде достигнута!",
  "fastOn": "Голодание началось",
@@ -1246,8 +1251,8 @@ export const ru: Partial<Dict> = {
  "scanAgain": "Сканировать снова",
  "amount": "Количество",
  "remT": "Напоминания",
- "remMeals": "Напоминания о еде (8:30, 13:30, 19:30)",
- "remWater": "Напоминания о воде (5 в день)",
+ "remMeals": "Напоминания о еде",
+ "remWater": "Напоминания о воде",
  "remNo": "Разрешите уведомления Nutri AI в настройках телефона.",
  "exT": "Спорт",
  "exAdd": "Добавить тренировку",
@@ -1462,6 +1467,7 @@ export const ru: Partial<Dict> = {
 };
 
 export const id: Partial<Dict> = {
+ "perDay": "kali sehari",
  "deleted": "Dihapus",
  "waterDone": "Target air tercapai!",
  "fastOn": "Puasa dimulai",
@@ -1538,8 +1544,8 @@ export const id: Partial<Dict> = {
  "scanAgain": "Pindai lagi",
  "amount": "Jumlah",
  "remT": "Pengingat",
- "remMeals": "Pengingat makan (8:30, 13:30, 19:30)",
- "remWater": "Pengingat minum (5 kali sehari)",
+ "remMeals": "Pengingat makan",
+ "remWater": "Pengingat minum",
  "remNo": "Izinkan notifikasi Nutri AI di pengaturan ponsel.",
  "exT": "Olahraga",
  "exAdd": "Tambah olahraga",
@@ -1754,6 +1760,7 @@ export const id: Partial<Dict> = {
 };
 
 export const ur: Partial<Dict> = {
+ "perDay": "بار روزانہ",
  "deleted": "حذف ہو گیا",
  "waterDone": "پانی کا ہدف مکمل!",
  "fastOn": "روزہ شروع",
@@ -1830,8 +1837,8 @@ export const ur: Partial<Dict> = {
  "scanAgain": "دوبارہ اسکین کریں",
  "amount": "مقدار",
  "remT": "یاد دہانیاں",
- "remMeals": "کھانے کی یاد دہانی (8:30، 13:30، 19:30)",
- "remWater": "پانی کی یاد دہانی (دن میں 5)",
+ "remMeals": "کھانے کی یاد دہانی",
+ "remWater": "پانی کی یاد دہانی",
  "remNo": "فون کی ترتیبات میں Nutri AI کی اطلاعات کی اجازت دیں۔",
  "exT": "ورزش",
  "exAdd": "ورزش شامل کریں",

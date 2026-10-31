@@ -68,8 +68,14 @@ export function Screen({ children, scroll = true, pad = true, glow = true }: { c
   );
 }
 
+/** Dark glass card: soft top highlight and a hairline border. */
 export function Card({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) {
-  return <View style={[s.card, style]}>{children}</View>;
+  return (
+    <View style={[s.card, style]}>
+      <LinearGradient pointerEvents="none" colors={['rgba(255,255,255,0.05)', 'rgba(255,255,255,0)']} locations={[0, 0.5]} style={[StyleSheet.absoluteFill, { borderRadius: R.lg }]} />
+      {children}
+    </View>
+  );
 }
 
 export function H1({ children, style }: { children: ReactNode; style?: StyleProp<TextStyle> }) {
@@ -159,11 +165,14 @@ export function Pop({ children, delay = 0, loop, style }: { children: ReactNode;
   return <Animated.View style={[style, { opacity: a, transform: tf as never }]}>{children}</Animated.View>;
 }
 
-/** Rounded square with a two-tone green icon that pops in (and can keep moving). */
+/** Glass tile with a two-tone green icon that pops in (and can keep moving). */
 export function IconBadge({ name, color = C.green, size = 40, icon = 20, loop, delay = 0 }: { name: IconName; color?: string; size?: number; icon?: number; loop?: Loop; delay?: number }) {
+  const r = size * 0.32;
   return (
     <Pop delay={delay} loop={loop}>
-      <View style={{ width: size, height: size, borderRadius: size * 0.32, backgroundColor: color + '1F', borderWidth: 1, borderColor: color + '33', alignItems: 'center', justifyContent: 'center' }}>
+      <View style={{ width: size, height: size, borderRadius: r, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(124,245,181,0.28)', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(57,230,140,0.07)' }}>
+        <LinearGradient pointerEvents="none" colors={['rgba(255,255,255,0.16)', 'rgba(57,230,140,0.10)', 'rgba(0,0,0,0.15)']} locations={[0, 0.45, 1]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={StyleSheet.absoluteFill} />
+        <View pointerEvents="none" style={{ position: 'absolute', top: 0, left: r * 0.6, right: r * 0.6, height: 1, backgroundColor: 'rgba(255,255,255,0.35)' }} />
         <Icon name={name} size={icon} color={color} fill={LINE_ONLY.has(name) ? undefined : color + '2E'} />
       </View>
     </Pop>
@@ -180,7 +189,7 @@ export function Bar({ value, max, color = C.green, height = 8 }: { value: number
 }
 
 export const s = StyleSheet.create({
-  card: { backgroundColor: C.surface, borderColor: C.stroke, borderWidth: 1, borderRadius: R.lg, padding: 18 },
+  card: { backgroundColor: C.surface, borderColor: 'rgba(255,255,255,0.09)', borderWidth: 1, borderRadius: R.lg, padding: 18 },
   h1: { fontSize: 30, fontWeight: '900', marginTop: 6, marginBottom: 14, lineHeight: 42 },
   h2: { fontSize: 19, fontWeight: '800' },
   label: { color: C.mut, fontSize: 13, fontWeight: '600' },

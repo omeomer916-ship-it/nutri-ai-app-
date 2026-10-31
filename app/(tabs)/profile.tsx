@@ -6,6 +6,7 @@ import { Goals, useApp } from '../../src/store';
 import { C, R } from '../../src/theme';
 import { Card, H2, Row, Screen, Txt } from '../../src/components/ui';
 import { Leaf } from '../../src/components/Leaf';
+import { googleSignOut } from '../../src/GoogleButton';
 
 export default function Profile() {
   const { t, lang } = useT();
@@ -52,7 +53,7 @@ export default function Profile() {
       <Card style={{ paddingVertical: 4 }}>
         {item(t('language'), lang === 'ar' ? 'English' : 'العربية', () => setLang(lang === 'ar' ? 'en' : 'ar'))}
         {item(t('redo'), '↻', () => router.push('/onboarding'))}
-        {item(account?.guest ? t('signIn') : t('signOut'), '→', () => { signOut(); router.replace('/intro'); })}
+        {item(account?.guest ? t('signIn') : t('signOut'), '→', () => { googleSignOut(); signOut(); router.replace('/intro'); })}
         {item(t('reset'), t('del'), () =>
           Alert.alert(t('reset'), t('resetQ'), [
             { text: t('cancel'), style: 'cancel' },

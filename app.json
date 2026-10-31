@@ -3,7 +3,7 @@
     "name": "Nutri AI",
     "slug": "nutri-ai",
     "scheme": "nutriai",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
@@ -27,7 +27,7 @@
       "permissions": [
         "CAMERA"
       ],
-      "versionCode": 6,
+      "versionCode": 7,
       "predictiveBackGestureEnabled": false
     },
     "web": {
@@ -53,6 +53,12 @@
         {
           "cameraPermission": "Nutri AI uses the camera to photograph your meals and estimate their calories.",
           "photosPermission": "Nutri AI lets you pick a meal photo from your library."
+        }
+      ],
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.1081446995388-ksak8j563trttlogn2baflel3vc034m1"
         }
       ]
     ],

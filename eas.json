@@ -10,9 +10,7 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "",
-        "EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID": "",
-        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": ""
+        "EXPO_PUBLIC_API_URL": ""
       }
     },
     "production": {
@@ -20,9 +18,7 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "",
-        "EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID": "",
-        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": ""
+        "EXPO_PUBLIC_API_URL": ""
       }
     },
     "store": {
@@ -30,9 +26,7 @@
         "buildType": "app-bundle"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "",
-        "EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID": "",
-        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": ""
+        "EXPO_PUBLIC_API_URL": ""
       }
     }
   }

@@ -35,7 +35,10 @@ async function geminiModels(key) {
         .map((m) => String(m.name).replace(/^models\//, ''))
         .filter((n) => /^gemini-.*flash/.test(n) && !/(tts|image|live|audio|embedding|thinking|exp)/.test(n));
       const ver = (n) => parseFloat((n.match(/gemini-(\d+(?:\.\d+)?)/) || [])[1] || '0');
-      const score = (n) => ver(n) * 10 - (/lite/.test(n) ? 5 : 0) - (/preview/.test(n) ? 3 : 0);
+      // Free-tier keys: the newest models are often overloaded, so try the lighter/older
+      // ones first; they answer fast and are good enough for food photos and chat.
+      const pref = process.env.GEMINI_PREFER === 'newest';
+      const score = (n) => (pref ? ver(n) * 10 : -ver(n) * 10) + (/lite/.test(n) ? (pref ? -5 : 5) : 0) - (/preview/.test(n) ? 30 : 0);
       list.sort((x, y) => score(y) - score(x) || x.length - y.length);
     }
   } catch {}
@@ -68,7 +71,7 @@ async function gemini({ system, messages, image, json }) {
       if (left < 2500) throw new Error(`Gemini busy [${tried.join(', ')}] ${lastErr}`);
       const ctl = new AbortController();
       // Cap each try so one slow model can't use the whole time; images get a bit longer.
-      const cap = image ? 11000 : 7000;
+      const cap = image ? 12000 : 8000;
       const timer = setTimeout(() => ctl.abort(), Math.min(cap, left - 500));
       try {
         const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`, {

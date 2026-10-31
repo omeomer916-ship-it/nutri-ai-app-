@@ -1,0 +1,9 @@
+# Netlify hosts only the AI server (folder "server"). The app itself is built by Expo.
+[build]
+  base = "server"
+  publish = "public"
+  command = "echo no build"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"

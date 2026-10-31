@@ -90,6 +90,7 @@ const en = {
   metric: 'Metric', imperialL: 'Imperial', units: 'Units',
   bT: 'Building your plan…', b1: 'Calculating your metabolism', b2: 'Setting calories and macros', b3: 'Estimating your timeline', b4: 'Personalizing your tips',
   reach: 'You can reach', byD: 'by', dailyCal: 'Daily calories', maintain: 'Maintenance',
+  deleted: 'Deleted', waterDone: 'Water goal reached!', fastOn: 'Fast started', fastOff: 'Fast ended. Well done!',
   rate: 'Rate the app', aiRate: 'Too many requests right now. Try again in a few minutes.', privacy: 'Privacy policy', termsL: 'Terms of use', shareDay: 'Share my day', bmi: 'BMI', bUnder: 'Underweight', bNormal: 'Healthy', bOver: 'Overweight', bObese: 'Obese',
 };
 
@@ -178,6 +179,7 @@ const ar: Dict = {
   metric: 'متري', imperialL: 'إمبراطوري', units: 'الوحدات',
   bT: 'عم نجهّز خطتك…', b1: 'حساب معدل الحرق عندك', b2: 'تحديد السعرات والماكروز', b3: 'تقدير موعد وصولك', b4: 'تخصيص النصائح إلك',
   reach: 'بتقدر توصل لـ', byD: 'بتاريخ', dailyCal: 'السعرات اليومية', maintain: 'سعرات الثبات',
+  deleted: 'انحذفت', waterDone: 'وصلت هدف المي!', fastOn: 'بلّش الصيام', fastOff: 'خلص الصيام. عاش!',
   rate: 'قيّم التطبيق', aiRate: 'في طلبات كتير هلأ. جرّب بعد كم دقيقة.', privacy: 'سياسة الخصوصية', termsL: 'شروط الاستخدام', shareDay: 'شارك يومي', bmi: 'مؤشر كتلة الجسم', bUnder: 'نحافة', bNormal: 'طبيعي', bOver: 'وزن زائد', bObese: 'سمنة',
 };
 

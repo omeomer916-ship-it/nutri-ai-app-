@@ -12,6 +12,10 @@ const deviceLang = (): Lang => {
   } catch { return 'en'; }
 };
 
+/** Free plan: AI scans per day. Turn PAYWALL_ON on once Google Play billing is connected. */
+export const PAYWALL_ON = false;
+export const FREE_SCANS = 3;
+
 export type Cat = 'bf' | 'ln' | 'dn' | 'sn' | 'ds' | 'dr';
 export const CATS: Cat[] = ['bf', 'ln', 'dn', 'sn', 'ds', 'dr'];
 
@@ -70,6 +74,9 @@ type State = {
   setFastHours: (h: number) => void;
   waterGoal: number;
   imperial: boolean;
+  isPro: boolean;
+  scans: Record<string, number>;
+  countScan: () => void;
   setImperial: (v: boolean) => void;
   setWaterGoal: (n: number) => void;
   copyDay: (from: string) => void;
@@ -92,7 +99,7 @@ type State = {
   resetAll: () => void;
 };
 
-const initial: Pick<State, 'lang' | 'seenIntro' | 'account' | 'profile' | 'goals' | 'days' | 'weights' | 'myFoods' | 'remind' | 'burn' | 'fast' | 'waterGoal' | 'imperial'> = {
+const initial: Pick<State, 'lang' | 'seenIntro' | 'account' | 'profile' | 'goals' | 'days' | 'weights' | 'myFoods' | 'remind' | 'burn' | 'fast' | 'waterGoal' | 'imperial' | 'isPro' | 'scans'> = {
   lang: deviceLang(),
   seenIntro: false,
   account: null,
@@ -106,6 +113,8 @@ const initial: Pick<State, 'lang' | 'seenIntro' | 'account' | 'profile' | 'goals
   fast: { start: null, hours: 16, log: [] },
   waterGoal: 8,
   imperial: false,
+  isPro: false,
+  scans: {},
 };
 
 export const useApp = create<State>()(
@@ -135,6 +144,10 @@ export const useApp = create<State>()(
         set({ fast: { ...f, start: null, log: [{ s: f.start, e: Date.now(), h: f.hours }, ...f.log].slice(0, 60) } });
       },
       setFastHours: (h) => set({ fast: { ...get().fast, hours: h } }),
+      countScan: () => {
+        const k = dayKey();
+        set({ scans: { [k]: (get().scans[k] ?? 0) + 1 } });
+      },
       setImperial: (v) => set({ imperial: v }),
       setWaterGoal: (n) => set({ waterGoal: Math.max(4, Math.min(16, n)) }),
       copyDay: (from) => {

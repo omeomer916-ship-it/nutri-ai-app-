@@ -5,6 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { C, R, fontFor } from '../theme';
 import { useT } from '../i18n';
 import { Icon, IconName } from './Icon';
+import * as Haptics from 'expo-haptics';
 
 /** Text with the Cairo font picked by weight, and direction from the app language. */
 export function Txt({ style, center, ...p }: TextProps & { center?: boolean }) {
@@ -84,7 +85,7 @@ export function Btn({ title, onPress, kind = 'primary', style, disabled, icon }:
   const fg = kind === 'ghost' || kind === 'soft' ? C.white : '#000';
   return (
     <Pressable
-      onPress={onPress}
+      onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {}); onPress?.(); }}
       disabled={disabled}
       style={({ pressed }) => [
         s.btn,

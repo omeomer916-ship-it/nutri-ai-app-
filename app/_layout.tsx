@@ -6,6 +6,7 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useApp } from '../src/store';
 import { C, FONTS } from '../src/theme';
+import { Toast } from '../src/components/Toast';
 
 // Show any startup error on screen instead of closing the app.
 export function ErrorBoundary({ error, retry }: { error: Error; retry: () => Promise<void> }) {
@@ -37,7 +38,15 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <StatusBar style="light" />
       {ready ? (
-        <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: C.bg }, animation: 'fade' }} />
+        <>
+          <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: C.bg }, animation: 'fade' }}>
+            <Stack.Screen name="food" options={{ animation: 'slide_from_bottom' }} />
+            <Stack.Screen name="barcode" options={{ animation: 'slide_from_bottom' }} />
+            <Stack.Screen name="fasting" options={{ animation: 'slide_from_right' }} />
+            <Stack.Screen name="pro" options={{ animation: 'slide_from_bottom', presentation: 'modal' }} />
+          </Stack>
+          <Toast />
+        </>
       ) : (
         <View style={{ flex: 1, backgroundColor: C.bg }} />
       )}

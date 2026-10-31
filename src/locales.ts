@@ -2,6 +2,10 @@
 import type { Dict } from './i18n';
 
 export const fr: Partial<Dict> = {
+ "deleted": "Supprimé",
+ "waterDone": "Objectif eau atteint !",
+ "fastOn": "Jeûne commencé",
+ "fastOff": "Jeûne terminé. Bravo !",
  "addFood": "Ajouter un aliment",
  "searchF": "Rechercher parmi 120+ aliments…",
  "gall": "Tout",
@@ -290,6 +294,10 @@ export const fr: Partial<Dict> = {
 };
 
 export const es: Partial<Dict> = {
+ "deleted": "Eliminado",
+ "waterDone": "¡Meta de agua lograda!",
+ "fastOn": "Ayuno iniciado",
+ "fastOff": "Ayuno terminado. ¡Bien hecho!",
  "addFood": "Añadir alimento",
  "searchF": "Busca entre 120+ alimentos…",
  "gall": "Todo",
@@ -578,6 +586,10 @@ export const es: Partial<Dict> = {
 };
 
 export const de: Partial<Dict> = {
+ "deleted": "Gelöscht",
+ "waterDone": "Wasserziel erreicht!",
+ "fastOn": "Fasten gestartet",
+ "fastOff": "Fasten beendet. Gut gemacht!",
  "addFood": "Lebensmittel hinzufügen",
  "searchF": "In 120+ Gerichten suchen…",
  "gall": "Alle",
@@ -866,6 +878,10 @@ export const de: Partial<Dict> = {
 };
 
 export const tr: Partial<Dict> = {
+ "deleted": "Silindi",
+ "waterDone": "Su hedefine ulaştın!",
+ "fastOn": "Oruç başladı",
+ "fastOff": "Oruç bitti. Tebrikler!",
  "addFood": "Yiyecek ekle",
  "searchF": "120+ yiyecekte ara…",
  "gall": "Tümü",
@@ -1154,6 +1170,10 @@ export const tr: Partial<Dict> = {
 };
 
 export const ru: Partial<Dict> = {
+ "deleted": "Удалено",
+ "waterDone": "Цель по воде достигнута!",
+ "fastOn": "Голодание началось",
+ "fastOff": "Голодание завершено. Молодец!",
  "addFood": "Добавить продукт",
  "searchF": "Поиск среди 120+ блюд…",
  "gall": "Все",
@@ -1442,6 +1462,10 @@ export const ru: Partial<Dict> = {
 };
 
 export const id: Partial<Dict> = {
+ "deleted": "Dihapus",
+ "waterDone": "Target air tercapai!",
+ "fastOn": "Puasa dimulai",
+ "fastOff": "Puasa selesai. Hebat!",
  "addFood": "Tambah makanan",
  "searchF": "Cari di 120+ makanan…",
  "gall": "Semua",
@@ -1730,6 +1754,10 @@ export const id: Partial<Dict> = {
 };
 
 export const ur: Partial<Dict> = {
+ "deleted": "حذف ہو گیا",
+ "waterDone": "پانی کا ہدف مکمل!",
+ "fastOn": "روزہ شروع",
+ "fastOff": "روزہ ختم۔ شاباش!",
  "addFood": "کھانا شامل کریں",
  "searchF": "120+ کھانوں میں تلاش کریں…",
  "gall": "سب",

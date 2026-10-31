@@ -6,7 +6,7 @@ import * as ImageManipulator from 'expo-image-manipulator';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useT, TKey } from '../../src/i18n';
-import { CATS, Cat, useApp } from '../../src/store';
+import { CATS, Cat, FREE_SCANS, PAYWALL_ON, dayKey, useApp } from '../../src/store';
 import { AiError, ScanResult, scanMeal } from '../../src/ai';
 import { fmt } from '../../src/calc';
 import { C, CAT_ICON, IMG, R, fontFor } from '../../src/theme';
@@ -80,6 +80,8 @@ export default function Scan() {
   const recent = Object.values(days).flatMap((d) => d.meals).filter((m) => m.photo).sort((a, b) => b.t - a.t).slice(0, 6);
 
   const pick = async (camera: boolean) => {
+    const st0 = useApp.getState();
+    if (PAYWALL_ON && !st0.isPro && (st0.scans[dayKey()] ?? 0) >= FREE_SCANS) { router.push('/pro'); return; }
     try {
       if (camera) {
         const p = await ImagePicker.requestCameraPermissionsAsync();
@@ -95,6 +97,7 @@ export default function Scan() {
       const small = await ImageManipulator.manipulateAsync(a.uri, [{ resize: { width: 1024 } }], {
         compress: 0.7, format: ImageManipulator.SaveFormat.JPEG, base64: true,
       });
+      useApp.getState().countScan();
       const r = await scanMeal(small.base64 ?? '', lang, cat === 'dr' ? 'drink' : 'food', cat);
       setMult(1);
       setFix(null);

@@ -1,5 +1,5 @@
 import { ReactNode, useEffect, useRef } from 'react';
-import { Animated, Easing, Pressable, ScrollView, StyleProp, StyleSheet, Text, TextProps, TextStyle, View, ViewStyle } from 'react-native';
+import { Animated, Easing, Platform, Pressable, ScrollView, StyleProp, StyleSheet, Text, TextProps, TextStyle, View, ViewStyle } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { C, R, fontFor } from '../theme';
@@ -15,16 +15,25 @@ export function Txt({ style, center, ...p }: TextProps & { center?: boolean }) {
   // Android mirrors left/right inside an RTL layout, so 'left' means "start" here.
   const out: TextStyle = { textAlign: center ? 'center' : 'left', writingDirection: rtl ? 'rtl' : 'ltr', ...flat };
   if (fam) { out.fontFamily = fam; delete out.fontWeight; }
+  logical(out, rtl);
   return <Text {...p} style={out} />;
+}
+
+/** In this app 'left' means start and 'right' means end. Android already mirrors them in RTL; iOS needs the swap. */
+function logical(st: TextStyle, rtl: boolean) {
+  if (Platform.OS !== 'ios' || !rtl) return;
+  if (st.textAlign === 'left') st.textAlign = 'right';
+  else if (st.textAlign === 'right') st.textAlign = 'left';
 }
 
 /** Numbers / Latin bits that must stay left-to-right inside Arabic text. */
 export function Num({ style, ...p }: TextProps) {
-  const { lang } = useT();
+  const { lang, rtl } = useT();
   const flat = (StyleSheet.flatten([{ color: C.white, fontSize: 15 }, style]) || {}) as TextStyle;
   const fam = fontFor(flat.fontWeight as string | undefined, lang);
   const out: TextStyle = { textAlign: 'left', writingDirection: 'ltr', ...flat };
   if (fam) { out.fontFamily = fam; delete out.fontWeight; }
+  logical(out, rtl);
   return <Text {...p} style={out} />;
 }
 

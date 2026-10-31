@@ -12,13 +12,13 @@ import { Icon, IconName } from '../../src/components/Icon';
 
 export default function Progress() {
   const { t } = useT();
-  const [tab, setTab] = useState<'d' | 'w'>('d');
+  const [tab, setTab] = useState<'d' | 'k' | 'w'>('d');
   return (
     <Screen>
       <Txt style={{ fontSize: 28, fontWeight: '900', marginTop: 12, marginBottom: 14, lineHeight: 40 }}>{t('tProgress')}</Txt>
-      <Segmented value={tab} options={[['d', t('daily')], ['w', t('weight')]]} onChange={setTab} />
+      <Segmented value={tab} options={[['d', t('daily')], ['k', t('wk')], ['w', t('weight')]]} onChange={setTab} />
       <View style={{ height: 16 }} />
-      {tab === 'd' ? <Daily /> : <Weight />}
+      {tab === 'd' ? <Daily /> : tab === 'k' ? <Weekly /> : <Weight />}
     </Screen>
   );
 }
@@ -87,7 +87,7 @@ function Daily() {
         {([['flame', '#FF9F5C', t('avg'), avg ? fmt(avg) : '—'], ['drumstick', C.pro, t('pavg'), pavg ? `${pavg} g` : '—'], ['bolt', C.green, t('streak'), String(streak)]] as [IconName, string, string, string][]).map(([ic, col, l, v]) => (
           <Card key={l} style={{ flex: 1, padding: 14 }}>
             <IconBadge name={ic} color={col} size={34} icon={17} />
-            <Num style={{ fontSize: 22, fontWeight: '900', marginTop: 10, textAlign: rtl ? 'right' : 'left' }}>{v}</Num>
+            <Num style={{ fontSize: 22, fontWeight: '900', marginTop: 10, textAlign: 'left' }}>{v}</Num>
             <Txt numberOfLines={1} style={{ color: C.mut, fontSize: 11, fontWeight: '600' }}>{l}</Txt>
           </Card>
         ))}
@@ -135,6 +135,88 @@ function Daily() {
         <Card><Txt style={{ color: C.mut }}>{t('noLog')}</Txt></Card>
       )}
       <MealSheet meal={edit} dayK={d.k} onClose={() => setEdit(null)} />
+    </>
+  );
+}
+
+function Weekly() {
+  const { t, lang } = useT();
+  const days = useApp((s) => s.days);
+  const goals = useApp((s) => s.goals);
+  const burn = useApp((s) => s.burn);
+  const loc = lang === 'ar' ? 'ar-u-nu-latn' : lang;
+  const span = (off: number) => [0, 1, 2, 3, 4, 5, 6].map((i) => {
+    const ts = Date.now() - (i + off) * 864e5, k = dayKey(ts);
+    return { ts, k, tot: totals(days[k]), water: days[k]?.water ?? 0, n: days[k]?.meals.length ?? 0, b: (burn[k] ?? []).reduce((a, x) => a + x.kcal, 0) };
+  });
+  const cur = span(0), prev = span(7);
+  const used = (w: typeof cur) => w.filter((d) => d.tot.kcal > 0);
+  const avg = (w: typeof cur, f: (d: (typeof cur)[0]) => number) => { const u = used(w); return u.length ? u.reduce((a, d) => a + f(d), 0) / u.length : 0; };
+  const aK = avg(cur, (d) => d.tot.kcal), pK = avg(prev, (d) => d.tot.kcal);
+  const diff = pK ? Math.round(((aK - pK) / pK) * 100) : 0;
+  const onT = cur.filter((d) => d.tot.kcal >= goals.kcal * 0.9 && d.tot.kcal <= goals.kcal * 1.1).length;
+  const best = used(cur).sort((a, b) => Math.abs(a.tot.kcal - goals.kcal) - Math.abs(b.tot.kcal - goals.kcal))[0];
+  const mP = avg(cur, (d) => d.tot.P * 4), mC = avg(cur, (d) => d.tot.C * 4), mF = avg(cur, (d) => d.tot.F * 9);
+  const sum = mP + mC + mF;
+  const tiles: [IconName, string, string, string][] = [
+    ['flame', '#FF9F5C', t('avg'), aK ? fmt(aK) : '—'],
+    ['target', C.green, t('onTarget'), `${onT}/7`],
+    ['bowl', C.carb, t('mealsLogged'), String(cur.reduce((a, d) => a + d.n, 0))],
+    ['drop', C.water, t('water'), `${(cur.reduce((a, d) => a + d.water, 0) * 0.25).toFixed(1)} L`],
+    ['run', C.pro, t('burned'), fmt(cur.reduce((a, d) => a + d.b, 0))],
+    ['drumstick', C.pro, t('pavg'), `${Math.round(avg(cur, (d) => d.tot.P))} g`],
+  ];
+  return (
+    <>
+      <Card style={{ paddingVertical: 20 }}>
+        <Txt style={{ color: C.mut, fontWeight: '700' }}>{t('wkT')} · {t('avg')}</Txt>
+        <Row style={{ alignItems: 'flex-end', gap: 8, marginTop: 4 }}>
+          <Num style={{ fontSize: 46, fontWeight: '900', lineHeight: 56 }}>{aK ? fmt(aK) : '—'}</Num>
+          <Num style={{ color: C.mut, fontWeight: '700', marginBottom: 10 }}>kcal</Num>
+        </Row>
+        {pK > 0 && (
+          <View style={[st.diff, { backgroundColor: (diff > 0 ? C.carb : C.green) + '22' }]}>
+            <Num style={{ color: diff > 0 ? C.carb : C.green, fontWeight: '900' }}>{diff > 0 ? '+' : ''}{diff}%</Num>
+            <Txt style={{ color: C.mut, fontSize: 12 }}>{t('vsLast')}</Txt>
+          </View>
+        )}
+      </Card>
+      <View style={st.tiles}>
+        {tiles.map(([ic, col, l, v]) => (
+          <Card key={l} style={st.tile}>
+            <IconBadge name={ic} color={col} size={34} icon={17} />
+            <Num style={{ fontSize: 20, fontWeight: '900', marginTop: 8 }}>{v}</Num>
+            <Txt numberOfLines={1} style={{ color: C.mut, fontSize: 11, fontWeight: '600' }}>{l}</Txt>
+          </Card>
+        ))}
+      </View>
+      {sum > 0 && (
+        <Card style={{ marginTop: 10 }}>
+          <Txt style={{ fontWeight: '800', marginBottom: 10 }}>{t('macroSplit')}</Txt>
+          <View style={{ flexDirection: 'row', height: 14, borderRadius: 7, overflow: 'hidden', gap: 3 }}>
+            {[[mP, C.pro], [mC, C.carb], [mF, C.fat]].map(([v, c], i) => <View key={i} style={{ flex: (v as number) || 0.001, backgroundColor: c as string }} />)}
+          </View>
+          <Row style={{ justifyContent: 'space-between', marginTop: 10 }}>
+            {([['P', mP, C.pro], ['Cb', mC, C.carb], ['F', mF, C.fat]] as [TKey, number, string][]).map(([k, v, c]) => (
+              <Row key={k} style={{ gap: 6 }}>
+                <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: c }} />
+                <Txt style={{ fontSize: 12, color: C.mut }}>{t(k)}</Txt>
+                <Num style={{ fontSize: 12, fontWeight: '900' }}>{Math.round((v / sum) * 100)}%</Num>
+              </Row>
+            ))}
+          </Row>
+        </Card>
+      )}
+      {best && (
+        <Card style={{ marginTop: 10, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+          <IconBadge name="trophy" color="#FFD45C" size={42} />
+          <View style={{ flex: 1 }}>
+            <Txt style={{ color: C.mut, fontSize: 12 }}>{t('bestDay')}</Txt>
+            <Txt style={{ fontWeight: '900' }}>{new Date(best.ts).toLocaleDateString(loc, { weekday: 'long', day: 'numeric', month: 'short' })}</Txt>
+          </View>
+          <Num style={{ fontWeight: '900', fontSize: 16 }}>{fmt(best.tot.kcal)}</Num>
+        </Card>
+      )}
     </>
   );
 }
@@ -218,6 +300,9 @@ function Weight() {
 const st = StyleSheet.create({
   day: { flex: 1, alignItems: 'center', gap: 3, paddingVertical: 9, borderRadius: 16, backgroundColor: C.surface, borderWidth: 1, borderColor: C.stroke },
   dayOn: { backgroundColor: '#fff', borderColor: '#fff' },
+  diff: { flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'flex-start', borderRadius: 999, paddingHorizontal: 10, paddingVertical: 4, marginTop: 8 },
+  tiles: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 10 },
+  tile: { width: '31.9%', padding: 12 },
   thumb: { width: 46, height: 46, borderRadius: 14 },
   goalLine: { position: 'absolute', left: 0, right: 0, borderTopWidth: 1, borderStyle: 'dashed', borderColor: 'rgba(255,255,255,0.4)' },
   in: { flex: 1, height: 54, paddingVertical: 0, textAlignVertical: 'center', includeFontPadding: false, color: '#fff', backgroundColor: C.surface2, borderRadius: R.pill, paddingHorizontal: 16, fontSize: 18, textAlign: 'center' },

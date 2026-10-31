@@ -17,3 +17,9 @@ export function computePlan(p: Profile): Goals & { weeks: number } {
 }
 
 export const fmt = (n: number) => Math.round(n).toLocaleString('en-US');
+
+export const hms = (ms: number) => {
+  const s = Math.max(0, Math.floor(ms / 1000));
+  const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), x = s % 60;
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(x).padStart(2, '0')}`;
+};

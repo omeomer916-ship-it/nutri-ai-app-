@@ -80,6 +80,11 @@ const en = {
   barcode: 'Barcode', bcHint: 'Point the camera at the barcode', bcNotFound: 'Product not found. Try another one or add it manually.', per100: 'per 100 g', serving: 'serving', camAsk: 'Allow camera', scanAgain: 'Scan again', amount: 'Amount',
   remT: 'Reminders', remMeals: 'Meal reminders (8:30, 13:30, 19:30)', remWater: 'Water reminders (5 a day)', remNo: 'Allow notifications for Nutri AI in your phone settings.',
   exT: 'Exercise', exAdd: 'Add exercise', burned: 'Burned', minutes: 'Minutes', exNone: 'Log a workout and its calories are added to your day.',
+  fastT: 'Fasting', fastS: 'Intermittent fasting timer', fastStart: 'Start fast', fastEnd: 'End fast', fastPlan: 'Plan',
+  fastElapsed: 'Elapsed', fastLeft: 'Remaining', fastDone: 'Goal reached!', fastIdle: 'Not fasting', fastHist: 'Recent fasts',
+  ph1: 'Digesting', ph2: 'Blood sugar settles', ph3: 'Fat burning', ph4: 'Deep fast', fastNote: 'Not for pregnancy, diabetes on medication or eating disorders. Ask your doctor.',
+  wk: 'Week', wkT: 'This week', onTarget: 'Days on target', bestDay: 'Closest to goal', vsLast: 'vs last week', mealsLogged: 'Meals logged', macroSplit: 'Macro split',
+  quickAdd: 'Quick add', copyY: "Copy yesterday's meals", waterGoal: 'Daily water goal', glassesU: 'glasses',
   rate: 'Rate the app', aiRate: 'Too many requests right now. Try again in a few minutes.', privacy: 'Privacy policy', termsL: 'Terms of use', shareDay: 'Share my day', bmi: 'BMI', bUnder: 'Underweight', bNormal: 'Healthy', bOver: 'Overweight', bObese: 'Obese',
 };
 
@@ -158,6 +163,11 @@ const ar: Dict = {
   barcode: 'باركود', bcHint: 'وجّه الكاميرا على الباركود', bcNotFound: 'المنتج مش موجود. جرّب غيره أو أضفه يدوياً.', per100: 'لكل 100 غ', serving: 'حصة', camAsk: 'اسمح بالكاميرا', scanAgain: 'امسح مرة ثانية', amount: 'الكمية',
   remT: 'التذكيرات', remMeals: 'تذكير بالوجبات (8:30، 13:30، 19:30)', remWater: 'تذكير بشرب المي (5 مرات باليوم)', remNo: 'اسمح بإشعارات Nutri AI من إعدادات التلفون.',
   exT: 'الرياضة', exAdd: 'أضف تمرين', burned: 'حرقت', minutes: 'الدقائق', exNone: 'سجّل تمرينك وسعراته بتنضاف ليومك.',
+  fastT: 'الصيام', fastS: 'مؤقت الصيام المتقطع', fastStart: 'ابدأ الصيام', fastEnd: 'أنهِ الصيام', fastPlan: 'النظام',
+  fastElapsed: 'مضى', fastLeft: 'متبقي', fastDone: 'وصلت هدفك!', fastIdle: 'مش صايم', fastHist: 'آخر الصيامات',
+  ph1: 'هضم', ph2: 'استقرار السكر', ph3: 'حرق الدهون', ph4: 'صيام عميق', fastNote: 'مش مناسب للحامل أو مريض السكري اللي بياخد دوا أو اللي عنده اضطراب أكل. استشير طبيبك.',
+  wk: 'الأسبوع', wkT: 'هالأسبوع', onTarget: 'أيام بالهدف', bestDay: 'أقرب يوم للهدف', vsLast: 'مقارنة بالأسبوع الماضي', mealsLogged: 'وجبات مسجّلة', macroSplit: 'توزيع الماكروز',
+  quickAdd: 'إضافة سريعة', copyY: 'انسخ أكل مبارح', waterGoal: 'هدف المي اليومي', glassesU: 'كاسات',
   rate: 'قيّم التطبيق', aiRate: 'في طلبات كتير هلأ. جرّب بعد كم دقيقة.', privacy: 'سياسة الخصوصية', termsL: 'شروط الاستخدام', shareDay: 'شارك يومي', bmi: 'مؤشر كتلة الجسم', bUnder: 'نحافة', bNormal: 'طبيعي', bOver: 'وزن زائد', bObese: 'سمنة',
 };
 

@@ -4,7 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useT, TKey } from '../../src/i18n';
 import { CATS, Cat, Meal, dayKey, streakOf, totals, useApp } from '../../src/store';
-import { fmt } from '../../src/calc';
+import { fmt, hms } from '../../src/calc';
 import { C, CAT_ICON, IMG, R } from '../../src/theme';
 import { Btn, Card, H2, IconBadge, Num, Row, Screen, Txt } from '../../src/components/ui';
 import { Ring } from '../../src/components/Ring';
@@ -21,6 +21,16 @@ export default function Today() {
   const setWater = useApp((s) => s.setWater);
   const [edit, setEdit] = useState<Meal | null>(null);
   const [exOpen, setExOpen] = useState(false);
+  const fast = useApp((s) => s.fast);
+  const waterGoal = useApp((s) => s.waterGoal);
+  const addMeal = useApp((s) => s.addMeal);
+  const copyDay = useApp((s) => s.copyDay);
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => {
+    if (!fast.start) return;
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, [fast.start]);
   const dk = dayKey();
   const day = days[dk];
   const tot = totals(day);
@@ -61,6 +71,15 @@ export default function Today() {
       `${fmt(tot.kcal)} / ${fmt(goals.kcal)} kcal\n${t('P')} ${Math.round(tot.P)}g · ${t('Cb')} ${Math.round(tot.C)}g · ${t('F')} ${Math.round(tot.F)}g`,
   }).catch(() => {});
 
+  const yKey = dayKey(Date.now() - 864e5);
+  const freq = (() => {
+    const m = new Map<string, { n: number; meal: Meal }>();
+    for (let i = 0; i < 30; i++) for (const x of days[dayKey(Date.now() - i * 864e5)]?.meals ?? []) {
+      const e = m.get(x.name);
+      m.set(x.name, { n: (e?.n ?? 0) + 1, meal: e?.meal ?? x });
+    }
+    return [...m.values()].sort((a, b) => b.n - a.n).slice(0, 8).map((e) => e.meal);
+  })();
   const sections = CATS.filter((c) => ['bf', 'ln', 'dn', 'sn'].includes(c) || meals.some((m) => m.cat === c));
 
   return (
@@ -166,13 +185,13 @@ export default function Today() {
           <IconBadge name="drop" color={C.water} size={44} />
           <View style={{ flex: 1 }}>
             <Txt style={{ fontWeight: '800', fontSize: 16 }}>{t('water')}</Txt>
-            <Num style={{ color: C.mut, fontSize: 13, textAlign: rtl ? 'right' : 'left' }}>{water * 250} / 2000 ml</Num>
+            <Num style={{ color: C.mut, fontSize: 13, textAlign: 'left' }}>{water * 250} / {waterGoal * 250} ml</Num>
           </View>
           <Pressable hitSlop={8} style={st.round} onPress={() => setWater(water - 1)}><Icon name="minus" size={18} /></Pressable>
           <Pressable hitSlop={8} style={[st.round, { backgroundColor: C.water }]} onPress={() => setWater(water + 1)}><Icon name="plus" size={18} color="#001a26" stroke={2.6} /></Pressable>
         </Row>
         <Row style={{ gap: 6, marginTop: 14 }}>
-          {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
+          {Array.from({ length: waterGoal }, (_, i) => i + 1).map((n) => (
             <Pressable key={n} style={{ flex: 1 }} onPress={() => setWater(water === n ? n - 1 : n)}>
               <View style={[st.glass, n <= water && { backgroundColor: C.water }]} />
             </Pressable>
@@ -180,13 +199,30 @@ export default function Today() {
         </Row>
       </Card>
 
+      <Pressable onPress={() => router.push('/fasting')}>
+        <Card style={{ marginTop: 10 }}>
+          <Row style={{ gap: 12 }}>
+            <IconBadge name="moon" color="#9C8CFF" size={44} />
+            <View style={{ flex: 1 }}>
+              <Txt style={{ fontWeight: '800', fontSize: 16 }}>{t('fastT')}</Txt>
+              {fast.start
+                ? <Num style={{ color: '#9C8CFF', fontWeight: '900', fontSize: 15 }}>{hms(now - fast.start)} / {fast.hours}h</Num>
+                : <Txt style={{ color: C.mut, fontSize: 12 }}>{t('fastS')}</Txt>}
+            </View>
+            {fast.start
+              ? <Ring size={44} stroke={5} value={now - fast.start} max={fast.hours * 3600e3} color="#9C8CFF"><Icon name="moon" size={16} color="#9C8CFF" /></Ring>
+              : <View style={[st.round, { backgroundColor: '#9C8CFF' }]}><Icon name="bolt" size={17} color="#000" stroke={2.6} /></View>}
+          </Row>
+        </Card>
+      </Pressable>
+
       <Card style={{ marginTop: 10 }}>
         <Row style={{ gap: 12 }}>
           <IconBadge name="run" color="#FF9F5C" size={44} />
           <View style={{ flex: 1 }}>
             <Txt style={{ fontWeight: '800', fontSize: 16 }}>{t('exT')}</Txt>
             {burned > 0
-              ? <Num style={{ color: '#FF9F5C', fontSize: 13, fontWeight: '700', textAlign: rtl ? 'right' : 'left' }}>{fmt(burned)} kcal</Num>
+              ? <Num style={{ color: '#FF9F5C', fontSize: 13, fontWeight: '700', textAlign: 'left' }}>{fmt(burned)} kcal</Num>
               : <Txt style={{ color: C.mut, fontSize: 12 }}>{t('exNone')}</Txt>}
           </View>
           <Pressable hitSlop={8} style={[st.round, { backgroundColor: '#FF9F5C' }]} onPress={() => setExOpen(true)}><Icon name="plus" size={18} color="#000" stroke={2.8} /></Pressable>
@@ -195,7 +231,7 @@ export default function Today() {
           <Pressable key={b.id} onLongPress={() => removeBurn(dk, b.id)} style={st.exRow}>
             <Txt style={{ flex: 1, fontWeight: '700', fontSize: 14 }}>{b.name}</Txt>
             <Num style={{ color: C.mut, fontSize: 12 }}>{b.min} min</Num>
-            <Num style={{ fontWeight: '900', color: '#FF9F5C', width: 70, textAlign: rtl ? 'left' : 'right' }}>-{fmt(b.kcal)}</Num>
+            <Num style={{ fontWeight: '900', color: '#FF9F5C', width: 70, textAlign: 'right' }}>-{fmt(b.kcal)}</Num>
           </Pressable>
         ))}
       </Card>
@@ -212,6 +248,23 @@ export default function Today() {
       </Pressable>
 
       <H2>{t('meals')}</H2>
+      {freq.length > 0 && (
+        <View style={{ marginBottom: 10 }}>
+          <Txt style={{ color: C.mut, fontWeight: '700', fontSize: 13, marginBottom: 8 }}>{t('quickAdd')}</Txt>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginHorizontal: -20 }} contentContainerStyle={{ gap: 8, paddingHorizontal: 20 }}>
+            {freq.map((m) => (
+              <Pressable key={m.id} onPress={() => addMeal({ name: m.name, cat: m.cat, kcal: m.kcal, P: m.P, C: m.C, F: m.F, photo: m.photo })} style={({ pressed }) => [st.qa, pressed && { transform: [{ scale: 0.96 }] }]}>
+                <Icon name="plus" size={14} color={C.green} stroke={2.8} />
+                <Txt numberOfLines={1} style={{ fontWeight: '700', fontSize: 13, maxWidth: 150 }}>{m.name}</Txt>
+                <Num style={{ color: C.dim, fontSize: 12 }}>{fmt(m.kcal)}</Num>
+              </Pressable>
+            ))}
+          </ScrollView>
+        </View>
+      )}
+      {!meals.length && (days[yKey]?.meals.length ?? 0) > 0 && (
+        <Btn kind="soft" title={t('copyY')} style={{ marginBottom: 10 }} icon={<Icon name="copy" size={17} />} onPress={() => copyDay(yKey)} />
+      )}
       {!meals.length && (
         <Card style={{ padding: 0, overflow: 'hidden', marginBottom: 10 }}>
           <ImageBackground source={IMG.scan} style={{ height: 150 }} resizeMode="cover">
@@ -238,7 +291,7 @@ export default function Today() {
                 <IconBadge name={ci.icon} color={ci.color} size={40} />
                 <View style={{ flex: 1 }}>
                   <Txt style={{ fontWeight: '900', fontSize: 16 }}>{t(c)}</Txt>
-                  <Num style={{ color: C.mut, fontSize: 12, textAlign: rtl ? 'right' : 'left' }}>{fmt(k)} kcal</Num>
+                  <Num style={{ color: C.mut, fontSize: 12, textAlign: 'left' }}>{fmt(k)} kcal</Num>
                 </View>
                 <Pressable hitSlop={6} onPress={() => openScan(c)} style={st.round}><Icon name="camera" size={17} /></Pressable>
                 <Pressable hitSlop={6} onPress={() => openFood(c)} style={[st.round, { backgroundColor: C.green }]}><Icon name="plus" size={18} color="#000" stroke={2.8} /></Pressable>
@@ -279,7 +332,7 @@ export default function Today() {
                 <LinearGradient colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.88)']} locations={[0.35, 1]} style={StyleSheet.absoluteFill} />
                 <View style={{ marginTop: 'auto', padding: 12 }}>
                   <Txt style={{ fontWeight: '900', fontSize: 16 }}>{t(c)}</Txt>
-                  <Num style={{ color: C.green, fontWeight: '800', fontSize: 12, textAlign: rtl ? 'right' : 'left' }}>{fmt(k)} kcal</Num>
+                  <Num style={{ color: C.green, fontWeight: '800', fontSize: 12, textAlign: 'left' }}>{fmt(k)} kcal</Num>
                 </View>
               </ImageBackground>
             </Pressable>
@@ -341,6 +394,7 @@ const st = StyleSheet.create({
   proBan: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: R.lg, padding: 16, borderWidth: 1, borderColor: 'rgba(57,230,140,0.35)' },
   crown: { width: 42, height: 42, borderRadius: 14, backgroundColor: '#FFD45C', alignItems: 'center', justifyContent: 'center' },
   meal: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: C.stroke },
+  qa: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: C.surface, borderWidth: 1, borderColor: C.stroke, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 8 },
   exRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 10, paddingTop: 10, borderTopWidth: 1, borderTopColor: C.stroke },
   thumb: { width: 48, height: 48, borderRadius: 14 },
   tile: { width: 140, height: 176, borderRadius: R.md, overflow: 'hidden', borderWidth: 1, borderColor: C.stroke },

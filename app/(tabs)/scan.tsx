@@ -207,7 +207,7 @@ export default function Scan() {
                 <Row key={i} style={[st.item, i > 0 && { borderTopWidth: 1, borderTopColor: C.stroke }]}>
                   <Txt numberOfLines={2} style={{ flex: 1, fontWeight: '600' }}>{it.name}</Txt>
                   <Num style={{ color: C.dim, fontSize: 13, width: 60, textAlign: 'center' }}>{Math.round(it.grams)} g</Num>
-                  <Num style={{ color: C.green, fontWeight: '800', width: 78, textAlign: rtl ? 'left' : 'right' }}>{Math.round(it.kcal)} kcal</Num>
+                  <Num style={{ color: C.green, fontWeight: '800', width: 78, textAlign: 'right' }}>{Math.round(it.kcal)} kcal</Num>
                 </Row>
               ))}
             </View>
@@ -258,7 +258,7 @@ export default function Scan() {
                   <LinearGradient colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.9)']} locations={[0.3, 1]} style={StyleSheet.absoluteFill} />
                   <View style={{ marginTop: 'auto', padding: 10 }}>
                     <Txt numberOfLines={1} style={{ fontWeight: '800', fontSize: 13 }}>{m.name}</Txt>
-                    <Num style={{ color: C.green, fontWeight: '800', fontSize: 12, textAlign: rtl ? 'right' : 'left' }}>{fmt(m.kcal)} kcal</Num>
+                    <Num style={{ color: C.green, fontWeight: '800', fontSize: 12, textAlign: 'left' }}>{fmt(m.kcal)} kcal</Num>
                   </View>
                 </ImageBackground>
               </View>

@@ -106,7 +106,7 @@ export default function Barcode() {
               <View style={{ flex: 1 }}>
                 <Txt style={{ fontSize: 20, fontWeight: '900' }}>{prod.name}</Txt>
                 {!!prod.brand && <Txt style={{ color: C.mut }}>{prod.brand}</Txt>}
-                <Num style={{ color: C.dim, fontSize: 12, textAlign: rtl ? 'right' : 'left' }}>{fmt(prod.k)} kcal · {t('per100')}</Num>
+                <Num style={{ color: C.dim, fontSize: 12, textAlign: 'left' }}>{fmt(prod.k)} kcal · {t('per100')}</Num>
               </View>
             </Row>
             <View style={st.kcal}>

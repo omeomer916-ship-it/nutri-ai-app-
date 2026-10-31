@@ -15,7 +15,7 @@ import { LangPicker } from '../../src/components/LangPicker';
 
 export default function Profile() {
   const { t, lang, rtl } = useT();
-  const { account, goals, profile, setGoals, signOut, resetAll, days, weights, remind, setRemind } = useApp();
+  const { account, goals, profile, setGoals, signOut, resetAll, days, weights, remind, setRemind, waterGoal, setWaterGoal } = useApp();
   const toggle = async (k: 'meals' | 'water', on: boolean) => {
     const next = { ...remind, [k]: on };
     setRemind({ [k]: on });
@@ -121,7 +121,7 @@ export default function Profile() {
             <Txt style={{ fontWeight: '800' }}>{t('bmi')}</Txt>
             <View style={[st.bmiTag, { backgroundColor: bmiC + '22' }]}><Txt style={{ color: bmiC, fontWeight: '800', fontSize: 12 }}>{t(bmiK)}</Txt></View>
           </Row>
-          <Num style={{ fontSize: 34, fontWeight: '900', marginTop: 4, textAlign: rtl ? 'right' : 'left' }}>{bmi.toFixed(1)}</Num>
+          <Num style={{ fontSize: 34, fontWeight: '900', marginTop: 4, textAlign: 'left' }}>{bmi.toFixed(1)}</Num>
           <View style={st.bmiBar}>
             {[C.water, C.green, C.carb, C.red].map((c, i) => <View key={i} style={{ flex: [18.5 - 15, 25 - 18.5, 30 - 25, 40 - 30][i], backgroundColor: c, opacity: 0.85 }} />)}
             <View style={[st.bmiDot, { left: `${Math.max(0, Math.min(100, ((bmi - 15) / 25) * 100))}%` }]} />
@@ -152,7 +152,14 @@ export default function Profile() {
       <H2>{t('remT')}</H2>
       <Card style={{ paddingVertical: 2 }}>
         {sw('bell', '#FF9F5C', t('remMeals'), 'meals')}
-        <View style={{ marginBottom: -1 }}>{sw('drop', C.water, t('remWater'), 'water')}</View>
+        {sw('drop', C.water, t('remWater'), 'water')}
+        <Row style={[st.row, { borderBottomWidth: 0 }]}>
+          <IconBadge name="drop" color={C.water} size={38} icon={18} />
+          <Txt style={{ flex: 1, fontWeight: '700' }}>{t('waterGoal')}</Txt>
+          <Pressable hitSlop={8} onPress={() => setWaterGoal(waterGoal - 1)} style={st.step}><Icon name="minus" size={16} /></Pressable>
+          <Num style={{ fontWeight: '900', fontSize: 16, minWidth: 54, textAlign: 'center' }}>{(waterGoal * 0.25).toFixed(2).replace(/0$/, '')} L</Num>
+          <Pressable hitSlop={8} onPress={() => setWaterGoal(waterGoal + 1)} style={st.step}><Icon name="plus" size={16} /></Pressable>
+        </Row>
       </Card>
 
       <H2>{t('settings')}</H2>
@@ -186,6 +193,7 @@ const st = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: C.stroke, gap: 12 },
   inWrap: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: C.surface2, borderRadius: R.pill, paddingHorizontal: 12, height: 42 },
   in: { width: 62, height: 42, paddingVertical: 0, color: '#fff', textAlign: 'center', textAlignVertical: 'center', includeFontPadding: false, fontSize: 16 },
+  step: { width: 32, height: 32, borderRadius: 16, backgroundColor: C.surface2, alignItems: 'center', justifyContent: 'center' },
   proBan: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: R.lg, padding: 16, borderWidth: 1, borderColor: 'rgba(255,212,92,0.4)' },
   crown: { width: 42, height: 42, borderRadius: 14, backgroundColor: '#FFD45C', alignItems: 'center', justifyContent: 'center' },
   bmiTag: { borderRadius: 999, paddingHorizontal: 10, paddingVertical: 3 },

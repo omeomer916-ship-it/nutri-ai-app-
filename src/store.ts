@@ -63,6 +63,13 @@ type State = {
   weights: { t: number; w: number }[];
   myFoods: MyFood[];
   remind: { meals: boolean; water: boolean };
+  fast: { start: number | null; hours: number; log: { s: number; e: number; h: number }[] };
+  startFast: (hours: number) => void;
+  endFast: () => void;
+  setFastHours: (h: number) => void;
+  waterGoal: number;
+  setWaterGoal: (n: number) => void;
+  copyDay: (from: string) => void;
   setRemind: (r: Partial<{ meals: boolean; water: boolean }>) => void;
   burn: Record<string, { id: string; name: string; kcal: number; min: number }[]>;
   addBurn: (b: { name: string; kcal: number; min: number }) => void;
@@ -82,7 +89,7 @@ type State = {
   resetAll: () => void;
 };
 
-const initial: Pick<State, 'lang' | 'seenIntro' | 'account' | 'profile' | 'goals' | 'days' | 'weights' | 'myFoods' | 'remind' | 'burn'> = {
+const initial: Pick<State, 'lang' | 'seenIntro' | 'account' | 'profile' | 'goals' | 'days' | 'weights' | 'myFoods' | 'remind' | 'burn' | 'fast' | 'waterGoal'> = {
   lang: deviceLang(),
   seenIntro: false,
   account: null,
@@ -93,6 +100,8 @@ const initial: Pick<State, 'lang' | 'seenIntro' | 'account' | 'profile' | 'goals
   myFoods: [],
   remind: { meals: false, water: false },
   burn: {},
+  fast: { start: null, hours: 16, log: [] },
+  waterGoal: 8,
 };
 
 export const useApp = create<State>()(
@@ -113,6 +122,25 @@ export const useApp = create<State>()(
         const d = days[k] ?? { meals: [], water: 0 };
         const meal: Meal = { ...m, id: Math.random().toString(36).slice(2), t: Date.now() };
         days[k] = { ...d, meals: [meal, ...d.meals] };
+        set({ days });
+      },
+      startFast: (hours) => set({ fast: { ...get().fast, start: Date.now(), hours } }),
+      endFast: () => {
+        const f = get().fast;
+        if (!f.start) return;
+        set({ fast: { ...f, start: null, log: [{ s: f.start, e: Date.now(), h: f.hours }, ...f.log].slice(0, 60) } });
+      },
+      setFastHours: (h) => set({ fast: { ...get().fast, hours: h } }),
+      setWaterGoal: (n) => set({ waterGoal: Math.max(4, Math.min(16, n)) }),
+      copyDay: (from) => {
+        const src = get().days[from];
+        if (!src?.meals.length) return;
+        const k = dayKey();
+        const days = { ...get().days };
+        const d = days[k] ?? { meals: [], water: 0 };
+        const now = Date.now();
+        const copies = src.meals.map((m, i) => ({ ...m, id: Math.random().toString(36).slice(2), t: now - i }));
+        days[k] = { ...d, meals: [...copies, ...d.meals] };
         set({ days });
       },
       setRemind: (r) => set({ remind: { ...get().remind, ...r } }),
@@ -142,7 +170,7 @@ export const useApp = create<State>()(
         const k = dayKey();
         const days = { ...get().days };
         const d = days[k] ?? { meals: [], water: 0 };
-        days[k] = { ...d, water: Math.max(0, Math.min(12, n)) };
+        days[k] = { ...d, water: Math.max(0, Math.min(20, n)) };
         set({ days });
       },
       addWeight: (w) => set({ weights: [...get().weights, { t: Date.now(), w }] }),

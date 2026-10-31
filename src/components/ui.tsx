@@ -11,7 +11,8 @@ export function Txt({ style, center, ...p }: TextProps & { center?: boolean }) {
   const { rtl, lang } = useT();
   const flat = (StyleSheet.flatten([{ color: C.white, fontSize: 15 }, style]) || {}) as TextStyle;
   const fam = fontFor(flat.fontWeight as string | undefined, lang);
-  const out: TextStyle = { textAlign: center ? 'center' : rtl ? 'right' : 'left', writingDirection: rtl ? 'rtl' : 'ltr', ...flat };
+  // Android mirrors left/right inside an RTL layout, so 'left' means "start" here.
+  const out: TextStyle = { textAlign: center ? 'center' : 'left', writingDirection: rtl ? 'rtl' : 'ltr', ...flat };
   if (fam) { out.fontFamily = fam; delete out.fontWeight; }
   return <Text {...p} style={out} />;
 }
@@ -21,7 +22,7 @@ export function Num({ style, ...p }: TextProps) {
   const { lang } = useT();
   const flat = (StyleSheet.flatten([{ color: C.white, fontSize: 15 }, style]) || {}) as TextStyle;
   const fam = fontFor(flat.fontWeight as string | undefined, lang);
-  const out: TextStyle = { writingDirection: 'ltr', ...flat };
+  const out: TextStyle = { textAlign: 'left', writingDirection: 'ltr', ...flat };
   if (fam) { out.fontFamily = fam; delete out.fontWeight; }
   return <Text {...p} style={out} />;
 }

@@ -46,3 +46,12 @@ export async function askCoach(messages: ChatMsg[], lang: string, context: strin
   const res = await post<{ text: string }>('/api/chat', { messages, lang, context });
   return res.text;
 }
+
+export type DescribeResult = ScanResult & { heard?: string };
+
+/** Meal from words: typed text or a recorded voice note (base64 m4a). */
+export async function describeMeal(input: { text?: string; audio?: string; mime?: string }, lang: string): Promise<DescribeResult> {
+  const res = await post<DescribeResult>('/api/describe', { ...input, lang });
+  if (res.error === 'no_food') throw new AiError('no_food');
+  return res;
+}

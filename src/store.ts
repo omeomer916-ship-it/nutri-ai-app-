@@ -30,6 +30,8 @@ export type Profile = {
   goal: 'lose' | 'keep' | 'gain'; act: 1 | 2 | 3 | 4;
   pace?: number; diet?: 'any' | 'veg' | 'vegan' | 'keto' | 'lowcarb' | 'highP' | 'medi';
 };
+export type Health = { diabetes: boolean; bp: boolean; gluten: boolean; nuts: boolean; lactose: boolean };
+export type BodyPhoto = { id: string; t: number; uri: string; w?: number };
 export type MyFood = { id: string; name: string; k: number; P: number; C: number; F: number };
 export type Account = { name: string; email?: string; photo?: string; guest: boolean };
 
@@ -75,6 +77,15 @@ type State = {
   waterGoal: number;
   imperial: boolean;
   theme: 'system' | 'dark' | 'light';
+  health: Health;
+  setHealth: (h: Partial<Health>) => void;
+  photos: BodyPhoto[];
+  addPhoto: (p: Omit<BodyPhoto, 'id'>) => void;
+  removePhoto: (id: string) => void;
+  rateAsked: number;
+  report: { k: string; text: string } | null;
+  setReport: (r: { k: string; text: string }) => void;
+  setRateAsked: (t: number) => void;
   setTheme: (v: 'system' | 'dark' | 'light') => void;
   isPro: boolean;
   scans: Record<string, number>;
@@ -101,7 +112,7 @@ type State = {
   resetAll: () => void;
 };
 
-const initial: Pick<State, 'lang' | 'seenIntro' | 'account' | 'profile' | 'goals' | 'days' | 'weights' | 'myFoods' | 'remind' | 'burn' | 'fast' | 'waterGoal' | 'imperial' | 'theme' | 'isPro' | 'scans'> = {
+const initial: Pick<State, 'lang' | 'seenIntro' | 'account' | 'profile' | 'goals' | 'days' | 'weights' | 'myFoods' | 'remind' | 'burn' | 'fast' | 'waterGoal' | 'imperial' | 'theme' | 'health' | 'photos' | 'rateAsked' | 'report' | 'isPro' | 'scans'> = {
   lang: deviceLang(),
   seenIntro: false,
   account: null,
@@ -116,6 +127,10 @@ const initial: Pick<State, 'lang' | 'seenIntro' | 'account' | 'profile' | 'goals
   waterGoal: 8,
   imperial: false,
   theme: 'system',
+  health: { diabetes: false, bp: false, gluten: false, nuts: false, lactose: false },
+  photos: [],
+  rateAsked: 0,
+  report: null,
   isPro: false,
   scans: {},
 };
@@ -153,6 +168,11 @@ export const useApp = create<State>()(
       },
       setImperial: (v) => set({ imperial: v }),
       setTheme: (v) => set({ theme: v }),
+      setHealth: (h) => set((s) => ({ health: { ...s.health, ...h } })),
+      addPhoto: (p) => set((s) => ({ photos: [...s.photos, { ...p, id: String(Date.now()) }].sort((a, b) => a.t - b.t) })),
+      removePhoto: (id) => set((s) => ({ photos: s.photos.filter((x) => x.id !== id) })),
+      setRateAsked: (t) => set({ rateAsked: t }),
+      setReport: (r) => set({ report: r }),
       setWaterGoal: (n) => set({ waterGoal: Math.max(4, Math.min(16, n)) }),
       copyDay: (from) => {
         const src = get().days[from];

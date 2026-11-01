@@ -49,6 +49,9 @@ export default function RootLayout() {
             <Stack.Screen name="barcode" options={{ animation: 'slide_from_bottom' }} />
             <Stack.Screen name="fasting" options={{ animation: 'slide_from_right' }} />
             <Stack.Screen name="pro" options={{ animation: 'slide_from_bottom', presentation: 'modal' }} />
+            <Stack.Screen name="voice" options={{ animation: 'slide_from_bottom' }} />
+            <Stack.Screen name="share" options={{ animation: 'slide_from_bottom' }} />
+            {['report', 'challenges', 'body', 'health', 'recipes'].map((n) => <Stack.Screen key={n} name={n} options={{ animation: 'slide_from_right' }} />)}
           </Stack>
           <Toast />
         </View>

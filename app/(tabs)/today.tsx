@@ -9,6 +9,8 @@ import { C, CAT_ICON, IMG, R, themed, fa } from '../../src/theme';
 import { Btn, Card, H2, IconBadge, Num, Pop, Row, Screen, Txt } from '../../src/components/ui';
 import { Ring } from '../../src/components/Ring';
 import { Brand } from '../../src/components/Brand';
+import * as StoreReview from 'expo-store-review';
+import { Illus } from '../../src/components/Illus';
 import { Icon, IconName } from '../../src/components/Icon';
 import { MealSheet } from '../../src/components/MealSheet';
 import { ExerciseSheet } from '../../src/components/ExerciseSheet';
@@ -66,10 +68,21 @@ export default function Today() {
     : hr >= 15 && tot.P < goals.P * 0.5 ? 'inP'
     : tot.kcal >= goals.kcal * 0.85 ? 'inGood' : 'inLeft';
 
-  const shareDay = () => Share.share({
-    message: `Nutri AI · ${new Date().toLocaleDateString(loc, { weekday: 'long', day: 'numeric', month: 'long' })}\n` +
-      `${fmt(tot.kcal)} / ${fmt(goals.kcal)} kcal\n${t('P')} ${Math.round(tot.P)}g · ${t('Cb')} ${Math.round(tot.C)}g · ${t('F')} ${Math.round(tot.F)}g`,
-  }).catch(() => {});
+  const shareDay = () => router.push('/share');
+
+  // Ask for a store rating once, only after a few good days of use.
+  const rateAsked = useApp((s) => s.rateAsked);
+  const setRateAsked = useApp((s) => s.setRateAsked);
+  useEffect(() => {
+    if (rateAsked || !meals.length) return;
+    const active = Object.values(days).filter((d) => d.meals.length > 0).length;
+    if (active < 3) return;
+    const id = setTimeout(async () => {
+      setRateAsked(Date.now());
+      try { if (await StoreReview.isAvailableAsync()) await StoreReview.requestReview(); } catch { /* not available */ }
+    }, 2500);
+    return () => clearTimeout(id);
+  }, [meals.length]);
 
   const yKey = dayKey(Date.now() - 864e5);
   const freq = (() => {
@@ -163,9 +176,9 @@ export default function Today() {
 
       <Row style={{ gap: 10, marginTop: 10 }}>
         <QuickBtn icon="camera" label={t('scanNow')} color={C.green} onPress={() => openScan()} />
-        <QuickBtn delay={250} icon="barcode" label={t('barcode')} color={C.mint} onPress={() => router.push('/barcode')} />
-        <QuickBtn delay={500} icon="search" label={t('addFood')} color={C.water} onPress={() => openFood()} />
-        <QuickBtn delay={750} icon="share" label={t('shareDay')} color={C.carb} onPress={shareDay} />
+        <QuickBtn delay={200} icon="mic" label={t('voiceQ')} color={C.green} onPress={() => router.push('/voice')} />
+        <QuickBtn delay={400} icon="barcode" label={t('barcode')} color={C.mint} onPress={() => router.push('/barcode')} />
+        <QuickBtn delay={600} icon="search" label={t('addFood')} color={C.water} onPress={() => openFood()} />
       </Row>
 
       <Card style={{ marginTop: 10, flexDirection: 'row', gap: 12, alignItems: 'flex-start' }}>
@@ -179,6 +192,15 @@ export default function Today() {
           </Pressable>
         </View>
       </Card>
+
+      <View style={st.tools}>
+        {([['book', 'recT', '/recipes'], ['trophy', 'chT', '/challenges'], ['chart', 'repT', '/report'], ['compare', 'bodyT', '/body'], ['share', 'shareDay', '/share'], ['shield', 'hT', '/health']] as [IconName, TKey, string][]).map(([ic, k, to], i) => (
+          <Pressable key={k} onPress={() => router.push(to as never)} style={({ pressed }) => [st.tool, pressed && { transform: [{ scale: 0.97 }] }]}>
+            <IconBadge name={ic} size={40} icon={20} delay={i * 80} />
+            <Txt center numberOfLines={2} style={{ fontSize: 12, fontWeight: '800', marginTop: 7, lineHeight: 16 }}>{t(k)}</Txt>
+          </Pressable>
+        ))}
+      </View>
 
       <Card style={{ marginTop: 10 }}>
         <Row style={{ gap: 12 }}>
@@ -267,9 +289,7 @@ export default function Today() {
       )}
       {!meals.length && (
         <Card style={{ padding: 0, overflow: 'hidden', marginBottom: 10 }}>
-          <ImageBackground source={IMG.scan} style={{ height: 150 }} resizeMode="cover">
-            <LinearGradient colors={[C.surface + '00', C.surface]} style={StyleSheet.absoluteFill} />
-          </ImageBackground>
+          <View style={{ alignItems: 'center', paddingTop: 10 }}><Illus kind="plate" size={150} /></View>
           <View style={{ padding: 18, paddingTop: 2 }}>
             <Txt style={{ fontWeight: '900', fontSize: 18 }}>{t('emptyT')}</Txt>
             <Txt style={{ color: C.mut, marginTop: 4, lineHeight: 22 }}>{t('emptyS')}</Txt>
@@ -391,6 +411,8 @@ const st = themed(() => StyleSheet.create({
   quick: { flex: 1, alignItems: 'center', backgroundColor: C.surface, borderWidth: 1, borderColor: C.stroke, borderRadius: R.md, paddingVertical: 12, paddingHorizontal: 6 },
   round: { width: 36, height: 36, borderRadius: 18, backgroundColor: C.surface2, alignItems: 'center', justifyContent: 'center' },
   glass: { height: 26, borderRadius: 7, backgroundColor: 'rgba(79,195,255,0.12)' },
+  tools: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 10 },
+  tool: { width: '31.4%', flexGrow: 1, alignItems: 'center', backgroundColor: C.surface, borderWidth: 1, borderColor: C.border, borderRadius: 20, paddingVertical: 14, paddingHorizontal: 6 },
   proBan: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: R.lg, padding: 16, borderWidth: 1, borderColor: 'rgba(255,212,92,0.4)' },
   crown: { width: 42, height: 42, borderRadius: 14, backgroundColor: '#FFD45C', alignItems: 'center', justifyContent: 'center' },
   meal: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: C.stroke },

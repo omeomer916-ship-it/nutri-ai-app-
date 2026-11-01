@@ -4,9 +4,19 @@ import Svg, { Circle, Path, Rect } from 'react-native-svg';
 export type IconName =
   | 'flame' | 'wheat' | 'drumstick' | 'avocado' | 'drop' | 'camera' | 'image' | 'plus' | 'minus' | 'chevron'
   | 'send' | 'sparkle' | 'home' | 'chart' | 'user' | 'chat' | 'globe' | 'refresh' | 'logout' | 'trash'
-  | 'target' | 'scale' | 'check' | 'x' | 'bolt' | 'sun' | 'moon' | 'bowl' | 'cookie' | 'cake' | 'cup' | 'scan' | 'info' | 'search' | 'crown' | 'share' | 'star' | 'edit' | 'copy' | 'lock' | 'trophy' | 'barcode' | 'bell' | 'run' | 'meat' | 'bread';
+  | 'target' | 'scale' | 'check' | 'x' | 'bolt' | 'sun' | 'moon' | 'bowl' | 'cookie' | 'cake' | 'cup' | 'scan' | 'info' | 'search' | 'crown' | 'share' | 'star' | 'edit' | 'copy' | 'lock' | 'trophy' | 'barcode' | 'bell' | 'run' | 'meat' | 'bread'
+  | 'mic' | 'heart' | 'shield' | 'book' | 'compare' | 'calendar' | 'alert' | 'clock' | 'medal';
 
 const P: Record<IconName, (c: string) => React.ReactNode> = {
+  mic: () => (<><Rect x={9} y={2} width={6} height={12} rx={3} /><Path d="M5 10a7 7 0 0 0 14 0M12 17v4M8 21h8" /></>),
+  heart: () => <Path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.8 0-3 .5-4.5 2-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7z" />,
+  shield: () => (<><Path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /><Path d="M9 12l2 2 4-4" /></>),
+  book: () => (<><Path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V2H6.5A2.5 2.5 0 0 0 4 4.5z" /><Path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5" /></>),
+  compare: () => (<><Rect x={3} y={4} width={7} height={16} rx={2} /><Rect x={14} y={4} width={7} height={16} rx={2} /><Path d="M12 2v20" /></>),
+  calendar: () => (<><Rect x={3} y={4} width={18} height={18} rx={3} /><Path d="M16 2v4M8 2v4M3 10h18" /></>),
+  alert: () => (<><Path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z" /><Path d="M12 9v4M12 17h.01" /></>),
+  clock: () => (<><Circle cx={12} cy={12} r={9} /><Path d="M12 7v5l3 2" /></>),
+  medal: () => (<><Circle cx={12} cy={15} r={6} /><Path d="M8.5 10.5L5 2h4l3 6M15.5 10.5L19 2h-4l-2.2 4.5" /><Path d="M12 12.5l.9 1.8 2 .3-1.4 1.4.3 2-1.8-1-1.8 1 .3-2-1.4-1.4 2-.3z" /></>),
   flame: () => <Path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z" />,
   wheat: () => (
     <>

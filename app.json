@@ -15,7 +15,8 @@
       "infoPlist": {
         "NSCameraUsageDescription": "Nutri AI uses the camera to photograph your meals and estimate their calories.",
         "NSPhotoLibraryUsageDescription": "Nutri AI lets you pick a meal photo from your library.",
-        "NSUserNotificationsUsageDescription": "Nutri AI sends the meal and water reminders you turn on."
+        "NSUserNotificationsUsageDescription": "Nutri AI sends the meal and water reminders you turn on.",
+        "NSMicrophoneUsageDescription": "Nutri AI uses the microphone so you can log meals by voice."
       },
       "buildNumber": "1",
       "config": {
@@ -30,7 +31,8 @@
       },
       "edgeToEdgeEnabled": true,
       "permissions": [
-        "CAMERA"
+        "CAMERA",
+        "RECORD_AUDIO"
       ],
       "versionCode": 18,
       "predictiveBackGestureEnabled": false
@@ -69,14 +71,19 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "Nutri AI uses the camera to scan meals and barcodes.",
-          "recordAudioAndroid": false
+          "cameraPermission": "Nutri AI uses the camera to scan meals and barcodes."
         }
       ],
       [
         "expo-notifications",
         {
           "color": "#39E68C"
+        }
+      ],
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "Nutri AI uses the microphone so you can log meals by voice."
         }
       ]
     ],

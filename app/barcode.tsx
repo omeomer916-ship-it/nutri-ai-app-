@@ -10,11 +10,17 @@ import { fmt } from '../src/calc';
 import { C, CAT_ICON, themed, fa } from '../src/theme';
 import { Btn, Chip, Num, Row, Txt } from '../src/components/ui';
 import { Icon, IconName } from '../src/components/Icon';
+import { MealAlerts } from '../src/components/Alerts';
 
-type Product = { name: string; brand?: string; img?: string; k: number; P: number; C: number; F: number; serving?: number };
+type Product = { name: string; brand?: string; img?: string; k: number; P: number; C: number; F: number; serving?: number; grade?: string; sugar?: number; salt?: number; sat?: number; ing?: string };
+
+const num = (x: unknown) => (x === undefined || x === null || x === '' || !isFinite(Number(x)) ? undefined : Number(x));
+
+/** Nutri-Score colours, A (best) to E. */
+const GRADE: Record<string, string> = { a: '#1E8F4E', b: '#7AC547', c: '#F5C100', d: '#EF7D00', e: '#E63E11' };
 
 async function lookup(code: string): Promise<Product | null> {
-  const fields = 'product_name,product_name_ar,product_name_en,brands,nutriments,serving_quantity,image_front_small_url';
+  const fields = 'product_name,product_name_ar,product_name_en,brands,nutriments,serving_quantity,image_front_small_url,nutriscore_grade,ingredients_text';
   const r = await fetch(`https://world.openfoodfacts.org/api/v2/product/${encodeURIComponent(code)}.json?fields=${fields}`, {
     headers: { 'User-Agent': 'NutriAI/1.5 (Android)' },
   });
@@ -31,7 +37,47 @@ async function lookup(code: string): Promise<Product | null> {
     img: p.image_front_small_url,
     k, P: Number(n.proteins_100g) || 0, C: Number(n.carbohydrates_100g) || 0, F: Number(n.fat_100g) || 0,
     serving: Number(p.serving_quantity) || undefined,
+    grade: typeof p.nutriscore_grade === 'string' && /^[a-e]$/.test(p.nutriscore_grade) ? p.nutriscore_grade : undefined,
+    sugar: num(n.sugars_100g), salt: num(n.salt_100g), sat: num(n['saturated-fat_100g']),
+    ing: typeof p.ingredients_text === 'string' ? p.ingredients_text.slice(0, 400) : undefined,
   };
+}
+
+/** Health grade (Nutri-Score) plus sugar, salt and saturated fat levels per 100 g. */
+function Score({ p }: { p: Product }) {
+  const { t } = useT();
+  const lv = (v: number | undefined, lo: number, hi: number) => (v === undefined ? null : v >= hi ? 2 : v > lo ? 1 : 0);
+  const rows: [TKey, number | undefined, 0 | 1 | 2 | null][] = [
+    ['sugar', p.sugar, lv(p.sugar, 5, 22.5)], ['salt', p.salt, lv(p.salt, 0.3, 1.5)], ['satFat', p.sat, lv(p.sat, 1.5, 5)],
+  ];
+  const shown = rows.filter((r) => r[2] !== null);
+  if (!p.grade && !shown.length) return null;
+  const col = ['#1FC46F', '#F5A400', '#E5484D'];
+  const word: TKey[] = ['lvLow', 'lvMed', 'lvHigh'];
+  return (
+    <View style={st.score}>
+      {!!p.grade && (
+        <Row style={{ gap: 10, marginBottom: shown.length ? 12 : 0 }}>
+          <Txt style={{ flex: 1, fontWeight: '900', fontSize: 15 }}>{t('healthScore')}</Txt>
+          <View style={{ flexDirection: 'row', gap: 3, direction: 'ltr' }}>
+            {['a', 'b', 'c', 'd', 'e'].map((g) => (
+              <View key={g} style={[st.grade, { backgroundColor: GRADE[g], opacity: g === p.grade ? 1 : 0.28 }, g === p.grade && st.gradeOn]}>
+                <Num style={{ color: '#fff', fontWeight: '900', fontSize: g === p.grade ? 17 : 12 }}>{g.toUpperCase()}</Num>
+              </View>
+            ))}
+          </View>
+        </Row>
+      )}
+      {shown.map(([k, v, l]) => (
+        <Row key={k} style={{ gap: 10, paddingVertical: 5 }}>
+          <View style={{ width: 9, height: 9, borderRadius: 5, backgroundColor: col[l!] }} />
+          <Txt style={{ flex: 1, fontWeight: '700', fontSize: 14 }}>{t(k)}</Txt>
+          <Num style={{ color: C.mut, fontSize: 13 }}>{Math.round((v ?? 0) * 10) / 10} g</Num>
+          <Txt style={{ color: col[l!], fontWeight: '800', fontSize: 12, width: 64, textAlign: 'right' }}>{t(word[l!])}</Txt>
+        </Row>
+      ))}
+    </View>
+  );
 }
 
 export default function Barcode() {
@@ -122,6 +168,8 @@ export default function Barcode() {
                 </View>
               ))}
             </Row>
+            <Score p={prod} />
+            <MealAlerts names={[prod.name, prod.brand ?? '', prod.ing ?? '']} m={{ C: v(prod.C), kcal: v(prod.k), F: v(prod.F) }} />
             <Txt style={st.lab}>{t('amount')}</Txt>
             <Row style={{ gap: 8 }}>
               {sizes.map((x) => (
@@ -149,6 +197,9 @@ const st = themed(() => StyleSheet.create({
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 28 },
   frame: { width: 280, height: 170, borderRadius: 26, borderWidth: 3, borderColor: C.green, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(57,230,140,0.06)' },
   hint: { marginTop: 18, backgroundColor: 'rgba(0,0,0,0.6)', borderRadius: 999, paddingHorizontal: 16, paddingVertical: 8 },
+  score: { marginTop: 14, padding: 14, borderRadius: 20, backgroundColor: C.surface, borderWidth: 1, borderColor: C.border },
+  grade: { width: 26, height: 30, borderRadius: 7, alignItems: 'center', justifyContent: 'center' },
+  gradeOn: { width: 34, height: 38, marginTop: -4, borderWidth: 2, borderColor: C.text },
   img: { width: 76, height: 76, borderRadius: 18, backgroundColor: '#fff' },
   kcal: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 18, paddingVertical: 8, backgroundColor: C.surface2, borderRadius: 20 },
   mt: { flex: 1, alignItems: 'center', backgroundColor: C.surface2, borderRadius: 16, paddingVertical: 10 },

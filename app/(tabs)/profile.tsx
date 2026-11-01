@@ -135,6 +135,13 @@ export default function Profile() {
         </Card>
       )}
 
+      <Card style={{ marginTop: 14, paddingVertical: 2 }}>
+        {item('shield', t('hT'), () => router.push('/health'))}
+        {item('compare', t('bodyT'), () => router.push('/body'))}
+        {item('trophy', t('chT'), () => router.push('/challenges'))}
+        {item('book', t('recT'), () => router.push('/recipes'), false, true)}
+      </Card>
+
       <H2 right={<Num style={{ color: C.mut, fontWeight: '800' }}>{ach.filter((a) => a[2]).length}/{ach.length}</Num>}>{t('achT')}</H2>
       <View style={st.achGrid}>
         {ach.map(([ic, k, on, col]) => (

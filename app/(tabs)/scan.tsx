@@ -13,6 +13,7 @@ import { C, CAT_ICON, IMG, R, fontFor, themed, fa } from '../../src/theme';
 import { Btn, Card, Chip, H2, IconBadge, Num, Row, Screen, Segmented, Txt } from '../../src/components/ui';
 import { IntroVideo } from '../../src/components/IntroVideo';
 import { Icon, IconName } from '../../src/components/Icon';
+import { MealAlerts } from '../../src/components/Alerts';
 
 // Example background + result shown for each meal type before the user takes a photo.
 const EX: Record<Cat, { bg?: number; ar: string; en: string; k: number; P: number; C: number; F: number }> = {
@@ -230,6 +231,7 @@ export default function Scan() {
             </View>
           )}
           {!!s.r.note && <Txt style={{ color: C.dim, fontSize: 12, marginTop: 10, lineHeight: 19 }}>{s.r.note}</Txt>}
+          <MealAlerts names={[s.r.name, ...(s.r.items ?? []).map((x) => x.name)]} m={{ C: s.r.carbs * mult, kcal: s.r.kcal * mult, F: s.r.fat * mult }} />
           <Row style={{ gap: 10, marginTop: 20 }}>
             <Pressable onPress={() => setFix(fix ? null : { name: s.r.name, kcal: String(Math.round(s.r.kcal)) })} style={[st.fixBtn, fix && { backgroundColor: C.green }]}>
               <Icon name="edit" size={18} color={fix ? '#000' : C.text} />

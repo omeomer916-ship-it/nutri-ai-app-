@@ -16,8 +16,9 @@ const useGemini = () => !!process.env.GEMINI_API_KEY;
  * - image: base64 JPEG (optional), attached to the last user message
  * Returns the model's text.
  */
-export async function ask({ system, messages, image, json = false, scan = false }) {
-  return useGemini() ? gemini({ system, messages, image, json, scan }) : openai({ system, messages, image, json, scan });
+export async function ask({ system, messages, image, audio, json = false, scan = false }) {
+  if (audio && !useGemini()) throw new Error('Voice needs GEMINI_API_KEY');
+  return useGemini() ? gemini({ system, messages, image, audio, json, scan }) : openai({ system, messages, image, json, scan });
 }
 
 // Gemini models this key can use, best first: newest "flash", then "flash-lite" as backup.
@@ -50,11 +51,12 @@ async function geminiModels(key) {
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-async function gemini({ system, messages, image, json }) {
+async function gemini({ system, messages, image, audio, json }) {
   const key = (process.env.GEMINI_API_KEY || '').trim();
   const contents = messages.map((m, i) => {
     const parts = [{ text: m.content }];
     if (image && i === messages.length - 1) parts.push({ inline_data: { mime_type: 'image/jpeg', data: image } });
+    if (audio && i === messages.length - 1) parts.push({ inline_data: { mime_type: audio.mime || 'audio/mp4', data: audio.data } });
     return { role: m.role === 'assistant' ? 'model' : 'user', parts };
   });
   const body = JSON.stringify({
@@ -76,7 +78,7 @@ async function gemini({ system, messages, image, json }) {
       if (left < 1500) throw new Error(`Gemini busy [${tried.join(', ')}] ${lastErr}`);
       const ctl = new AbortController();
       // Cap each try so one slow model can't use the whole time; images get a bit longer.
-      const cap = image ? 7500 : 4500;
+      const cap = image || audio ? 7500 : 4500;
       const timer = setTimeout(() => ctl.abort(), Math.min(cap, left - 500));
       try {
         const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`, {

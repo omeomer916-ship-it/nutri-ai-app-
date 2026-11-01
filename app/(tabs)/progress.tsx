@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Image, Pressable, StyleSheet, TextInput, View } from 'react-native';
 import Svg, { Circle, Defs, Line, LinearGradient as SvgGrad, Path, Stop } from 'react-native-svg';
+import { router } from 'expo-router';
 import { useT, TKey } from '../../src/i18n';
 import { Meal, dayKey, streakOf, totals, useApp } from '../../src/store';
 import { MealSheet } from '../../src/components/MealSheet';
@@ -8,6 +9,7 @@ import { KG_LB, fmt, wShow } from '../../src/calc';
 import { C, CAT_ICON, R, fontFor, themed, fa } from '../../src/theme';
 import { Bar, Btn, Card, H2, IconBadge, Num, Row, Screen, Segmented, Txt } from '../../src/components/ui';
 import { Ring } from '../../src/components/Ring';
+import { Illus } from '../../src/components/Illus';
 import { Icon, IconName } from '../../src/components/Icon';
 
 export default function Progress() {
@@ -140,7 +142,7 @@ function Daily() {
 }
 
 function Weekly() {
-  const { t, lang } = useT();
+  const { t, lang, rtl } = useT();
   const days = useApp((s) => s.days);
   const goals = useApp((s) => s.goals);
   const burn = useApp((s) => s.burn);
@@ -168,6 +170,14 @@ function Weekly() {
   ];
   return (
     <>
+      <Pressable onPress={() => router.push('/report')} style={({ pressed }) => [st.repBtn, pressed && { opacity: 0.85 }]}>
+        <IconBadge name="sparkle" size={42} icon={20} loop="pulse" />
+        <View style={{ flex: 1 }}>
+          <Txt style={{ fontWeight: '900' }}>{t('repT')}</Txt>
+          <Txt style={{ color: C.mut, fontSize: 12 }}>{t('repBtnS')}</Txt>
+        </View>
+        <View style={{ transform: [{ scaleX: rtl ? -1 : 1 }] }}><Icon name="chevron" size={18} color={C.green} stroke={2.6} /></View>
+      </Pressable>
       <Card style={{ paddingVertical: 20 }}>
         <Txt style={{ color: C.mut, fontWeight: '700' }}>{t('wkT')} · {t('avg')}</Txt>
         <Row style={{ alignItems: 'flex-end', gap: 8, marginTop: 4 }}>
@@ -243,8 +253,8 @@ function Weight() {
   if (!weights.length) {
     return (
       <Card style={{ alignItems: 'center', paddingVertical: 28 }}>
-        <IconBadge name="scale" color={C.green} size={64} icon={32} />
-        <Txt center style={{ fontSize: 19, fontWeight: '900', marginTop: 12 }}>{t('logW')}</Txt>
+        <Illus kind="scale" size={150} />
+        <Txt center style={{ fontSize: 19, fontWeight: '900', marginTop: 4 }}>{t('logW')}</Txt>
         <Txt center style={{ color: C.mut, marginTop: 4 }}>{t('logWS')}</Txt>
         <View style={{ alignSelf: 'stretch' }}>{input}</View>
       </Card>
@@ -296,11 +306,13 @@ function Weight() {
         </View>
         {input}
       </Card>
+      <Forecast cur={cur} goal={goal} />
     </>
   );
 }
 
 const st = themed(() => StyleSheet.create({
+  repBtn: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 10, padding: 14, borderRadius: R.lg, backgroundColor: C.surface, borderWidth: 1, borderColor: 'rgba(57,230,140,0.4)' },
   day: { flex: 1, alignItems: 'center', gap: 3, paddingVertical: 9, borderRadius: 16, backgroundColor: C.surface, borderWidth: 1, borderColor: C.stroke },
   dayOn: { backgroundColor: C.inv, borderColor: C.inv },
   diff: { flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'flex-start', borderRadius: 999, paddingHorizontal: 10, paddingVertical: 4, marginTop: 8 },
@@ -311,3 +323,66 @@ const st = themed(() => StyleSheet.create({
   in: { flex: 1, height: 54, paddingVertical: 0, textAlignVertical: 'center', includeFontPadding: false, color: C.text, backgroundColor: C.surface2, borderRadius: R.pill, paddingHorizontal: 16, fontSize: 18, textAlign: 'center' },
   toGo: { flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'flex-start', backgroundColor: 'rgba(57,230,140,0.12)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 999, marginTop: 12 },
 }));
+
+/** Where the weight is heading: the trend of the last 30 days (or the planned pace), 30 days ahead. */
+function Forecast({ cur, goal }: { cur: number; goal: number }) {
+  const { t, lang, rtl } = useT();
+  const weights = useApp((s) => s.weights);
+  const profile = useApp((s) => s.profile);
+  const imperial = useApp((s) => s.imperial);
+  const U = imperial ? 'lb' : t('kg');
+  const recent = weights.filter((w) => Date.now() - w.t < 30 * 864e5);
+  let rate = 0; // kg per day
+  const span = recent.length >= 2 ? (recent[recent.length - 1].t - recent[0].t) / 864e5 : 0;
+  if (span >= 3) {
+    const xs = recent.map((w) => (w.t - recent[0].t) / 864e5), ys = recent.map((w) => w.w);
+    const mx = xs.reduce((a, b) => a + b, 0) / xs.length, my = ys.reduce((a, b) => a + b, 0) / ys.length;
+    const num = xs.reduce((a, x, i) => a + (x - mx) * (ys[i] - my), 0), den = xs.reduce((a, x) => a + (x - mx) ** 2, 0);
+    rate = den ? num / den : 0;
+  } else if (profile?.pace && profile.goal !== 'keep') {
+    rate = ((profile.goal === 'lose' ? -1 : 1) * profile.pace) / 7;
+  }
+  rate = Math.max(-0.2, Math.min(0.2, rate));
+  const in30 = Math.round((cur + rate * 30) * 10) / 10;
+  const toward = (goal - cur) * rate > 0;
+  const eta = toward && Math.abs(goal - cur) > 0.2 ? Math.ceil((goal - cur) / rate) : null;
+  const loc = lang === 'ar' ? 'ar' : lang;
+  const W = 300, Hh = 90;
+  const lo = Math.min(cur, in30, goal) - 0.8, hi = Math.max(cur, in30, goal) + 0.8;
+  const y = (w: number) => Hh - ((w - lo) / (hi - lo)) * Hh;
+  return (
+    <Card style={{ marginTop: 10 }}>
+      <Row style={{ gap: 12 }}>
+        <IconBadge name="sparkle" size={40} icon={19} loop="pulse" />
+        <View style={{ flex: 1 }}>
+          <Txt style={{ fontWeight: '900', fontSize: 16 }}>{t('fcT')}</Txt>
+          <Txt style={{ color: C.mut, fontSize: 12 }}>{span >= 3 ? t('fcTrend') : t('fcPlan')}</Txt>
+        </View>
+      </Row>
+      <View style={{ transform: [{ scaleX: rtl ? -1 : 1 }], marginTop: 12 }}>
+        <Svg width="100%" height={Hh + 20} viewBox={`-12 -10 ${W + 24} ${Hh + 20}`}>
+          <Line x1={0} x2={W} y1={y(goal)} y2={y(goal)} stroke={fa(0.25)} strokeDasharray="4 6" />
+          <Line x1={0} x2={W} y1={y(cur)} y2={y(in30)} stroke={C.green} strokeWidth={3} strokeDasharray="8 7" strokeLinecap="round" />
+          <Circle cx={0} cy={y(cur)} r={6} fill={C.text} />
+          <Circle cx={W} cy={y(in30)} r={7} fill={C.green} stroke={C.bg} strokeWidth={3} />
+        </Svg>
+      </View>
+      <Row style={{ justifyContent: 'space-between', marginTop: 6 }}>
+        <View>
+          <Txt style={{ color: C.mut, fontSize: 12 }}>{t('fcNow')}</Txt>
+          <Num style={{ fontWeight: '900', fontSize: 17 }}>{wShow(cur, imperial)} {U}</Num>
+        </View>
+        <View style={{ alignItems: 'flex-end' }}>
+          <Txt style={{ color: C.mut, fontSize: 12 }}>{t('fc30')}</Txt>
+          <Num style={{ fontWeight: '900', fontSize: 17, color: C.green }}>{wShow(in30, imperial)} {U}</Num>
+        </View>
+      </Row>
+      <View style={[st.toGo, { marginTop: 12 }]}>
+        <Icon name="target" size={16} color={C.green} />
+        <Txt style={{ color: C.green, fontWeight: '800', flex: 1 }}>
+          {eta && eta < 730 ? `${t('fcGoal')} ${new Date(Date.now() + eta * 864e5).toLocaleDateString(loc, { day: 'numeric', month: 'long', year: 'numeric' })}` : Math.abs(goal - cur) <= 0.2 ? t('fcAt') : t('fcKeep')}
+        </Txt>
+      </View>
+    </Card>
+  );
+}

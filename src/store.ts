@@ -32,6 +32,9 @@ export type Profile = {
 };
 export type Health = { diabetes: boolean; bp: boolean; gluten: boolean; nuts: boolean; lactose: boolean };
 export type BodyPhoto = { id: string; t: number; uri: string; w?: number };
+export type Checkin = { mood: number; energy: number; hunger: number; sleep: number };
+export type Measure = { t: number; waist?: number; hip?: number; chest?: number; arm?: number; thigh?: number; neck?: number };
+export type Supp = { id: string; name: string };
 export type MyFood = { id: string; name: string; k: number; P: number; C: number; F: number };
 export type Account = { name: string; email?: string; photo?: string; guest: boolean };
 
@@ -83,6 +86,16 @@ type State = {
   addPhoto: (p: Omit<BodyPhoto, 'id'>) => void;
   removePhoto: (id: string) => void;
   rateAsked: number;
+  checkins: Record<string, Checkin>;
+  setCheckin: (key: string, c: Checkin) => void;
+  measures: Measure[];
+  addMeasure: (m: Omit<Measure, 't'>) => void;
+  removeMeasure: (t: number) => void;
+  supps: Supp[];
+  suppLog: Record<string, string[]>;
+  addSupp: (name: string) => void;
+  removeSupp: (id: string) => void;
+  toggleSupp: (key: string, id: string) => void;
   report: { k: string; text: string } | null;
   setReport: (r: { k: string; text: string }) => void;
   setRateAsked: (t: number) => void;
@@ -112,7 +125,7 @@ type State = {
   resetAll: () => void;
 };
 
-const initial: Pick<State, 'lang' | 'seenIntro' | 'account' | 'profile' | 'goals' | 'days' | 'weights' | 'myFoods' | 'remind' | 'burn' | 'fast' | 'waterGoal' | 'imperial' | 'theme' | 'health' | 'photos' | 'rateAsked' | 'report' | 'isPro' | 'scans'> = {
+const initial: Pick<State, 'lang' | 'seenIntro' | 'account' | 'profile' | 'goals' | 'days' | 'weights' | 'myFoods' | 'remind' | 'burn' | 'fast' | 'waterGoal' | 'imperial' | 'theme' | 'health' | 'photos' | 'rateAsked' | 'report' | 'checkins' | 'measures' | 'supps' | 'suppLog' | 'isPro' | 'scans'> = {
   lang: deviceLang(),
   seenIntro: false,
   account: null,
@@ -131,6 +144,10 @@ const initial: Pick<State, 'lang' | 'seenIntro' | 'account' | 'profile' | 'goals
   photos: [],
   rateAsked: 0,
   report: null,
+  checkins: {},
+  measures: [],
+  supps: [],
+  suppLog: {},
   isPro: false,
   scans: {},
 };
@@ -173,6 +190,15 @@ export const useApp = create<State>()(
       removePhoto: (id) => set((s) => ({ photos: s.photos.filter((x) => x.id !== id) })),
       setRateAsked: (t) => set({ rateAsked: t }),
       setReport: (r) => set({ report: r }),
+      setCheckin: (key, c) => set((s) => ({ checkins: { ...s.checkins, [key]: c } })),
+      addMeasure: (m) => set((s) => ({ measures: [...s.measures, { ...m, t: Date.now() }] })),
+      removeMeasure: (t) => set((s) => ({ measures: s.measures.filter((x) => x.t !== t) })),
+      addSupp: (name) => set((s) => ({ supps: [...s.supps, { id: String(Date.now()), name: name.trim().slice(0, 40) }] })),
+      removeSupp: (id) => set((s) => ({ supps: s.supps.filter((x) => x.id !== id) })),
+      toggleSupp: (key, id) => set((s) => {
+        const cur = s.suppLog[key] ?? [];
+        return { suppLog: { ...s.suppLog, [key]: cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id] } };
+      }),
       setWaterGoal: (n) => set({ waterGoal: Math.max(4, Math.min(16, n)) }),
       copyDay: (from) => {
         const src = get().days[from];

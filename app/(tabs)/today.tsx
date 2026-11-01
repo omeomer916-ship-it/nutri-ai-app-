@@ -11,6 +11,7 @@ import { Ring } from '../../src/components/Ring';
 import { Brand } from '../../src/components/Brand';
 import * as StoreReview from 'expo-store-review';
 import { Illus } from '../../src/components/Illus';
+import { GRADE_COLOR, dayScore, weekBank } from '../../src/score';
 import { Icon, IconName } from '../../src/components/Icon';
 import { MealSheet } from '../../src/components/MealSheet';
 import { ExerciseSheet } from '../../src/components/ExerciseSheet';
@@ -36,7 +37,8 @@ export default function Today() {
   const dk = dayKey();
   const day = days[dk];
   const tot = totals(day);
-  const burnList = useApp((s) => s.burn[dk]) ?? [];
+  const burnAll = useApp((s) => s.burn);
+  const burnList = burnAll[dk] ?? [];
   const removeBurn = useApp((s) => s.removeBurn);
   const burned = burnList.reduce((a, b) => a + b.kcal, 0);
   const left = goals.kcal + burned - tot.kcal;
@@ -69,6 +71,8 @@ export default function Today() {
     : tot.kcal >= goals.kcal * 0.85 ? 'inGood' : 'inLeft';
 
   const shareDay = () => router.push('/share');
+  const score = dayScore(day, goals, waterGoal, burned);
+  const bank = weekBank(days, goals, burnAll);
 
   // Ask for a store rating once, only after a few good days of use.
   const rateAsked = useApp((s) => s.rateAsked);
@@ -174,6 +178,20 @@ export default function Today() {
         })}
       </Row>
 
+      <Pressable onPress={() => router.push('/score')} style={({ pressed }) => [st.scoreRow, pressed && { opacity: 0.85 }]}>
+        <View style={[st.grade, { backgroundColor: GRADE_COLOR[score.grade] }]}><Num style={{ color: '#fff', fontWeight: '900', fontSize: 22 }}>{score.grade}</Num></View>
+        <View style={{ flex: 1 }}>
+          <Row style={{ gap: 6 }}>
+            <Txt style={{ fontWeight: '900' }}>{t('scT')}</Txt>
+            <Num style={{ color: C.mut, fontWeight: '800' }}>{score.total}/100</Num>
+          </Row>
+          <Txt numberOfLines={1} style={{ color: C.mut, fontSize: 12 }}>
+            {bank.used ? `${t('bankT')}: ${bank.bank >= 0 ? '+' : '-'}${fmt(Math.abs(bank.bank))} kcal` : t('scTap')}
+          </Txt>
+        </View>
+        <View style={{ transform: [{ scaleX: rtl ? -1 : 1 }] }}><Icon name="chevron" size={18} color={C.dim} /></View>
+      </Pressable>
+
       <Row style={{ gap: 10, marginTop: 10 }}>
         <QuickBtn icon="camera" label={t('scanNow')} color={C.green} onPress={() => openScan()} />
         <QuickBtn delay={200} icon="mic" label={t('voiceQ')} color={C.green} onPress={() => router.push('/voice')} />
@@ -204,7 +222,7 @@ export default function Today() {
         </LinearGradient>
       </Pressable>
       <View style={st.tools}>
-        {([['book', 'recT', '/recipes'], ['trophy', 'chT', '/challenges'], ['chart', 'repT', '/report'], ['compare', 'bodyT', '/body'], ['share', 'shareDay', '/share'], ['shield', 'hT', '/health']] as [IconName, TKey, string][]).map(([ic, k, to], i) => (
+        {([['book', 'recT', '/recipes'], ['trophy', 'chT', '/challenges'], ['chart', 'repT', '/report'], ['heart', 'ciT', '/checkin'], ['scale', 'bsT', '/bodystats'], ['pill', 'spT', '/supps'], ['compare', 'bodyT', '/body'], ['share', 'shareDay', '/share'], ['shield', 'hT', '/health']] as [IconName, TKey, string][]).map(([ic, k, to], i) => (
           <Pressable key={k} onPress={() => router.push(to as never)} style={({ pressed }) => [st.tool, pressed && { transform: [{ scale: 0.97 }] }]}>
             <IconBadge name={ic} size={40} icon={20} delay={i * 80} />
             <Txt center numberOfLines={2} style={{ fontSize: 12, fontWeight: '800', marginTop: 7, lineHeight: 16 }}>{t(k)}</Txt>
@@ -421,6 +439,8 @@ const st = themed(() => StyleSheet.create({
   quick: { flex: 1, alignItems: 'center', backgroundColor: C.surface, borderWidth: 1, borderColor: C.stroke, borderRadius: R.md, paddingVertical: 12, paddingHorizontal: 6 },
   round: { width: 36, height: 36, borderRadius: 18, backgroundColor: C.surface2, alignItems: 'center', justifyContent: 'center' },
   glass: { height: 26, borderRadius: 7, backgroundColor: 'rgba(79,195,255,0.12)' },
+  scoreRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 10, padding: 12, borderRadius: R.lg, backgroundColor: C.surface, borderWidth: 1, borderColor: C.border },
+  grade: { width: 44, height: 44, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
   aiBan: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: R.lg, padding: 14, borderWidth: 1, borderColor: 'rgba(57,230,140,0.45)' },
   aiCount: { minWidth: 30, height: 30, borderRadius: 15, paddingHorizontal: 8, backgroundColor: C.green, alignItems: 'center', justifyContent: 'center' },
   tools: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 10 },

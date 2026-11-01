@@ -10,6 +10,7 @@ import { at12, hShow, wShow } from '../../src/calc';
 import { C, R, fontFor, themed, fa } from '../../src/theme';
 import { Card, H2, IconBadge, Num, Row, Screen, Segmented, Txt } from '../../src/components/ui';
 import { Leaf } from '../../src/components/Leaf';
+import { exportData } from '../../src/export';
 import { Icon, IconName } from '../../src/components/Icon';
 import { googleSignOut } from '../../src/GoogleButton';
 import { API } from '../../src/ai';
@@ -139,7 +140,11 @@ export default function Profile() {
         {item('shield', t('hT'), () => router.push('/health'))}
         {item('compare', t('bodyT'), () => router.push('/body'))}
         {item('trophy', t('chT'), () => router.push('/challenges'))}
-        {item('book', t('recT'), () => router.push('/recipes'), false, true)}
+        {item('heart', t('ciT'), () => router.push('/checkin'))}
+        {item('scale', t('bsT'), () => router.push('/bodystats'))}
+        {item('pill', t('spT'), () => router.push('/supps'))}
+        {item('book', t('recT'), () => router.push('/recipes'))}
+        {item('download', t('expT'), () => { exportData().catch(() => {}); }, false, true)}
       </Card>
 
       <H2 right={<Num style={{ color: C.mut, fontWeight: '800' }}>{ach.filter((a) => a[2]).length}/{ach.length}</Num>}>{t('achT')}</H2>

@@ -4,15 +4,6 @@ name: Build Android APK
 on:
   push:
     branches: ['build']
-    # Only app changes start a build (server-only changes don't use a build).
-    paths:
-      - 'app/**'
-      - 'src/**'
-      - 'assets/**'
-      - 'app.json'
-      - 'package.json'
-      - 'eas.json'
-      - 'index.js'
 
 jobs:
   build_android:

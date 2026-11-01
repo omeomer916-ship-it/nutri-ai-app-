@@ -6,13 +6,15 @@ import { useT, TKey } from '../../src/i18n';
 import { CATS, Cat, Meal, dayKey, streakOf, totals, useApp } from '../../src/store';
 import { fmt, hms } from '../../src/calc';
 import { C, CAT_ICON, IMG, R, themed, fa } from '../../src/theme';
-import { Btn, Card, H2, IconBadge, Num, Pop, Row, Screen, Txt } from '../../src/components/ui';
+import { Bar, Btn, Card, H2, IconBadge, Num, Pop, Row, Screen, Txt } from '../../src/components/ui';
 import { Ring } from '../../src/components/Ring';
 import { Brand } from '../../src/components/Brand';
 import * as StoreReview from 'expo-store-review';
 import { Illus } from '../../src/components/Illus';
 import { GRADE_COLOR, dayScore, weekBank } from '../../src/score';
 import { Confetti } from '../../src/components/Confetti';
+import { QUEST_BONUS, levelOf, levelStart, quests, streakInfo, totalXp } from '../../src/xp';
+import { scheduleStreakReminder } from '../../src/streakReminder';
 import { Icon, IconName } from '../../src/components/Icon';
 import { MealSheet } from '../../src/components/MealSheet';
 import { ExerciseSheet } from '../../src/components/ExerciseSheet';
@@ -49,7 +51,12 @@ export default function Today() {
   const meals = day?.meals ?? [];
   const loc = lang === 'ar' ? 'ar-u-nu-latn' : lang;
   const first = account && !account.guest ? account.name.split(' ')[0] : '';
-  const streak = streakOf(days);
+  const sInfo = streakInfo(days);
+  const streak = sInfo.streak;
+  const checkins = useApp((s) => s.checkins);
+  const toolUses = useApp((s) => s.toolUses);
+  const suppLog = useApp((s) => s.suppLog);
+  const supps = useApp((s) => s.supps);
 
   const week = [6, 5, 4, 3, 2, 1, 0].map((i) => {
     const ts = Date.now() - i * 864e5;
@@ -78,6 +85,18 @@ export default function Today() {
   const celebrated = useApp((s) => s.celebrated);
   const setCelebrated = useApp((s) => s.setCelebrated);
   const [party, setParty] = useState(false);
+  // Levels, daily quests and the streak reminder.
+  const xpData = { days, goals, waterGoal, burn: burnAll, checkins, fast, toolUses, suppLog, supps };
+  const xpTotal = totalXp(xpData);
+  const lvl = levelOf(xpTotal);
+  const qs = quests(xpData);
+  const lastLevel = useApp((s) => s.lastLevel);
+  const setLastLevel = useApp((s) => s.setLastLevel);
+  const [levelUp, setLevelUp] = useState(0);
+  useEffect(() => {
+    if (lvl.level > lastLevel) { if (lastLevel > 0) setLevelUp(lvl.level); setLastLevel(lvl.level); }
+  }, [lvl.level]);
+  useEffect(() => { if (meals.length) scheduleStreakReminder(streak, lang); }, [meals.length]);
   useEffect(() => {
     if (score.grade === 'A' && celebrated !== dk) { setCelebrated(dk); setParty(true); }
   }, [score.grade]);
@@ -116,9 +135,10 @@ export default function Today() {
             <Icon name="crown" size={15} color="#000" stroke={2.4} />
             <Num style={{ fontWeight: '900', fontSize: 13, color: '#000' }}>PRO</Num>
           </Pressable>
-          <Pressable onPress={() => router.navigate('/(tabs)/progress')} style={st.streak}>
+          <Pressable onPress={() => router.push('/quests')} style={st.streak}>
             <Icon name="flame" size={17} color={C.water} fill={C.water + '33'} />
             <Num style={{ fontWeight: '800', fontSize: 15 }}>{streak}</Num>
+            {sInfo.freezes > 0 && <><Icon name="snow" size={13} color="#8FD8FF" stroke={2.2} /><Num style={{ fontWeight: '800', fontSize: 12, color: '#8FD8FF' }}>{sInfo.freezes}</Num></>}
           </Pressable>
           <Pressable hitSlop={6} onPress={() => router.navigate('/(tabs)/profile')} style={st.avatar}>
             {account?.photo ? <Image source={{ uri: account.photo }} style={{ width: 38, height: 38, borderRadius: 19 }} />
@@ -202,6 +222,36 @@ export default function Today() {
           </Txt>
         </View>
         <View style={{ transform: [{ scaleX: rtl ? -1 : 1 }] }}><Icon name="chevron" size={18} color={C.dim} /></View>
+      </Pressable>
+
+      <Pressable onPress={() => router.push('/quests')} style={({ pressed }) => [st.quest, pressed && { opacity: 0.9 }]}>
+        <Row style={{ gap: 12 }}>
+          <LinearGradient colors={['#FFE48A', '#FFD45C', '#E0A91C']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={st.lvl}>
+            <Num style={{ color: '#2a1d00', fontWeight: '900', fontSize: 17 }}>{lvl.level}</Num>
+          </LinearGradient>
+          <View style={{ flex: 1 }}>
+            <Row style={{ justifyContent: 'space-between' }}>
+              <Txt style={{ fontWeight: '900' }}>{t(lvl.title)}</Txt>
+              <Num style={{ color: C.mut, fontSize: 12, fontWeight: '800' }}>{lvl.into}/{lvl.need} XP</Num>
+            </Row>
+            <View style={{ marginTop: 6 }}><Bar value={lvl.into} max={lvl.need} color="#FFD45C" height={7} /></View>
+          </View>
+        </Row>
+        <Txt style={{ color: C.mut, fontSize: 12, fontWeight: '800', marginTop: 14, marginBottom: 4 }}>{t('qToday')}</Txt>
+        {qs.map((q) => (
+          <Row key={q.id} style={{ gap: 10, paddingVertical: 6 }}>
+            <View style={[st.qChk, q.done && { backgroundColor: C.green, borderColor: C.green }]}>
+              {q.done ? <Icon name="check" size={14} color="#000" stroke={3} /> : <Icon name={q.icon} size={13} color={C.dim} />}
+            </View>
+            <Txt style={[{ flex: 1, fontWeight: '700', fontSize: 14 }, q.done && { color: C.mut, textDecorationLine: 'line-through' }]}>{t(q.title)}</Txt>
+            <Num style={{ color: q.done ? C.green : '#E0A91C', fontWeight: '900', fontSize: 13 }}>+{q.xp}</Num>
+          </Row>
+        ))}
+        <Row style={[st.bonus, qs.every((q) => q.done) && { backgroundColor: 'rgba(255,212,92,0.18)', borderColor: '#FFD45C' }]}>
+          <Icon name="gift" size={16} color="#E0A91C" />
+          <Txt style={{ flex: 1, fontSize: 12, fontWeight: '800', color: C.mut }}>{qs.every((q) => q.done) ? t('qAllDone') : t('qBonus')}</Txt>
+          <Num style={{ color: '#E0A91C', fontWeight: '900', fontSize: 13 }}>+{QUEST_BONUS}</Num>
+        </Row>
       </Pressable>
 
       <Row style={{ gap: 10, marginTop: 10 }}>
@@ -383,6 +433,22 @@ export default function Today() {
 
       <MealSheet meal={edit} dayK={dk} onClose={() => setEdit(null)} />
       <ExerciseSheet open={exOpen} onClose={() => setExOpen(false)} />
+      {levelUp > 0 && (
+        <Modal transparent visible animationType="fade" onRequestClose={() => setLevelUp(0)}>
+          <Pressable style={st.partyBg} onPress={() => setLevelUp(0)}>
+            <Pop style={st.party}>
+              <LinearGradient colors={['#FFE48A', '#FFD45C', '#E0A91C']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[st.lvl, { width: 84, height: 84, borderRadius: 28 }]}>
+                <Num style={{ color: '#2a1d00', fontWeight: '900', fontSize: 38 }}>{levelUp}</Num>
+              </LinearGradient>
+              <Txt center style={{ fontSize: 22, fontWeight: '900', marginTop: 14 }}>{t('lvUp')}</Txt>
+              <Txt center style={{ color: '#E0A91C', fontWeight: '900', marginTop: 4 }}>{t(levelOf(levelStart(levelUp)).title)}</Txt>
+              <Txt center style={{ color: C.mut, marginTop: 6, lineHeight: 22 }}>{t('lvUpS')}</Txt>
+              <Btn title={t('lvUpBtn')} style={{ marginTop: 18, alignSelf: 'stretch' }} onPress={() => setLevelUp(0)} />
+            </Pop>
+            <Confetti />
+          </Pressable>
+        </Modal>
+      )}
       {party && (
         <Modal transparent visible animationType="fade" onRequestClose={() => setParty(false)}>
           <Pressable style={st.partyBg} onPress={() => setParty(false)}>
@@ -445,6 +511,10 @@ const st = themed(() => StyleSheet.create({
   quick: { flex: 1, alignItems: 'center', backgroundColor: C.surface, borderWidth: 1, borderColor: C.stroke, borderRadius: R.md, paddingVertical: 12, paddingHorizontal: 6 },
   round: { width: 36, height: 36, borderRadius: 18, backgroundColor: C.surface2, alignItems: 'center', justifyContent: 'center' },
   glass: { height: 26, borderRadius: 7, backgroundColor: 'rgba(79,195,255,0.12)' },
+  quest: { marginTop: 10, padding: 14, borderRadius: R.lg, backgroundColor: C.surface, borderWidth: 1, borderColor: 'rgba(255,212,92,0.35)' },
+  lvl: { width: 46, height: 46, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
+  qChk: { width: 26, height: 26, borderRadius: 13, borderWidth: 1.5, borderColor: C.stroke, backgroundColor: C.surface2, alignItems: 'center', justifyContent: 'center' },
+  bonus: { alignItems: 'center', gap: 8, marginTop: 8, padding: 10, borderRadius: 14, borderWidth: 1, borderColor: C.stroke, backgroundColor: C.surface2 },
   partyBg: { flex: 1, backgroundColor: C.scrim, alignItems: 'center', justifyContent: 'center', padding: 30 },
   party: { alignSelf: 'stretch', alignItems: 'center', backgroundColor: C.surface, borderRadius: 28, padding: 24, borderWidth: 1, borderColor: C.line },
   avatar: { width: 40, height: 40, borderRadius: 20, backgroundColor: C.green, alignItems: 'center', justifyContent: 'center', overflow: 'hidden', borderWidth: 1, borderColor: C.line },

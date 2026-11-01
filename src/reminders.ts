@@ -1,5 +1,8 @@
 import { Platform } from 'react-native';
 import * as Notifications from 'expo-notifications';
+import { scheduleStreakReminder } from './streakReminder';
+import { useApp } from './store';
+import { streakInfo } from './xp';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({ shouldShowBanner: true, shouldShowList: true, shouldPlaySound: true, shouldSetBadge: false }),
@@ -33,6 +36,8 @@ async function allowed() {
 export async function applyReminders(r: { meals: boolean; water: boolean }, lang: string): Promise<boolean> {
   try {
     await Notifications.cancelAllScheduledNotificationsAsync();
+    // cancelAll also removed the streak reminder: put it back.
+    await scheduleStreakReminder(streakInfo(useApp.getState().days).streak, lang);
     if (!r.meals && !r.water) return true;
     if (!(await allowed())) return false;
     const tx = TEXT[lang] ?? TEXT.en;

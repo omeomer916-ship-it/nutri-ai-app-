@@ -6,6 +6,7 @@ import * as ImageManipulator from 'expo-image-manipulator';
 import * as Haptics from 'expo-haptics';
 import { useT, TKey } from '../src/i18n';
 import { TOOLS } from '../src/tools';
+import { useApp } from '../src/store';
 import { AiError, runTool } from '../src/ai';
 import { aiContext } from '../src/aiContext';
 import { C, fontFor, themed } from '../src/theme';
@@ -40,6 +41,7 @@ export default function ToolScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
     try {
       const out = await runTool(tool.id, { text: text.trim() || undefined, image: img?.b64 }, lang, aiContext());
+      useApp.getState().countTool();
       setS({ k: 'done', text: out });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
     } catch (e) {

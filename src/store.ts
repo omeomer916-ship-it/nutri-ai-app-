@@ -87,6 +87,10 @@ type State = {
   removePhoto: (id: string) => void;
   rateAsked: number;
   celebrated: string;
+  toolUses: Record<string, number>;
+  countTool: () => void;
+  lastLevel: number;
+  setLastLevel: (n: number) => void;
   setCelebrated: (k: string) => void;
   checkins: Record<string, Checkin>;
   setCheckin: (key: string, c: Checkin) => void;
@@ -127,7 +131,7 @@ type State = {
   resetAll: () => void;
 };
 
-const initial: Pick<State, 'lang' | 'seenIntro' | 'account' | 'profile' | 'goals' | 'days' | 'weights' | 'myFoods' | 'remind' | 'burn' | 'fast' | 'waterGoal' | 'imperial' | 'theme' | 'health' | 'photos' | 'rateAsked' | 'report' | 'celebrated' | 'checkins' | 'measures' | 'supps' | 'suppLog' | 'isPro' | 'scans'> = {
+const initial: Pick<State, 'lang' | 'seenIntro' | 'account' | 'profile' | 'goals' | 'days' | 'weights' | 'myFoods' | 'remind' | 'burn' | 'fast' | 'waterGoal' | 'imperial' | 'theme' | 'health' | 'photos' | 'rateAsked' | 'report' | 'celebrated' | 'toolUses' | 'lastLevel' | 'checkins' | 'measures' | 'supps' | 'suppLog' | 'isPro' | 'scans'> = {
   lang: deviceLang(),
   seenIntro: false,
   account: null,
@@ -147,6 +151,8 @@ const initial: Pick<State, 'lang' | 'seenIntro' | 'account' | 'profile' | 'goals
   rateAsked: 0,
   report: null,
   celebrated: '',
+  toolUses: {},
+  lastLevel: 0,
   checkins: {},
   measures: [],
   supps: [],
@@ -194,6 +200,8 @@ export const useApp = create<State>()(
       setRateAsked: (t) => set({ rateAsked: t }),
       setReport: (r) => set({ report: r }),
       setCelebrated: (k) => set({ celebrated: k }),
+      countTool: () => set((s) => { const k = dayKey(); return { toolUses: { ...s.toolUses, [k]: (s.toolUses[k] ?? 0) + 1 } }; }),
+      setLastLevel: (n) => set({ lastLevel: n }),
       setCheckin: (key, c) => set((s) => ({ checkins: { ...s.checkins, [key]: c } })),
       addMeasure: (m) => set((s) => ({ measures: [...s.measures, { ...m, t: Date.now() }] })),
       removeMeasure: (t) => set((s) => ({ measures: s.measures.filter((x) => x.t !== t) })),

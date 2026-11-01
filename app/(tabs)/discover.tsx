@@ -6,6 +6,7 @@ import { useT, TKey } from '../../src/i18n';
 import { dayKey, useApp } from '../../src/store';
 import { TOOLS } from '../../src/tools';
 import { challenges } from '../../src/challenges';
+import { levelOf, totalXp } from '../../src/xp';
 import { exportData } from '../../src/export';
 import { INSTAGRAM, openInstagram } from '../../src/social';
 import { C, R, fontFor, themed } from '../../src/theme';
@@ -34,6 +35,7 @@ export default function Discover() {
       { k: 'bodyT', icon: 'compare', go: push('/body'), sub: s.photos.length ? `${s.photos.length} ${t('dcPhotos')}` : t('dcBodySub') },
     ]],
     ['dcPlan', [
+      { k: 'qT', icon: 'gift', go: push('/quests'), sub: `${t('qLevel')} ${levelOf(totalXp({ days: s.days, goals: s.goals, waterGoal: s.waterGoal, burn: s.burn, checkins: s.checkins, fast: s.fast, toolUses: s.toolUses, suppLog: s.suppLog, supps: s.supps })).level}` },
       { k: 'recT', icon: 'book', go: push('/recipes'), sub: t('dcRecSub') },
       { k: 'chT', icon: 'trophy', go: push('/challenges'), sub: `${ch.filter((c) => c.done).length}/${ch.length} ${t('dcDone')}` },
       { k: 'repT', icon: 'chart', go: push('/report'), sub: t('dcRepSub') },

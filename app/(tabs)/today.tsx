@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Image, ImageBackground, Pressable, ScrollView, Share, StyleSheet, View } from 'react-native';
+import { Image, ImageBackground, Modal, Pressable, ScrollView, Share, StyleSheet, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useT, TKey } from '../../src/i18n';
@@ -12,6 +12,7 @@ import { Brand } from '../../src/components/Brand';
 import * as StoreReview from 'expo-store-review';
 import { Illus } from '../../src/components/Illus';
 import { GRADE_COLOR, dayScore, weekBank } from '../../src/score';
+import { Confetti } from '../../src/components/Confetti';
 import { Icon, IconName } from '../../src/components/Icon';
 import { MealSheet } from '../../src/components/MealSheet';
 import { ExerciseSheet } from '../../src/components/ExerciseSheet';
@@ -73,6 +74,13 @@ export default function Today() {
   const shareDay = () => router.push('/share');
   const score = dayScore(day, goals, waterGoal, burned);
   const bank = weekBank(days, goals, burnAll);
+  // Confetti the first time today's score reaches A.
+  const celebrated = useApp((s) => s.celebrated);
+  const setCelebrated = useApp((s) => s.setCelebrated);
+  const [party, setParty] = useState(false);
+  useEffect(() => {
+    if (score.grade === 'A' && celebrated !== dk) { setCelebrated(dk); setParty(true); }
+  }, [score.grade]);
 
   // Ask for a store rating once, only after a few good days of use.
   const rateAsked = useApp((s) => s.rateAsked);
@@ -111,6 +119,10 @@ export default function Today() {
           <Pressable onPress={() => router.navigate('/(tabs)/progress')} style={st.streak}>
             <Icon name="flame" size={17} color={C.water} fill={C.water + '33'} />
             <Num style={{ fontWeight: '800', fontSize: 15 }}>{streak}</Num>
+          </Pressable>
+          <Pressable hitSlop={6} onPress={() => router.navigate('/(tabs)/profile')} style={st.avatar}>
+            {account?.photo ? <Image source={{ uri: account.photo }} style={{ width: 38, height: 38, borderRadius: 19 }} />
+              : <Txt style={{ fontWeight: '900', fontSize: 16, color: '#03140b' }}>{(account?.name || 'N').trim().charAt(0).toUpperCase()}</Txt>}
           </Pressable>
         </Row>
       </Row>
@@ -210,25 +222,6 @@ export default function Today() {
           </Pressable>
         </View>
       </Card>
-
-      <Pressable onPress={() => router.push('/ai')} style={({ pressed }) => [{ marginTop: 10 }, pressed && { transform: [{ scale: 0.98 }] }]}>
-        <LinearGradient colors={C.mode === 'light' ? ['#DDF7E8', '#FFFFFF'] : ['#123A25', '#08130D']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={st.aiBan}>
-          <IconBadge name="wand" size={48} icon={24} loop="pulse" />
-          <View style={{ flex: 1 }}>
-            <Txt style={{ fontWeight: '900', fontSize: 17 }}>{t('aiT')}</Txt>
-            <Txt numberOfLines={2} style={{ color: C.mut, fontSize: 12, lineHeight: 18 }}>{t('aiBan')}</Txt>
-          </View>
-          <View style={st.aiCount}><Num style={{ color: '#000', fontWeight: '900', fontSize: 13 }}>12</Num></View>
-        </LinearGradient>
-      </Pressable>
-      <View style={st.tools}>
-        {([['book', 'recT', '/recipes'], ['trophy', 'chT', '/challenges'], ['chart', 'repT', '/report'], ['heart', 'ciT', '/checkin'], ['scale', 'bsT', '/bodystats'], ['pill', 'spT', '/supps'], ['compare', 'bodyT', '/body'], ['share', 'shareDay', '/share'], ['shield', 'hT', '/health']] as [IconName, TKey, string][]).map(([ic, k, to], i) => (
-          <Pressable key={k} onPress={() => router.push(to as never)} style={({ pressed }) => [st.tool, pressed && { transform: [{ scale: 0.97 }] }]}>
-            <IconBadge name={ic} size={40} icon={20} delay={i * 80} />
-            <Txt center numberOfLines={2} style={{ fontSize: 12, fontWeight: '800', marginTop: 7, lineHeight: 16 }}>{t(k)}</Txt>
-          </Pressable>
-        ))}
-      </View>
 
       <Card style={{ marginTop: 10 }}>
         <Row style={{ gap: 12 }}>
@@ -390,6 +383,19 @@ export default function Today() {
 
       <MealSheet meal={edit} dayK={dk} onClose={() => setEdit(null)} />
       <ExerciseSheet open={exOpen} onClose={() => setExOpen(false)} />
+      {party && (
+        <Modal transparent visible animationType="fade" onRequestClose={() => setParty(false)}>
+          <Pressable style={st.partyBg} onPress={() => setParty(false)}>
+            <Pop style={st.party}>
+              <View style={[st.grade, { width: 72, height: 72, borderRadius: 24, backgroundColor: GRADE_COLOR.A }]}><Num style={{ color: '#fff', fontWeight: '900', fontSize: 38 }}>A</Num></View>
+              <Txt center style={{ fontSize: 22, fontWeight: '900', marginTop: 14 }}>{t('wow')}</Txt>
+              <Txt center style={{ color: C.mut, marginTop: 6, lineHeight: 22 }}>{t('wowS')}</Txt>
+              <Btn title={t('wowBtn')} style={{ marginTop: 18, alignSelf: 'stretch' }} icon={<Icon name="share" size={18} color="#000" stroke={2.4} />} onPress={() => { setParty(false); router.push('/share'); }} />
+            </Pop>
+            <Confetti onDone={() => {}} />
+          </Pressable>
+        </Modal>
+      )}
     </Screen>
   );
 }
@@ -439,6 +445,9 @@ const st = themed(() => StyleSheet.create({
   quick: { flex: 1, alignItems: 'center', backgroundColor: C.surface, borderWidth: 1, borderColor: C.stroke, borderRadius: R.md, paddingVertical: 12, paddingHorizontal: 6 },
   round: { width: 36, height: 36, borderRadius: 18, backgroundColor: C.surface2, alignItems: 'center', justifyContent: 'center' },
   glass: { height: 26, borderRadius: 7, backgroundColor: 'rgba(79,195,255,0.12)' },
+  partyBg: { flex: 1, backgroundColor: C.scrim, alignItems: 'center', justifyContent: 'center', padding: 30 },
+  party: { alignSelf: 'stretch', alignItems: 'center', backgroundColor: C.surface, borderRadius: 28, padding: 24, borderWidth: 1, borderColor: C.line },
+  avatar: { width: 40, height: 40, borderRadius: 20, backgroundColor: C.green, alignItems: 'center', justifyContent: 'center', overflow: 'hidden', borderWidth: 1, borderColor: C.line },
   scoreRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 10, padding: 12, borderRadius: R.lg, backgroundColor: C.surface, borderWidth: 1, borderColor: C.border },
   grade: { width: 44, height: 44, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
   aiBan: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: R.lg, padding: 14, borderWidth: 1, borderColor: 'rgba(57,230,140,0.45)' },

@@ -89,7 +89,10 @@ export default function Profile() {
 
   return (
     <Screen>
-      <View style={{ alignItems: 'center', marginTop: 22 }}>
+      <Pressable hitSlop={10} onPress={() => router.navigate('/(tabs)/today')} style={st.back}>
+        <View style={{ transform: [{ scaleX: rtl ? 1 : -1 }] }}><Icon name="chevron" size={20} stroke={2.4} /></View>
+      </Pressable>
+      <View style={{ alignItems: 'center', marginTop: 0 }}>
         <View style={st.avRing}>
           {account?.photo ? <Image source={{ uri: account.photo }} style={st.av} /> : (
             <LinearGradient colors={['#7CF5B5', C.green, '#17A35B']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[st.av, { alignItems: 'center', justifyContent: 'center' }]}>
@@ -228,6 +231,7 @@ export default function Profile() {
 }
 
 const st = themed(() => StyleSheet.create({
+  back: { width: 40, height: 40, borderRadius: 20, backgroundColor: C.surface2, alignItems: 'center', justifyContent: 'center', marginTop: 8 },
   avRing: { padding: 4, borderRadius: 60, borderWidth: 2, borderColor: 'rgba(57,230,140,0.5)' },
   av: { width: 96, height: 96, borderRadius: 48 },
   stats: { alignSelf: 'stretch', marginTop: 18, backgroundColor: C.surface, borderWidth: 1, borderColor: C.stroke, borderRadius: R.lg, paddingVertical: 14 },

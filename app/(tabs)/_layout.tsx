@@ -14,10 +14,13 @@ const META: Record<string, { icon: IconName; label: TKey }> = {
   today: { icon: 'home', label: 'tToday' },
   progress: { icon: 'chart', label: 'tProgress' },
   scan: { icon: 'camera', label: 'tScan' },
+  discover: { icon: 'grid', label: 'tDiscover' },
   coach: { icon: 'chat', label: 'tCoach' },
   profile: { icon: 'user', label: 'tProfile' },
 };
-const ORDER = ['today', 'progress', 'scan', 'coach', 'profile'];
+const ORDER = ['today', 'progress', 'scan', 'discover', 'coach'];
+// Profile is opened from the avatar on Today and Discover, not from the bar.
+const HIDDEN = ['profile'];
 
 function Bar({ state, navigation }: BottomTabBarProps) {
   const { t, rtl } = useT();
@@ -37,7 +40,7 @@ function Bar({ state, navigation }: BottomTabBarProps) {
   };
   return (
     <View pointerEvents="box-none" style={[st.wrap, { paddingBottom: Math.max(ins.bottom, 12) }]}>
-      <LinearGradient pointerEvents="none" colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.9)']} style={StyleSheet.absoluteFill} />
+      <LinearGradient pointerEvents="none" colors={[C.bg + '00', C.bg + 'E6']} style={StyleSheet.absoluteFill} />
       <View style={[st.bar, { flexDirection: rtl ? 'row-reverse' : 'row' }]}>
         {routes.map((r) => {
           const m = META[r.name];
@@ -54,7 +57,7 @@ function Bar({ state, navigation }: BottomTabBarProps) {
           return (
             <Pressable key={r.key} onPress={() => go(r.name)} style={st.item}>
               <Pop key={on ? 'on' : 'off'}>
-                <Icon name={m.icon} size={23} color={on ? C.green : fa(0.42)} stroke={on ? 2.2 : 1.8} fill={on && m.icon !== 'chart' ? 'rgba(57,230,140,0.18)' : undefined} />
+                <Icon name={m.icon} size={23} color={on ? C.green : fa(0.42)} stroke={on ? 2.2 : 1.8} fill={on && m.icon !== 'chart' && m.icon !== 'grid' ? 'rgba(57,230,140,0.18)' : undefined} />
               </Pop>
               <Txt center numberOfLines={1} style={{ fontSize: 11, fontWeight: on ? '800' : '600', color: on ? C.text : fa(0.42), marginTop: 2 }}>{t(m.label)}</Txt>
               <View style={[st.dot, on && { backgroundColor: C.green }]} />
@@ -69,7 +72,7 @@ function Bar({ state, navigation }: BottomTabBarProps) {
 export default function TabsLayout() {
   return (
     <Tabs tabBar={(p) => <Bar {...p} />} screenOptions={{ headerShown: false, sceneStyle: { backgroundColor: C.bg } }}>
-      {ORDER.map((n) => <Tabs.Screen key={n} name={n} />)}
+      {[...ORDER, ...HIDDEN].map((n) => <Tabs.Screen key={n} name={n} />)}
     </Tabs>
   );
 }

@@ -86,6 +86,8 @@ type State = {
   addPhoto: (p: Omit<BodyPhoto, 'id'>) => void;
   removePhoto: (id: string) => void;
   rateAsked: number;
+  celebrated: string;
+  setCelebrated: (k: string) => void;
   checkins: Record<string, Checkin>;
   setCheckin: (key: string, c: Checkin) => void;
   measures: Measure[];
@@ -125,7 +127,7 @@ type State = {
   resetAll: () => void;
 };
 
-const initial: Pick<State, 'lang' | 'seenIntro' | 'account' | 'profile' | 'goals' | 'days' | 'weights' | 'myFoods' | 'remind' | 'burn' | 'fast' | 'waterGoal' | 'imperial' | 'theme' | 'health' | 'photos' | 'rateAsked' | 'report' | 'checkins' | 'measures' | 'supps' | 'suppLog' | 'isPro' | 'scans'> = {
+const initial: Pick<State, 'lang' | 'seenIntro' | 'account' | 'profile' | 'goals' | 'days' | 'weights' | 'myFoods' | 'remind' | 'burn' | 'fast' | 'waterGoal' | 'imperial' | 'theme' | 'health' | 'photos' | 'rateAsked' | 'report' | 'celebrated' | 'checkins' | 'measures' | 'supps' | 'suppLog' | 'isPro' | 'scans'> = {
   lang: deviceLang(),
   seenIntro: false,
   account: null,
@@ -144,6 +146,7 @@ const initial: Pick<State, 'lang' | 'seenIntro' | 'account' | 'profile' | 'goals
   photos: [],
   rateAsked: 0,
   report: null,
+  celebrated: '',
   checkins: {},
   measures: [],
   supps: [],
@@ -190,6 +193,7 @@ export const useApp = create<State>()(
       removePhoto: (id) => set((s) => ({ photos: s.photos.filter((x) => x.id !== id) })),
       setRateAsked: (t) => set({ rateAsked: t }),
       setReport: (r) => set({ report: r }),
+      setCelebrated: (k) => set({ celebrated: k }),
       setCheckin: (key, c) => set((s) => ({ checkins: { ...s.checkins, [key]: c } })),
       addMeasure: (m) => set((s) => ({ measures: [...s.measures, { ...m, t: Date.now() }] })),
       removeMeasure: (t) => set((s) => ({ measures: s.measures.filter((x) => x.t !== t) })),

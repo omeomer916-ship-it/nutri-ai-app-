@@ -143,7 +143,7 @@ export function Row({ children, style }: { children: ReactNode; style?: StylePro
 }
 
 type Loop = 'float' | 'pulse' | 'wiggle';
-const LINE_ONLY = new Set(['refresh', 'logout', 'share', 'search', 'info', 'plus', 'minus', 'x', 'chevron', 'check', 'edit', 'copy', 'barcode', 'scan', 'run', 'chart', 'send', 'sun', 'bowl', 'wheat', 'bread', 'mic', 'book', 'compare', 'calendar', 'alert', 'clock', 'medal', 'fridge', 'cart', 'list', 'menu', 'tag', 'wand', 'download']);
+const LINE_ONLY = new Set(['refresh', 'logout', 'share', 'search', 'info', 'plus', 'minus', 'x', 'chevron', 'check', 'edit', 'copy', 'barcode', 'scan', 'run', 'chart', 'send', 'sun', 'bowl', 'wheat', 'bread', 'mic', 'book', 'compare', 'calendar', 'alert', 'clock', 'medal', 'fridge', 'cart', 'list', 'menu', 'tag', 'wand', 'download', 'instagram']);
 /** Pops in when it appears; can keep a gentle idle motion. */
 export function Pop({ children, delay = 0, loop, style }: { children: ReactNode; delay?: number; loop?: Loop; style?: StyleProp<ViewStyle> }) {
   const a = useRef(new Animated.Value(0)).current;

@@ -6,9 +6,10 @@ export type IconName =
   | 'send' | 'sparkle' | 'home' | 'chart' | 'user' | 'chat' | 'globe' | 'refresh' | 'logout' | 'trash'
   | 'target' | 'scale' | 'check' | 'x' | 'bolt' | 'sun' | 'moon' | 'bowl' | 'cookie' | 'cake' | 'cup' | 'scan' | 'info' | 'search' | 'crown' | 'share' | 'star' | 'edit' | 'copy' | 'lock' | 'trophy' | 'barcode' | 'bell' | 'run' | 'meat' | 'bread'
   | 'mic' | 'heart' | 'shield' | 'book' | 'compare' | 'calendar' | 'alert' | 'clock' | 'medal'
-  | 'fridge' | 'cart' | 'list' | 'menu' | 'tag' | 'wand' | 'pill' | 'download' | 'grid';
+  | 'fridge' | 'cart' | 'list' | 'menu' | 'tag' | 'wand' | 'pill' | 'download' | 'grid' | 'instagram';
 
 const P: Record<IconName, (c: string) => React.ReactNode> = {
+  instagram: () => (<><Rect x={3} y={3} width={18} height={18} rx={5} /><Circle cx={12} cy={12} r={4} /><Circle cx={17.3} cy={6.7} r={0.6} /></>),
   grid: () => (<><Rect x={3} y={3} width={7.5} height={7.5} rx={2} /><Rect x={13.5} y={3} width={7.5} height={7.5} rx={2} /><Rect x={3} y={13.5} width={7.5} height={7.5} rx={2} /><Rect x={13.5} y={13.5} width={7.5} height={7.5} rx={2} /></>),
   pill: () => (<><Path d="M10.5 20.5a5 5 0 0 1-7-7l6-6a5 5 0 0 1 7 7z" /><Path d="M7.5 10.5l6 6" /></>),
   download: () => <Path d="M12 3v12m-5-5 5 5 5-5M4 20h16" />,

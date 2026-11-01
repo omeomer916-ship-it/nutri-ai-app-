@@ -13,6 +13,7 @@ import { Btn, Num, Row, Txt } from '../src/components/ui';
 import { Icon } from '../src/components/Icon';
 import { Ring } from '../src/components/Ring';
 import { Logo } from '../src/components/Logo';
+import { INSTAGRAM } from '../src/social';
 
 const W = Math.min(Dimensions.get('window').width - 48, 360);
 type Look = 'night' | 'mint' | 'paper';
@@ -115,7 +116,7 @@ export default function ShareDay() {
                   {meals.length > 4 && <Txt style={{ color: L.mut, fontSize: 12, marginTop: 2 }}>+{meals.length - 4}</Txt>}
                 </View>
               )}
-              <Txt center style={{ color: L.mut, fontSize: 11, fontWeight: '700', marginTop: 16 }}>{t('trackedWith')}</Txt>
+              <Txt center style={{ color: L.mut, fontSize: 11, fontWeight: '700', marginTop: 16 }}>{t('trackedWith')}{INSTAGRAM ? `  ·  @${INSTAGRAM}` : ''}</Txt>
             </LinearGradient>
           </View>
 

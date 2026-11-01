@@ -344,6 +344,8 @@ const en = {
   wow: "Perfect day!",
   wowS: "You scored an A today. Calories, protein and water all on point.",
   wowBtn: "Share my day",
+  igFollow: "Follow us on Instagram",
+  igSub: "Tips, recipes and app news every week",
 };
 
 export type Dict = typeof en;
@@ -685,6 +687,8 @@ const ar: Dict = {
   wow: "يوم مثالي!",
   wowS: "أخدت A اليوم. السعرات والبروتين والمي كلهم مظبوطين.",
   wowBtn: "شارك يومي",
+  igFollow: "تابعنا على إنستغرام",
+  igSub: "نصايح ووصفات وأخبار التطبيق كل أسبوع",
 };
 
 import { de, es, fr, id, ru, tr, ur } from './locales';

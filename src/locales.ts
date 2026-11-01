@@ -544,6 +544,8 @@ export const fr: Partial<Dict> = {
  "wow": "Journée parfaite !",
  "wowS": "Vous avez un A aujourd'hui. Calories, protéines et eau au top.",
  "wowBtn": "Partager ma journée",
+ "igFollow": "Suivez-nous sur Instagram",
+ "igSub": "Conseils, recettes et nouveautés chaque semaine",
 };
 
 export const es: Partial<Dict> = {
@@ -1089,6 +1091,8 @@ export const es: Partial<Dict> = {
  "wow": "¡Día perfecto!",
  "wowS": "Hoy sacaste una A. Calorías, proteína y agua en su punto.",
  "wowBtn": "Compartir mi día",
+ "igFollow": "Síguenos en Instagram",
+ "igSub": "Consejos, recetas y novedades cada semana",
 };
 
 export const de: Partial<Dict> = {
@@ -1634,6 +1638,8 @@ export const de: Partial<Dict> = {
  "wow": "Perfekter Tag!",
  "wowS": "Heute ein A. Kalorien, Protein und Wasser passen.",
  "wowBtn": "Meinen Tag teilen",
+ "igFollow": "Folge uns auf Instagram",
+ "igSub": "Tipps, Rezepte und App-News jede Woche",
 };
 
 export const tr: Partial<Dict> = {
@@ -2179,6 +2185,8 @@ export const tr: Partial<Dict> = {
  "wow": "Mükemmel gün!",
  "wowS": "Bugün A aldın. Kalori, protein ve su tam yerinde.",
  "wowBtn": "Günümü paylaş",
+ "igFollow": "Bizi Instagram'da takip et",
+ "igSub": "Her hafta ipuçları, tarifler ve haberler",
 };
 
 export const ru: Partial<Dict> = {
@@ -2724,6 +2732,8 @@ export const ru: Partial<Dict> = {
  "wow": "Идеальный день!",
  "wowS": "Сегодня у вас A. Калории, белок и вода в норме.",
  "wowBtn": "Поделиться днём",
+ "igFollow": "Мы в Instagram",
+ "igSub": "Советы, рецепты и новости каждую неделю",
 };
 
 export const id: Partial<Dict> = {
@@ -3269,6 +3279,8 @@ export const id: Partial<Dict> = {
  "wow": "Hari sempurna!",
  "wowS": "Hari ini kamu dapat A. Kalori, protein dan air pas.",
  "wowBtn": "Bagikan hariku",
+ "igFollow": "Ikuti kami di Instagram",
+ "igSub": "Tips, resep dan kabar aplikasi tiap minggu",
 };
 
 export const ur: Partial<Dict> = {
@@ -3814,5 +3826,7 @@ export const ur: Partial<Dict> = {
  "wow": "بہترین دن!",
  "wowS": "آج آپ کو A ملا۔ کیلوریز، پروٹین اور پانی سب درست۔",
  "wowBtn": "میرا دن شیئر کریں",
+ "igFollow": "انسٹاگرام پر فالو کریں",
+ "igSub": "ہر ہفتے ٹپس، ترکیبیں اور ایپ کی خبریں",
 };
 

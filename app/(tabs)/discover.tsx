@@ -7,6 +7,7 @@ import { dayKey, useApp } from '../../src/store';
 import { TOOLS } from '../../src/tools';
 import { challenges } from '../../src/challenges';
 import { exportData } from '../../src/export';
+import { INSTAGRAM, openInstagram } from '../../src/social';
 import { C, R, fontFor, themed } from '../../src/theme';
 import { IconBadge, Num, Pop, Row, Screen, Txt } from '../../src/components/ui';
 import { Icon, IconName } from '../../src/components/Icon';
@@ -103,6 +104,19 @@ export default function Discover() {
         </View>
       ))}
       {!tools.length && !shown.length && <Txt center style={{ color: C.mut, marginTop: 30 }}>{t('noRes')}</Txt>}
+      {!!INSTAGRAM && !nq && (
+        <Pressable onPress={openInstagram} style={({ pressed }) => [{ marginTop: 22 }, pressed && { transform: [{ scale: 0.98 }] }]}>
+          <LinearGradient colors={['#F58529', '#DD2A7B', '#8134AF', '#515BD4']} start={{ x: 0, y: 1 }} end={{ x: 1, y: 0 }} style={st.ig}>
+            <View style={st.igIc}><Icon name="instagram" size={26} color="#fff" stroke={2.2} /></View>
+            <View style={{ flex: 1 }}>
+              <Txt style={{ color: '#fff', fontWeight: '900', fontSize: 16 }}>{t('igFollow')}</Txt>
+              <Num style={{ color: 'rgba(255,255,255,0.85)', fontSize: 13, textAlign: 'left' }}>@{INSTAGRAM}</Num>
+              <Txt style={{ color: 'rgba(255,255,255,0.85)', fontSize: 12, marginTop: 2 }}>{t('igSub')}</Txt>
+            </View>
+            <View style={{ transform: [{ scaleX: rtl ? -1 : 1 }] }}><Icon name="chevron" size={20} color="#fff" stroke={2.6} /></View>
+          </LinearGradient>
+        </Pressable>
+      )}
     </Screen>
   );
 }
@@ -111,6 +125,8 @@ const st = themed(() => StyleSheet.create({
   search: { gap: 8, marginTop: 14, backgroundColor: C.surface, borderWidth: 1, borderColor: C.border, borderRadius: R.pill, paddingHorizontal: 16, height: 48 },
   searchIn: { flex: 1, color: C.text, fontSize: 15, paddingVertical: 0 },
   hero: { borderRadius: 24, padding: 16, borderWidth: 1, borderColor: 'rgba(57,230,140,0.45)' },
+  ig: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 24, padding: 16 },
+  igIc: { width: 48, height: 48, borderRadius: 16, backgroundColor: 'rgba(255,255,255,0.18)', alignItems: 'center', justifyContent: 'center' },
   tool: { width: 104, backgroundColor: C.surface, borderWidth: 1, borderColor: C.border, borderRadius: 20, padding: 12 },
   lab: { color: C.mut, fontWeight: '800', fontSize: 13, marginTop: 22, marginBottom: 10 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },

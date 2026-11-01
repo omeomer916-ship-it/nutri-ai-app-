@@ -11,6 +11,7 @@ import { C, R, fontFor, themed, fa } from '../../src/theme';
 import { Card, H2, IconBadge, Num, Row, Screen, Segmented, Txt } from '../../src/components/ui';
 import { Leaf } from '../../src/components/Leaf';
 import { exportData } from '../../src/export';
+import { INSTAGRAM, openInstagram } from '../../src/social';
 import { Icon, IconName } from '../../src/components/Icon';
 import { googleSignOut } from '../../src/GoogleButton';
 import { API } from '../../src/ai';
@@ -215,6 +216,7 @@ export default function Profile() {
         </Row>
         {item('refresh', t('redo'), () => router.push('/onboarding'))}
         {item('share', t('share'), () => { Share.share({ message: t('shareMsg') }).catch(() => {}); })}
+        {!!INSTAGRAM && item('instagram', t('igFollow'), openInstagram)}
         {item('star', t('rate'), () => { Linking.openURL('market://details?id=com.nutriai.app').catch(() => Linking.openURL('https://play.google.com/store/apps/details?id=com.nutriai.app').catch(() => {})); })}
         {item('info', t('privacy'), () => { Linking.openURL(`${API ?? 'https://nutri-ai-server.netlify.app'}/privacy`).catch(() => {}); })}
         {item('info', t('termsL'), () => { Linking.openURL(`${API ?? 'https://nutri-ai-server.netlify.app'}/terms`).catch(() => {}); })}

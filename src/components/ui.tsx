@@ -3,6 +3,7 @@ import { Animated, Easing, Platform, Pressable, ScrollView, StyleProp, StyleShee
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { C, R, fontFor, themed, fa } from '../theme';
+import { accent } from '../accent';
 import { useT } from '../i18n';
 import { Icon, IconName } from './Icon';
 import * as Haptics from 'expo-haptics';
@@ -39,11 +40,11 @@ export function Num({ style, children, ...p }: TextProps) {
 }
 
 /** Soft green light at the top of every screen. */
-export function Glow({ height = 340, strength = 0.16 }: { height?: number; strength?: number }) {
+export function Glow({ height = 380, strength = C.mode === 'light' ? 0.3 : 0.24 }: { height?: number; strength?: number }) {
   return (
     <LinearGradient
       pointerEvents="none"
-      colors={[`rgba(57,230,140,${strength})`, 'rgba(57,230,140,0.03)', 'rgba(0,0,0,0)']}
+      colors={[`rgba(57,230,140,${strength})`, 'rgba(57,230,140,0.05)', 'rgba(57,230,140,0)']}
       locations={[0, 0.55, 1]}
       style={{ position: 'absolute', top: 0, left: 0, right: 0, height }}
     />
@@ -167,14 +168,19 @@ export function Pop({ children, delay = 0, loop, style }: { children: ReactNode;
 }
 
 /** Glass tile with a two-tone green icon that pops in (and can keep moving). */
-export function IconBadge({ name, color = C.green, size = 40, icon = 20, loop, delay = 0 }: { name: IconName; color?: string; size?: number; icon?: number; loop?: Loop; delay?: number }) {
+/** hex colour + alpha (0-1) as #RRGGBBAA; other colour formats fall back to brand green. */
+const tint = (c: string, a: number) => (/^#[0-9a-f]{6}$/i.test(c) ? c + Math.round(a * 255).toString(16).padStart(2, '0') : `rgba(57,230,140,${a})`);
+
+export function IconBadge({ name, color: c0, size = 40, icon = 20, loop, delay = 0 }: { name: IconName; color?: string; size?: number; icon?: number; loop?: Loop; delay?: number }) {
+  const color = c0 ?? accent(name);
   const r = size * 0.32;
+  const light = C.mode === 'light';
   return (
     <Pop delay={delay} loop={loop}>
-      <View style={{ width: size, height: size, borderRadius: r, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(124,245,181,0.28)', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(57,230,140,0.07)' }}>
-        <LinearGradient pointerEvents="none" colors={C.mode === 'light' ? ['rgba(255,255,255,0.9)', 'rgba(57,230,140,0.12)', 'rgba(57,230,140,0.05)'] : ['rgba(255,255,255,0.16)', 'rgba(57,230,140,0.10)', 'rgba(0,0,0,0.15)']} locations={[0, 0.45, 1]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={StyleSheet.absoluteFill} />
+      <View style={{ width: size, height: size, borderRadius: r, overflow: 'hidden', borderWidth: 1, borderColor: tint(color, light ? 0.35 : 0.4), alignItems: 'center', justifyContent: 'center', backgroundColor: tint(color, light ? 0.12 : 0.13) }}>
+        <LinearGradient pointerEvents="none" colors={light ? ['rgba(255,255,255,0.75)', tint(color, 0.1), tint(color, 0.04)] : ['rgba(255,255,255,0.14)', tint(color, 0.1), 'rgba(0,0,0,0.12)']} locations={[0, 0.45, 1]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={StyleSheet.absoluteFill} />
         <View pointerEvents="none" style={{ position: 'absolute', top: 0, left: r * 0.6, right: r * 0.6, height: 1, backgroundColor: 'rgba(255,255,255,0.35)' }} />
-        <Icon name={name} size={icon} color={color} fill={LINE_ONLY.has(name) ? undefined : color + '2E'} />
+        <Icon name={name} size={icon} color={color} fill={LINE_ONLY.has(name) ? undefined : tint(color, 0.18)} />
       </View>
     </Pop>
   );

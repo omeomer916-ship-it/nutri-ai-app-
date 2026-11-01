@@ -252,7 +252,7 @@ export default function Scan() {
       )}
 
       <Pressable onPress={() => router.push({ pathname: '/food', params: { cat } })} style={({ pressed }) => [st.search, pressed && { opacity: 0.8 }]}>
-        <IconBadge name="search" color={C.green} size={46} />
+        <IconBadge name="search" size={46} />
         <View style={{ flex: 1 }}>
           <Txt style={{ fontWeight: '800' }}>{t('orSearch')}</Txt>
           <Txt style={{ color: C.mut, fontSize: 13 }}>{t('searchD')}</Txt>

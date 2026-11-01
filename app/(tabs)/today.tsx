@@ -19,6 +19,9 @@ import { Icon, IconName } from '../../src/components/Icon';
 import { MealSheet } from '../../src/components/MealSheet';
 import { ExerciseSheet } from '../../src/components/ExerciseSheet';
 
+/** Dark ink used on the bright green hero card. */
+const INK = '#03140b';
+
 export default function Today() {
   const { t, lang, rtl } = useT();
   const goals = useApp((s) => s.goals);
@@ -136,7 +139,7 @@ export default function Today() {
             <Num style={{ fontWeight: '900', fontSize: 13, color: '#000' }}>PRO</Num>
           </Pressable>
           <Pressable onPress={() => router.push('/quests')} style={st.streak}>
-            <Icon name="flame" size={17} color={C.water} fill={C.water + '33'} />
+            <Icon name="flame" size={17} color={C.orange} fill={C.orange + '33'} />
             <Num style={{ fontWeight: '800', fontSize: 15 }}>{streak}</Num>
             {sInfo.freezes > 0 && <><Icon name="snow" size={13} color="#8FD8FF" stroke={2.2} /><Num style={{ fontWeight: '800', fontSize: 12, color: '#8FD8FF' }}>{sInfo.freezes}</Num></>}
           </Pressable>
@@ -162,10 +165,10 @@ export default function Today() {
         ))}
       </Row>
 
-      <Card style={st.hero}>
+      <LinearGradient colors={left < 0 ? ['#FF8A8A', '#F05252', '#B42318'] : ['#4BF09A', '#1FC46F', '#0E8F4C']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={st.hero}>
         <View style={{ flex: 1 }}>
-          <CountUp value={Math.abs(left)} style={st.big} />
-          <Txt style={{ color: C.mut, fontSize: 15, fontWeight: '700', marginTop: -4 }}>{left >= 0 ? t('kLeft') : t('kOver')}</Txt>
+          <CountUp value={Math.abs(left)} style={[st.big, { color: INK }]} />
+          <Txt style={{ color: INK, opacity: 0.75, fontSize: 15, fontWeight: '800', marginTop: -4 }}>{left >= 0 ? t('kLeft') : t('kOver')}</Txt>
           <Row style={{ gap: 14, marginTop: 14 }}>
             <View>
               <Txt style={st.small}>{t('eaten')}</Txt>
@@ -180,21 +183,22 @@ export default function Today() {
               <View style={st.vsep} />
               <View>
                 <Txt style={st.small}>{t('burned')}</Txt>
-                <Num style={[st.smallV, { color: C.water }]}>+{fmt(burned)}</Num>
+                <Num style={st.smallV}>+{fmt(burned)}</Num>
               </View>
             </>}
           </Row>
         </View>
-        <Ring size={128} stroke={12} value={tot.kcal} max={goals.kcal + burned} color={left < 0 ? C.red : C.green}>
-          <View style={st.flame}><Pop loop="wiggle"><Icon name="flame" size={30} color={C.green} fill="rgba(57,230,140,0.2)" /></Pop></View>
+        <Ring size={124} stroke={12} value={tot.kcal} max={goals.kcal + burned} color={INK} track="rgba(3,20,11,0.15)">
+          <View style={st.flame}><Pop loop="wiggle"><Icon name="flame" size={30} color={INK} fill="rgba(3,20,11,0.15)" stroke={2.2} /></Pop></View>
         </Ring>
-      </Card>
+      </LinearGradient>
 
       <Row style={{ gap: 10, marginTop: 10 }}>
         {macros.map(([l, v, g, col, ic]) => {
           const rem = Math.round(g - v);
           return (
-            <Card key={l} style={st.macro}>
+            <Card key={l} style={[st.macro, { borderColor: col + '55' }]}>
+              <LinearGradient pointerEvents="none" colors={[col + '30', col + '00']} locations={[0, 0.7]} style={StyleSheet.absoluteFill} />
               <Row style={{ alignItems: 'flex-end', gap: 3 }}>
                 <Num style={{ fontSize: 22, fontWeight: '900' }}>{Math.abs(rem)}</Num>
                 <Num style={{ fontSize: 13, color: C.mut, fontWeight: '700', marginBottom: 3 }}>g</Num>
@@ -256,9 +260,9 @@ export default function Today() {
 
       <Row style={{ gap: 10, marginTop: 10 }}>
         <QuickBtn icon="camera" label={t('scanNow')} color={C.green} onPress={() => openScan()} />
-        <QuickBtn delay={200} icon="mic" label={t('voiceQ')} color={C.green} onPress={() => router.push('/voice')} />
-        <QuickBtn delay={400} icon="barcode" label={t('barcode')} color={C.mint} onPress={() => router.push('/barcode')} />
-        <QuickBtn delay={600} icon="search" label={t('addFood')} color={C.water} onPress={() => openFood()} />
+        <QuickBtn delay={200} icon="mic" label={t('voiceQ')} color={C.violet} onPress={() => router.push('/voice')} />
+        <QuickBtn delay={400} icon="barcode" label={t('barcode')} color={C.orange} onPress={() => router.push('/barcode')} />
+        <QuickBtn delay={600} icon="search" label={t('addFood')} color={C.sky} onPress={() => openFood()} />
       </Row>
 
       <Card style={{ marginTop: 10, flexDirection: 'row', gap: 12, alignItems: 'flex-start' }}>
@@ -295,36 +299,36 @@ export default function Today() {
       <Pressable onPress={() => router.push('/fasting')}>
         <Card style={{ marginTop: 10 }}>
           <Row style={{ gap: 12 }}>
-            <IconBadge name="moon" color={C.mint} size={44} loop="float" />
+            <IconBadge name="moon" color={C.violet} size={44} loop="float" />
             <View style={{ flex: 1 }}>
               <Txt style={{ fontWeight: '800', fontSize: 16 }}>{t('fastT')}</Txt>
               {fast.start
-                ? <Num style={{ color: C.mint, fontWeight: '900', fontSize: 15 }}>{hms(now - fast.start)} / {fast.hours}h</Num>
+                ? <Num style={{ color: C.violet, fontWeight: '900', fontSize: 15 }}>{hms(now - fast.start)} / {fast.hours}h</Num>
                 : <Txt style={{ color: C.mut, fontSize: 12 }}>{t('fastS')}</Txt>}
             </View>
             {fast.start
-              ? <Ring size={44} stroke={5} value={now - fast.start} max={fast.hours * 3600e3} color={C.mint}><Icon name="moon" size={16} color={C.mint} /></Ring>
-              : <View style={[st.round, { backgroundColor: C.mint }]}><Icon name="bolt" size={17} color="#000" stroke={2.6} /></View>}
+              ? <Ring size={44} stroke={5} value={now - fast.start} max={fast.hours * 3600e3} color={C.violet}><Icon name="moon" size={16} color={C.violet} /></Ring>
+              : <View style={[st.round, { backgroundColor: C.violet }]}><Icon name="bolt" size={17} color="#000" stroke={2.6} /></View>}
           </Row>
         </Card>
       </Pressable>
 
       <Card style={{ marginTop: 10 }}>
         <Row style={{ gap: 12 }}>
-          <IconBadge name="run" color={C.water} size={44} loop="float" delay={200} />
+          <IconBadge name="run" color={C.coral} size={44} loop="float" delay={200} />
           <View style={{ flex: 1 }}>
             <Txt style={{ fontWeight: '800', fontSize: 16 }}>{t('exT')}</Txt>
             {burned > 0
-              ? <Num style={{ color: C.water, fontSize: 13, fontWeight: '700', textAlign: 'left' }}>{fmt(burned)} kcal</Num>
+              ? <Num style={{ color: C.coral, fontSize: 13, fontWeight: '700', textAlign: 'left' }}>{fmt(burned)} kcal</Num>
               : <Txt style={{ color: C.mut, fontSize: 12 }}>{t('exNone')}</Txt>}
           </View>
-          <Pressable hitSlop={8} style={[st.round, { backgroundColor: C.water }]} onPress={() => setExOpen(true)}><Icon name="plus" size={18} color="#000" stroke={2.8} /></Pressable>
+          <Pressable hitSlop={8} style={[st.round, { backgroundColor: C.coral }]} onPress={() => setExOpen(true)}><Icon name="plus" size={18} color="#000" stroke={2.8} /></Pressable>
         </Row>
         {burnList.map((b) => (
           <Pressable key={b.id} onLongPress={() => removeBurn(dk, b.id)} style={st.exRow}>
             <Txt style={{ flex: 1, fontWeight: '700', fontSize: 14 }}>{b.name}</Txt>
             <Num style={{ color: C.mut, fontSize: 12 }}>{b.min} min</Num>
-            <Num style={{ fontWeight: '900', color: C.water, width: 70, textAlign: 'right' }}>-{fmt(b.kcal)}</Num>
+            <Num style={{ fontWeight: '900', color: C.coral, width: 70, textAlign: 'right' }}>-{fmt(b.kcal)}</Num>
           </Pressable>
         ))}
       </Card>
@@ -501,13 +505,13 @@ const st = themed(() => StyleSheet.create({
   day: { width: 38, height: 38, borderRadius: 19, alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, borderColor: fa(0.12), borderStyle: 'dashed' },
   dayHas: { borderStyle: 'solid', borderColor: C.green },
   dayToday: { backgroundColor: C.inv, borderColor: C.inv, borderStyle: 'solid' },
-  hero: { marginTop: 20, flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 22 },
+  hero: { marginTop: 20, flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 22, paddingHorizontal: 18, borderRadius: R.lg + 4, shadowColor: '#1FC46F', shadowOpacity: 0.45, shadowRadius: 20, shadowOffset: { width: 0, height: 10 }, elevation: 12 },
   big: { fontSize: 52, fontWeight: '900', lineHeight: 64 },
-  small: { color: C.dim, fontSize: 12, fontWeight: '600' },
-  smallV: { fontSize: 16, fontWeight: '800' },
-  vsep: { width: 1, height: 28, backgroundColor: C.stroke },
-  flame: { width: 56, height: 56, borderRadius: 28, backgroundColor: C.surface2, alignItems: 'center', justifyContent: 'center' },
-  macro: { flex: 1, padding: 14 },
+  small: { color: INK, opacity: 0.65, fontSize: 12, fontWeight: '700' },
+  smallV: { color: INK, fontSize: 16, fontWeight: '900' },
+  vsep: { width: 1, height: 28, backgroundColor: 'rgba(3,20,11,0.2)' },
+  flame: { width: 56, height: 56, borderRadius: 28, backgroundColor: 'rgba(255,255,255,0.25)', alignItems: 'center', justifyContent: 'center' },
+  macro: { flex: 1, padding: 14, overflow: 'hidden' },
   quick: { flex: 1, alignItems: 'center', backgroundColor: C.surface, borderWidth: 1, borderColor: C.stroke, borderRadius: R.md, paddingVertical: 12, paddingHorizontal: 6 },
   round: { width: 36, height: 36, borderRadius: 18, backgroundColor: C.surface2, alignItems: 'center', justifyContent: 'center' },
   glass: { height: 26, borderRadius: 7, backgroundColor: 'rgba(79,195,255,0.12)' },

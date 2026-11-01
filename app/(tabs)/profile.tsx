@@ -78,7 +78,7 @@ export default function Profile() {
 
   const item = (ic: IconName, label: string, onPress: () => void, danger = false, last = false) => (
     <Pressable key={label} onPress={onPress} style={({ pressed }) => [st.row, last && { borderBottomWidth: 0 }, pressed && { opacity: 0.7 }]}>
-      <IconBadge name={ic} color={danger ? C.red : C.text} size={38} icon={18} />
+      <IconBadge name={ic} color={danger ? C.red : undefined} size={38} icon={18} />
       <Txt style={{ flex: 1, fontWeight: '700', color: danger ? C.red : C.text }}>{label}</Txt>
       {!danger && <View style={{ transform: [{ scaleX: rtl ? -1 : 1 }] }}><Icon name="chevron" size={18} color={C.dim} /></View>}
     </Pressable>
@@ -196,19 +196,19 @@ export default function Profile() {
       <H2>{t('settings')}</H2>
       <Card style={{ paddingVertical: 2 }}>
         <Row style={st.row}>
-          <IconBadge name="globe" color={C.water} size={38} icon={18} />
+          <IconBadge name="globe" size={38} icon={18} />
           <Txt style={{ flex: 1, fontWeight: '700' }}>{t('language')}</Txt>
           <LangPicker style={st.pill} textStyle={{ color: C.text, fontWeight: '700', fontSize: 13 }} />
         </Row>
         <Row style={st.row}>
-          <IconBadge name="scale" color={C.green} size={38} icon={18} />
+          <IconBadge name="scale" size={38} icon={18} />
           <Txt style={{ flex: 1, fontWeight: '700' }}>{t('units')}</Txt>
           <View style={{ width: 170 }}>
             <Segmented value={imperial ? 'i' : 'm'} options={[['m', 'kg · cm'], ['i', 'lb · ft']]} onChange={(v) => setImperial(v === 'i')} />
           </View>
         </Row>
         <Row style={st.row}>
-          <IconBadge name={C.mode === 'light' ? 'sun' : 'moon'} color={C.green} size={38} icon={18} />
+          <IconBadge name={C.mode === 'light' ? 'sun' : 'moon'} size={38} icon={18} />
           <Txt style={{ flex: 1, fontWeight: '700' }}>{t('appearance')}</Txt>
           <View style={{ width: 196 }}>
             <Segmented value={theme} options={[['system', t('thAuto')], ['dark', t('thDark')], ['light', t('thLight')]]} onChange={(v) => setTheme(v as 'system' | 'dark' | 'light')} />

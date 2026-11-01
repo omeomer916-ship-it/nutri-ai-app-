@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Pressable, Text, View, useColorScheme } from 'react-native';
-import { Stack } from 'expo-router';
+import { Stack, router, usePathname } from 'expo-router';
 import { useFonts } from 'expo-font';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -34,6 +34,16 @@ export default function RootLayout() {
   const pref = useApp((s) => s.theme);
   applyTheme(pref === 'system' ? (sys === 'light' ? 'light' : 'dark') : pref);
   const tv = themeVersion();
+  // Changing the theme remounts the screens; come back to the same screen afterwards.
+  const path = usePathname();
+  const lastPath = useRef(path);
+  const lastTv = useRef(tv);
+  useEffect(() => {
+    if (lastTv.current === tv) { lastPath.current = path; return; }
+    lastTv.current = tv;
+    const to = lastPath.current;
+    if (to && to !== '/') setTimeout(() => { try { router.replace(to as never); } catch { /* ignore */ } }, 0);
+  }, [tv, path]);
   useEffect(() => {
     const unsub = useApp.persist.onFinishHydration(() => setReady(true));
     if (useApp.persist.hasHydrated()) setReady(true);

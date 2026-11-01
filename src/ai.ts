@@ -55,3 +55,12 @@ export async function describeMeal(input: { text?: string; audio?: string; mime?
   if (res.error === 'no_food') throw new AiError('no_food');
   return res;
 }
+
+export type ToolId = 'fridge' | 'menu' | 'label' | 'plan' | 'week' | 'swap' | 'craving' | 'eatout' | 'compare' | 'snack' | 'workout' | 'grocery';
+
+/** One of the AI tools. Instructions live on the server; the app sends only the tool, input and user context. */
+export async function runTool(tool: ToolId, input: { text?: string; image?: string }, lang: string, context: string): Promise<string> {
+  const res = await post<{ text?: string; error?: string }>('/api/tool', { tool, ...input, lang, context });
+  if (res.error === 'no_food') throw new AiError('no_food');
+  return res.text ?? '';
+}

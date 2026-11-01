@@ -193,6 +193,16 @@ export default function Today() {
         </View>
       </Card>
 
+      <Pressable onPress={() => router.push('/ai')} style={({ pressed }) => [{ marginTop: 10 }, pressed && { transform: [{ scale: 0.98 }] }]}>
+        <LinearGradient colors={C.mode === 'light' ? ['#DDF7E8', '#FFFFFF'] : ['#123A25', '#08130D']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={st.aiBan}>
+          <IconBadge name="wand" size={48} icon={24} loop="pulse" />
+          <View style={{ flex: 1 }}>
+            <Txt style={{ fontWeight: '900', fontSize: 17 }}>{t('aiT')}</Txt>
+            <Txt numberOfLines={2} style={{ color: C.mut, fontSize: 12, lineHeight: 18 }}>{t('aiBan')}</Txt>
+          </View>
+          <View style={st.aiCount}><Num style={{ color: '#000', fontWeight: '900', fontSize: 13 }}>12</Num></View>
+        </LinearGradient>
+      </Pressable>
       <View style={st.tools}>
         {([['book', 'recT', '/recipes'], ['trophy', 'chT', '/challenges'], ['chart', 'repT', '/report'], ['compare', 'bodyT', '/body'], ['share', 'shareDay', '/share'], ['shield', 'hT', '/health']] as [IconName, TKey, string][]).map(([ic, k, to], i) => (
           <Pressable key={k} onPress={() => router.push(to as never)} style={({ pressed }) => [st.tool, pressed && { transform: [{ scale: 0.97 }] }]}>
@@ -411,6 +421,8 @@ const st = themed(() => StyleSheet.create({
   quick: { flex: 1, alignItems: 'center', backgroundColor: C.surface, borderWidth: 1, borderColor: C.stroke, borderRadius: R.md, paddingVertical: 12, paddingHorizontal: 6 },
   round: { width: 36, height: 36, borderRadius: 18, backgroundColor: C.surface2, alignItems: 'center', justifyContent: 'center' },
   glass: { height: 26, borderRadius: 7, backgroundColor: 'rgba(79,195,255,0.12)' },
+  aiBan: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: R.lg, padding: 14, borderWidth: 1, borderColor: 'rgba(57,230,140,0.45)' },
+  aiCount: { minWidth: 30, height: 30, borderRadius: 15, paddingHorizontal: 8, backgroundColor: C.green, alignItems: 'center', justifyContent: 'center' },
   tools: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 10 },
   tool: { width: '31.4%', flexGrow: 1, alignItems: 'center', backgroundColor: C.surface, borderWidth: 1, borderColor: C.border, borderRadius: 20, paddingVertical: 14, paddingHorizontal: 6 },
   proBan: { flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: R.lg, padding: 16, borderWidth: 1, borderColor: 'rgba(255,212,92,0.4)' },

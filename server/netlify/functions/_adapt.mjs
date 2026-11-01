@@ -2,7 +2,7 @@
 // with basic abuse protection: app key, per-IP rate limit and body size limits.
 
 const HITS = new Map(); // ip|route -> [timestamps]  (per warm instance)
-const LIMITS = { scan: 30, chat: 80, describe: 40 }; // requests per hour per IP
+const LIMITS = { scan: 30, chat: 80, describe: 40, tool: 40 }; // requests per hour per IP
 const MAX_BODY = 3_000_000; // bytes (a 1024px JPEG in base64 is ~200 KB)
 
 function limited(ip, route) {

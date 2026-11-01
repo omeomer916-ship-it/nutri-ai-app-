@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useT } from '../../src/i18n';
 import { dayKey, totals, useApp } from '../../src/store';
@@ -10,6 +11,7 @@ import { Glow, Row, Txt } from '../../src/components/ui';
 import { Leaf } from '../../src/components/Leaf';
 import { Icon, IconName } from '../../src/components/Icon';
 import { Rich } from '../../src/components/Rich';
+import { aiContext } from '../../src/aiContext';
 
 export default function Coach() {
   const { t, rtl, lang } = useT();
@@ -24,13 +26,7 @@ export default function Coach() {
     return () => { a.remove(); b.remove(); };
   }, []);
 
-  const context = () => {
-    const s = useApp.getState();
-    const tot = totals(s.days[dayKey()]);
-    const p = s.profile;
-    return `Goals: ${s.goals.kcal} kcal, P ${s.goals.P}g, C ${s.goals.C}g, F ${s.goals.F}g. Eaten today: ${tot.kcal} kcal, P ${tot.P}g, C ${tot.C}g, F ${tot.F}g. ` +
-      (p ? `User: ${p.sex === 'm' ? 'male' : 'female'}, ${p.age}y, ${p.h}cm, ${p.w}kg, target ${p.gw}kg, goal ${p.goal}, activity ${p.act}/4${p.diet && p.diet !== 'any' ? `, diet ${p.diet}` : ''}${p.pace ? `, pace ${p.pace} kg/week` : ''}.` : '');
-  };
+  const context = aiContext;
 
   const send = async (text: string) => {
     const txt = text.trim();
@@ -70,6 +66,10 @@ export default function Coach() {
               <Txt style={{ fontSize: 20, fontWeight: '900' }}>{t('tCoach')}</Txt>
               <Txt style={{ color: C.green, fontSize: 12, fontWeight: '700' }}>{t('online')}</Txt>
             </View>
+            <Pressable hitSlop={8} onPress={() => router.push('/ai')} style={st.toolsBtn}>
+              <Icon name="wand" size={16} color="#000" stroke={2.4} />
+              <Txt style={{ color: '#000', fontWeight: '900', fontSize: 13 }}>{t('aiToolsBtn')}</Txt>
+            </Pressable>
             {msgs.length > 0 && (
               <Pressable hitSlop={10} onPress={() => setMsgs([])} style={st.clear}>
                 <Icon name="refresh" size={18} color={C.mut} />
@@ -122,6 +122,7 @@ export default function Coach() {
 }
 
 const st = themed(() => StyleSheet.create({
+  toolsBtn: { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: C.green, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 7 },
   head: { gap: 12, paddingHorizontal: 20, paddingTop: 12, paddingBottom: 12, borderBottomWidth: 1, borderBottomColor: C.stroke },
   av: { width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center' },
   clear: { width: 40, height: 40, borderRadius: 20, backgroundColor: C.surface2, alignItems: 'center', justifyContent: 'center' },

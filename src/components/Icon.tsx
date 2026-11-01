@@ -5,9 +5,16 @@ export type IconName =
   | 'flame' | 'wheat' | 'drumstick' | 'avocado' | 'drop' | 'camera' | 'image' | 'plus' | 'minus' | 'chevron'
   | 'send' | 'sparkle' | 'home' | 'chart' | 'user' | 'chat' | 'globe' | 'refresh' | 'logout' | 'trash'
   | 'target' | 'scale' | 'check' | 'x' | 'bolt' | 'sun' | 'moon' | 'bowl' | 'cookie' | 'cake' | 'cup' | 'scan' | 'info' | 'search' | 'crown' | 'share' | 'star' | 'edit' | 'copy' | 'lock' | 'trophy' | 'barcode' | 'bell' | 'run' | 'meat' | 'bread'
-  | 'mic' | 'heart' | 'shield' | 'book' | 'compare' | 'calendar' | 'alert' | 'clock' | 'medal';
+  | 'mic' | 'heart' | 'shield' | 'book' | 'compare' | 'calendar' | 'alert' | 'clock' | 'medal'
+  | 'fridge' | 'cart' | 'list' | 'menu' | 'tag' | 'wand';
 
 const P: Record<IconName, (c: string) => React.ReactNode> = {
+  fridge: () => (<><Rect x={5} y={2} width={14} height={20} rx={3} /><Path d="M5 10h14M8 6v1M8 13v3" /></>),
+  cart: () => (<><Path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 8H6.2" /><Circle cx={10} cy={20} r={1.5} /><Circle cx={17} cy={20} r={1.5} /></>),
+  list: () => <Path d="M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01" />,
+  menu: () => (<><Rect x={4} y={3} width={16} height={18} rx={2.5} /><Path d="M8 8h8M8 12h8M8 16h5" /></>),
+  tag: () => (<><Path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z" /><Circle cx={7.5} cy={7.5} r={1.2} /></>),
+  wand: () => (<><Path d="M15 4V2M15 10V8M11 6h2M17 6h2M4 20L14 10" /><Path d="M19 13l.7 1.8 1.8.7-1.8.7L19 18l-.7-1.8-1.8-.7 1.8-.7z" /></>),
   mic: () => (<><Rect x={9} y={2} width={6} height={12} rx={3} /><Path d="M5 10a7 7 0 0 0 14 0M12 17v4M8 21h8" /></>),
   heart: () => <Path d="M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.8 0-3 .5-4.5 2-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7z" />,
   shield: () => (<><Path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /><Path d="M9 12l2 2 4-4" /></>),

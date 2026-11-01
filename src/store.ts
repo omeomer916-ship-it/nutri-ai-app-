@@ -74,6 +74,8 @@ type State = {
   setFastHours: (h: number) => void;
   waterGoal: number;
   imperial: boolean;
+  theme: 'system' | 'dark' | 'light';
+  setTheme: (v: 'system' | 'dark' | 'light') => void;
   isPro: boolean;
   scans: Record<string, number>;
   countScan: () => void;
@@ -99,7 +101,7 @@ type State = {
   resetAll: () => void;
 };
 
-const initial: Pick<State, 'lang' | 'seenIntro' | 'account' | 'profile' | 'goals' | 'days' | 'weights' | 'myFoods' | 'remind' | 'burn' | 'fast' | 'waterGoal' | 'imperial' | 'isPro' | 'scans'> = {
+const initial: Pick<State, 'lang' | 'seenIntro' | 'account' | 'profile' | 'goals' | 'days' | 'weights' | 'myFoods' | 'remind' | 'burn' | 'fast' | 'waterGoal' | 'imperial' | 'theme' | 'isPro' | 'scans'> = {
   lang: deviceLang(),
   seenIntro: false,
   account: null,
@@ -113,6 +115,7 @@ const initial: Pick<State, 'lang' | 'seenIntro' | 'account' | 'profile' | 'goals
   fast: { start: null, hours: 16, log: [] },
   waterGoal: 8,
   imperial: false,
+  theme: 'system',
   isPro: false,
   scans: {},
 };
@@ -149,6 +152,7 @@ export const useApp = create<State>()(
         set({ scans: { [k]: (get().scans[k] ?? 0) + 1 } });
       },
       setImperial: (v) => set({ imperial: v }),
+      setTheme: (v) => set({ theme: v }),
       setWaterGoal: (n) => set({ waterGoal: Math.max(4, Math.min(16, n)) }),
       copyDay: (from) => {
         const src = get().days[from];

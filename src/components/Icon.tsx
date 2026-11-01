@@ -1,3 +1,4 @@
+import { C } from '../theme';
 import Svg, { Circle, Path, Rect } from 'react-native-svg';
 
 export type IconName =
@@ -137,9 +138,10 @@ const P: Record<IconName, (c: string) => React.ReactNode> = {
   ),
 };
 
-export function Icon({ name, size = 22, color = '#fff', stroke = 2, fill }: {
+export function Icon({ name, size = 22, color, stroke = 2, fill }: {
   name: IconName; size?: number; color?: string; stroke?: number; fill?: string;
 }) {
+  color = color ?? C.text;
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill={fill ?? 'none'} stroke={color} strokeWidth={stroke} strokeLinecap="round" strokeLinejoin="round">
       {P[name](color)}

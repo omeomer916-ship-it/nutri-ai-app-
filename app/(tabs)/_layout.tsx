@@ -6,7 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import { useT, TKey } from '../../src/i18n';
-import { C } from '../../src/theme';
+import { C, themed, fa } from '../../src/theme';
 import { Icon, IconName } from '../../src/components/Icon';
 import { Pop, Txt } from '../../src/components/ui';
 
@@ -54,9 +54,9 @@ function Bar({ state, navigation }: BottomTabBarProps) {
           return (
             <Pressable key={r.key} onPress={() => go(r.name)} style={st.item}>
               <Pop key={on ? 'on' : 'off'}>
-                <Icon name={m.icon} size={23} color={on ? C.green : 'rgba(255,255,255,0.42)'} stroke={on ? 2.2 : 1.8} fill={on && m.icon !== 'chart' ? 'rgba(57,230,140,0.18)' : undefined} />
+                <Icon name={m.icon} size={23} color={on ? C.green : fa(0.42)} stroke={on ? 2.2 : 1.8} fill={on && m.icon !== 'chart' ? 'rgba(57,230,140,0.18)' : undefined} />
               </Pop>
-              <Txt center numberOfLines={1} style={{ fontSize: 11, fontWeight: on ? '800' : '600', color: on ? '#fff' : 'rgba(255,255,255,0.42)', marginTop: 2 }}>{t(m.label)}</Txt>
+              <Txt center numberOfLines={1} style={{ fontSize: 11, fontWeight: on ? '800' : '600', color: on ? C.text : fa(0.42), marginTop: 2 }}>{t(m.label)}</Txt>
               <View style={[st.dot, on && { backgroundColor: C.green }]} />
             </Pressable>
           );
@@ -74,18 +74,18 @@ export default function TabsLayout() {
   );
 }
 
-const st = StyleSheet.create({
+const st = themed(() => StyleSheet.create({
   wrap: { position: 'absolute', left: 0, right: 0, bottom: 0, paddingHorizontal: 14, paddingTop: 24 },
   bar: {
-    height: 72, borderRadius: 36, backgroundColor: 'rgba(20,28,24,0.97)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)',
+    height: 72, borderRadius: 36, backgroundColor: C.bar, borderWidth: 1, borderColor: fa(0.08),
     alignItems: 'center', paddingHorizontal: 6,
-    shadowColor: '#000', shadowOpacity: 0.6, shadowRadius: 24, shadowOffset: { width: 0, height: 10 }, elevation: 14,
+    shadowColor: '#000', shadowOpacity: C.mode === 'light' ? 0.12 : 0.6, shadowRadius: 24, shadowOffset: { width: 0, height: 10 }, elevation: 14,
   },
   item: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: 4 },
   dot: { width: 4, height: 4, borderRadius: 2, marginTop: 3, backgroundColor: 'transparent' },
   fabWrap: { flex: 1, alignItems: 'center' },
   fab: {
     width: 62, height: 62, borderRadius: 31, alignItems: 'center', justifyContent: 'center', marginTop: -30,
-    borderWidth: 4, borderColor: '#000', shadowColor: C.green, shadowOpacity: 0.7, shadowRadius: 18, elevation: 12,
+    borderWidth: 4, borderColor: C.bg, shadowColor: C.green, shadowOpacity: 0.7, shadowRadius: 18, elevation: 12,
   },
-});
+}));

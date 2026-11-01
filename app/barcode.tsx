@@ -7,7 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useT, TKey } from '../src/i18n';
 import { CATS, Cat, useApp } from '../src/store';
 import { fmt } from '../src/calc';
-import { C, CAT_ICON } from '../src/theme';
+import { C, CAT_ICON, themed, fa } from '../src/theme';
 import { Btn, Chip, Num, Row, Txt } from '../src/components/ui';
 import { Icon, IconName } from '../src/components/Icon';
 
@@ -110,7 +110,7 @@ export default function Barcode() {
               </View>
             </Row>
             <View style={st.kcal}>
-              <Icon name="flame" size={28} color="#fff" fill="rgba(255,255,255,0.1)" />
+              <Icon name="flame" size={28} color={C.text} fill={fa(0.1)} />
               <Num style={{ fontSize: 42, fontWeight: '900' }}>{fmt(v(prod.k))}</Num>
               <Num style={{ color: C.mut, fontSize: 15, fontWeight: '700', marginTop: 12 }}>kcal</Num>
             </View>
@@ -125,9 +125,9 @@ export default function Barcode() {
             <Txt style={st.lab}>{t('amount')}</Txt>
             <Row style={{ gap: 8 }}>
               {sizes.map((x) => (
-                <Pressable key={x} onPress={() => setG(x)} style={[st.mult, g === x && { backgroundColor: '#fff' }]}>
-                  <Num style={{ fontWeight: '900', fontSize: 14, color: g === x ? '#000' : '#fff' }}>{x} g</Num>
-                  {x === prod.serving && <Txt style={{ fontSize: 9, color: g === x ? '#000' : C.mut }}>{t('serving')}</Txt>}
+                <Pressable key={x} onPress={() => setG(x)} style={[st.mult, g === x && { backgroundColor: C.inv }]}>
+                  <Num style={{ fontWeight: '900', fontSize: 14, color: g === x ? C.onInv : C.text }}>{x} g</Num>
+                  {x === prod.serving && <Txt style={{ fontSize: 9, color: g === x ? C.onInv : C.mut }}>{t('serving')}</Txt>}
                 </Pressable>
               ))}
             </Row>
@@ -144,7 +144,7 @@ export default function Barcode() {
   );
 }
 
-const st = StyleSheet.create({
+const st = themed(() => StyleSheet.create({
   back: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(0,0,0,0.55)', alignItems: 'center', justifyContent: 'center' },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 28 },
   frame: { width: 280, height: 170, borderRadius: 26, borderWidth: 3, borderColor: C.green, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(57,230,140,0.06)' },
@@ -154,4 +154,4 @@ const st = StyleSheet.create({
   mt: { flex: 1, alignItems: 'center', backgroundColor: C.surface2, borderRadius: 16, paddingVertical: 10 },
   lab: { color: C.mut, fontWeight: '700', fontSize: 13, marginTop: 18, marginBottom: 8 },
   mult: { flex: 1, height: 50, borderRadius: 14, backgroundColor: C.surface2, alignItems: 'center', justifyContent: 'center' },
-});
+}));

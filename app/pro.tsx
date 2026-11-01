@@ -6,7 +6,7 @@ import { router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useT, TKey } from '../src/i18n';
-import { C, R } from '../src/theme';
+import { C, R, themed, fa } from '../src/theme';
 import { Btn, Num, Row, Txt } from '../src/components/ui';
 import { Brand } from '../src/components/Brand';
 import { Icon, IconName } from '../src/components/Icon';
@@ -22,7 +22,7 @@ export default function Pro() {
   const soon = () => Alert.alert('Nutri AI Pro', t('soon'));
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#000' }}>
+    <View style={{ flex: 1, backgroundColor: C.bg }}>
       <Hero />
       <SafeAreaView style={{ flex: 1, direction: rtl ? 'rtl' : 'ltr' }} edges={['top', 'bottom']}>
         <Row style={{ justifyContent: 'space-between', paddingHorizontal: 20, paddingTop: 8 }}>
@@ -30,7 +30,7 @@ export default function Pro() {
           <Pressable hitSlop={10} onPress={() => router.back()} style={st.x}><Icon name="x" size={18} /></Pressable>
         </Row>
         <ScrollView contentContainerStyle={{ padding: 20, paddingTop: 250, paddingBottom: 30 }} showsVerticalScrollIndicator={false}>
-          <Num style={{ fontSize: 36, fontWeight: '900', lineHeight: 48, textAlign: 'center' }}>Nutri AI <Num style={{ fontSize: 36, fontWeight: '900', color: GOLD }}>Pro</Num></Num>
+          <Num style={{ fontSize: 36, fontWeight: '900', lineHeight: 48, textAlign: 'center' }}>Nutri AI <Num style={{ fontSize: 36, fontWeight: '900', color: C.mode === 'light' ? '#C9971A' : GOLD }}>Pro</Num></Num>
           <Txt center style={{ color: C.mut, fontSize: 16, lineHeight: 25 }}>{t('proS')}</Txt>
 
           <View style={{ gap: 14, marginTop: 24 }}>
@@ -81,7 +81,7 @@ function Hero() {
           <RadialGradient id="g" cx="50%" cy="50%" r="50%">
             <Stop offset="0" stopColor={GOLD} stopOpacity={0.35} />
             <Stop offset="0.5" stopColor={C.green} stopOpacity={0.08} />
-            <Stop offset="1" stopColor="#000" stopOpacity={0} />
+            <Stop offset="1" stopColor={C.bg} stopOpacity={0} />
           </RadialGradient>
         </Defs>
         <Circle cx={(S + 120) / 2} cy={S / 2} r={S / 2} fill="url(#g)" />
@@ -126,7 +126,7 @@ function PlanCard({ on, onPress, title, price, per, sub, tag }: { on: boolean; o
   );
 }
 
-const st = StyleSheet.create({
+const st = themed(() => StyleSheet.create({
   x: { width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(0,0,0,0.5)', alignItems: 'center', justifyContent: 'center' },
   orb: { position: 'absolute', width: 44, height: 44, borderRadius: 22, backgroundColor: '#0D1411', borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
   crownBig: { position: 'absolute', top: 150 - 52, width: 104, height: 104, borderRadius: 52, shadowColor: GOLD, shadowOpacity: 0.8, shadowRadius: 30, elevation: 20 },
@@ -134,7 +134,7 @@ const st = StyleSheet.create({
   badge: { alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: GOLD, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 5 },
   fi: { width: 36, height: 36, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
   plan: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 16, borderRadius: R.lg, backgroundColor: C.surface, borderWidth: 1.5, borderColor: C.stroke },
-  planOn: { borderColor: GOLD, backgroundColor: '#1a1708' },
-  radio: { width: 24, height: 24, borderRadius: 12, borderWidth: 2, borderColor: 'rgba(255,255,255,0.3)', alignItems: 'center', justifyContent: 'center' },
+  planOn: { borderColor: GOLD, backgroundColor: C.mode === 'light' ? '#FFF7DC' : '#1a1708' },
+  radio: { width: 24, height: 24, borderRadius: 12, borderWidth: 2, borderColor: fa(0.3), alignItems: 'center', justifyContent: 'center' },
   tag: { backgroundColor: C.green, borderRadius: 999, paddingHorizontal: 8, paddingVertical: 2 },
-});
+}));

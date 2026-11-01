@@ -1,12 +1,13 @@
 import { View } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
-import { C } from '../theme';
+import { C, fa } from '../theme';
 
 /** Progress ring; optional coloured segments (e.g. kcal from protein, carbs, fat). */
-export function Ring({ size, value, max, stroke = 14, color = C.green, segments, segColors, track = 'rgba(255,255,255,0.07)', children }: {
+export function Ring({ size, value, max, stroke = 14, color = C.green, segments, segColors, track, children }: {
   size: number; value: number; max: number; stroke?: number; color?: string;
   segments?: number[]; segColors?: string[]; track?: string; children?: React.ReactNode;
 }) {
+  track = track ?? fa(0.07);
   const r = size / 2 - stroke / 2 - 1;
   const L = 2 * Math.PI * r;
   const p = Math.max(0, Math.min(1, max ? value / max : 0));

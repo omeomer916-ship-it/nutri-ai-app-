@@ -5,7 +5,7 @@ import * as Haptics from 'expo-haptics';
 import { useT } from '../i18n';
 import { dayKey, useApp } from '../store';
 import { fmt } from '../calc';
-import { C } from '../theme';
+import { C, themed } from '../theme';
 import { Num, Txt } from './ui';
 import { Icon, IconName } from './Icon';
 
@@ -52,8 +52,8 @@ export function Toast() {
   );
 }
 
-const st = StyleSheet.create({
+const st = themed(() => StyleSheet.create({
   wrap: { position: 'absolute', left: 16, right: 16, alignItems: 'center', zIndex: 999, elevation: 30 },
-  pill: { alignItems: 'center', gap: 10, maxWidth: '100%', backgroundColor: 'rgba(20,29,24,0.98)', borderWidth: 1, borderColor: 'rgba(57,230,140,0.45)', borderRadius: 999, paddingVertical: 10, paddingHorizontal: 14, shadowColor: '#000', shadowOpacity: 0.5, shadowRadius: 16, shadowOffset: { width: 0, height: 6 } },
+  pill: { alignItems: 'center', gap: 10, maxWidth: '100%', backgroundColor: C.bar, borderWidth: 1, borderColor: 'rgba(57,230,140,0.45)', borderRadius: 999, paddingVertical: 10, paddingHorizontal: 14, shadowColor: '#000', shadowOpacity: 0.5, shadowRadius: 16, shadowOffset: { width: 0, height: 6 } },
   ic: { width: 26, height: 26, borderRadius: 13, backgroundColor: C.green, alignItems: 'center', justifyContent: 'center' },
-});
+}));

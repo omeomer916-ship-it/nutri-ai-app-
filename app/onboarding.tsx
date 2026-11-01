@@ -6,7 +6,7 @@ import Svg, { Circle, Defs, LinearGradient as SvgGrad, Path, Stop } from 'react-
 import { useT, TKey } from '../src/i18n';
 import { Profile, useApp } from '../src/store';
 import { KG_LB, computePlan, fmt, wShow } from '../src/calc';
-import { C, R, fontFor } from '../src/theme';
+import { C, R, fontFor, themed, fa } from '../src/theme';
 import { Btn, Card, IconBadge, Num, Pop, Row, Screen, Segmented, Txt } from '../src/components/ui';
 import { Ring } from '../src/components/Ring';
 import { Icon, IconName } from '../src/components/Icon';
@@ -101,7 +101,7 @@ export default function Onboarding() {
                 <Pressable onPress={() => next(v)} style={({ pressed }) => [styles.opt, on && styles.optOn, pressed && { transform: [{ scale: 0.98 }] }]}>
                   <IconBadge name={ic} color={on ? '#03140b' : C.green} size={44} />
                   <View style={{ flex: 1 }}>
-                    <Txt style={{ fontSize: 17, fontWeight: '800', color: on ? '#03140b' : '#fff' }}>{t(k)}</Txt>
+                    <Txt style={{ fontSize: 17, fontWeight: '800', color: on ? '#03140b' : C.text }}>{t(k)}</Txt>
                     {!!sub && <Num style={{ color: on ? '#03140b' : C.mut, fontSize: 12 }}>{sub}</Num>}
                   </View>
                   <View style={[styles.radio, on && { borderColor: '#03140b', backgroundColor: '#03140b' }]}>{on && <Icon name="check" size={14} color={C.green} stroke={3} />}</View>
@@ -167,7 +167,7 @@ function Building({ onDone }: { onDone: () => void }) {
             return (
               <Row key={k} style={{ gap: 10, opacity: pct >= i * 25 ? 1 : 0.3 }}>
                 <View style={[styles.chk, done && { backgroundColor: C.green, borderColor: C.green }]}>{done && <Icon name="check" size={13} color="#03140b" stroke={3} />}</View>
-                <Txt style={{ fontWeight: '700', color: done ? '#fff' : C.mut }}>{t(k)}</Txt>
+                <Txt style={{ fontWeight: '700', color: done ? C.text : C.mut }}>{t(k)}</Txt>
               </Row>
             );
           })}
@@ -208,8 +208,8 @@ function Plan({ p, onStart, onBack }: { p: Profile; onStart: (g: ReturnType<type
                 </SvgGrad>
               </Defs>
               <Path d={curve} stroke="url(#pg)" strokeWidth={4} fill="none" strokeLinecap="round" />
-              <Circle cx={10} cy={y0} r={6} fill="#fff" />
-              <Circle cx={W - 10} cy={y1} r={8} fill={C.green} stroke="#000" strokeWidth={3} />
+              <Circle cx={10} cy={y0} r={6} fill={C.text} />
+              <Circle cx={W - 10} cy={y1} r={8} fill={C.green} stroke={C.bg} strokeWidth={3} />
             </Svg>
           </Card>
         </Pop>
@@ -242,18 +242,18 @@ function Plan({ p, onStart, onBack }: { p: Profile; onStart: (g: ReturnType<type
   );
 }
 
-const styles = StyleSheet.create({
-  prog: { height: 6, borderRadius: 6, backgroundColor: 'rgba(255,255,255,0.08)', overflow: 'hidden' },
+const styles = themed(() => StyleSheet.create({
+  prog: { height: 6, borderRadius: 6, backgroundColor: fa(0.08), overflow: 'hidden' },
   progIn: { height: 6, borderRadius: 6, backgroundColor: C.green },
   backBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: C.surface2, alignItems: 'center', justifyContent: 'center' },
-  radio: { width: 24, height: 24, borderRadius: 12, borderWidth: 2, borderColor: 'rgba(255,255,255,0.25)', alignItems: 'center', justifyContent: 'center' },
-  chk: { width: 24, height: 24, borderRadius: 12, borderWidth: 2, borderColor: 'rgba(255,255,255,0.25)', alignItems: 'center', justifyContent: 'center' },
+  radio: { width: 24, height: 24, borderRadius: 12, borderWidth: 2, borderColor: fa(0.25), alignItems: 'center', justifyContent: 'center' },
+  chk: { width: 24, height: 24, borderRadius: 12, borderWidth: 2, borderColor: fa(0.25), alignItems: 'center', justifyContent: 'center' },
   kicker: { color: C.green, fontWeight: '700', marginTop: 26 },
   q: { fontSize: 30, fontWeight: '900', marginTop: 6, marginBottom: 18, lineHeight: 42 },
   sub: { color: C.mut, marginBottom: 18, lineHeight: 22 },
   opt: { flexDirection: 'row', alignItems: 'center', gap: 14, backgroundColor: C.surface, borderWidth: 1, borderColor: C.stroke, borderRadius: R.lg, padding: 14 },
   optOn: { borderColor: C.green, backgroundColor: C.green },
   inputRow: { backgroundColor: C.surface, borderWidth: 1, borderColor: C.stroke, borderRadius: R.lg, paddingHorizontal: 18, gap: 10 },
-  input: { flex: 1, color: '#fff', fontSize: 34, height: 84, paddingVertical: 0, textAlign: 'center', textAlignVertical: 'center', includeFontPadding: false },
+  input: { flex: 1, color: C.text, fontSize: 34, height: 84, paddingVertical: 0, textAlign: 'center', textAlignVertical: 'center', includeFontPadding: false },
   mac: { flex: 1, alignItems: 'center', backgroundColor: C.surface2, borderRadius: R.md, paddingVertical: 12 },
-});
+}));

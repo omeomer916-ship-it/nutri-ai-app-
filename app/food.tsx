@@ -6,7 +6,7 @@ import { useT, TKey } from '../src/i18n';
 import { CATS, Cat, useApp } from '../src/store';
 import { FOODS, Food, GROUPS, norm } from '../src/foods';
 import { fmt } from '../src/calc';
-import { C, CAT_ICON, R, fontFor } from '../src/theme';
+import { C, CAT_ICON, R, fontFor, themed, fa } from '../src/theme';
 import { Btn, Chip, Glow, IconBadge, Num, Row, Txt } from '../src/components/ui';
 import { Icon, IconName } from '../src/components/Icon';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -35,7 +35,7 @@ export default function FoodSearch() {
     const n = norm(q);
     const mine: Food[] = myFoods.map((m) => ({ id: 'my_' + m.id, ar: m.name, en: m.name, pa: '', pe: '', g: 'mine', k: m.k, P: m.P, C: m.C, F: m.F }));
     // Arabic users see Arab dishes first; everyone else sees world dishes first.
-    const base = ar ? FOODS : [...FOODS.filter((f) => f.g === 'intl' || f.g === 'healthy'), ...FOODS.filter((f) => f.g !== 'intl' && f.g !== 'healthy')];
+    const base = [...FOODS.filter((f) => f.g === 'intl' || f.g === 'healthy'), ...FOODS.filter((f) => f.g !== 'intl' && f.g !== 'healthy')];
     return [...mine, ...base].filter((f) => (g === 'all' || f.g === g) && (!n || norm(f.ar).includes(n) || norm(f.en).includes(n)));
   }, [q, g, myFoods, ar]);
 
@@ -78,8 +78,8 @@ export default function FoodSearch() {
             <Icon name="barcode" size={18} color={C.green} />
           </Pressable>
           <Pressable onPress={() => setManual(true)} style={st.manualBtn}>
-            <Icon name="edit" size={15} color="#000" stroke={2.4} />
-            <Txt style={{ color: '#000', fontWeight: '800', fontSize: 13 }}>{t('manual')}</Txt>
+            <Icon name="edit" size={15} color={C.onInv} stroke={2.4} />
+            <Txt style={{ color: C.onInv, fontWeight: '800', fontSize: 13 }}>{t('manual')}</Txt>
           </Pressable>
         </Row>
         <View style={st.search}>
@@ -133,7 +133,7 @@ export default function FoodSearch() {
               </View>
             </Row>
             <View style={st.kcal}>
-              <Icon name="flame" size={28} color="#fff" fill="rgba(255,255,255,0.1)" />
+              <Icon name="flame" size={28} color={C.text} fill={fa(0.1)} />
               <Num style={{ fontSize: 42, fontWeight: '900' }}>{fmt(pick.k * mult)}</Num>
               <Num style={{ color: C.mut, fontSize: 15, fontWeight: '700', marginTop: 12 }}>kcal</Num>
             </View>
@@ -149,7 +149,7 @@ export default function FoodSearch() {
             <Row style={{ gap: 8 }}>
               {MULTS.map((m) => (
                 <Pressable key={m} onPress={() => setMult(m)} style={[st.mult, mult === m && st.multOn]}>
-                  <Num style={{ fontWeight: '900', fontSize: 16, color: mult === m ? '#000' : '#fff' }}>×{m}</Num>
+                  <Num style={{ fontWeight: '900', fontSize: 16, color: mult === m ? C.onInv : C.text }}>×{m}</Num>
                 </Pressable>
               ))}
             </Row>
@@ -189,21 +189,21 @@ export default function FoodSearch() {
   );
 }
 
-const st = StyleSheet.create({
+const st = themed(() => StyleSheet.create({
   bcBtn: { width: 38, height: 38, borderRadius: 19, backgroundColor: C.surface2, alignItems: 'center', justifyContent: 'center' },
-  manualBtn: { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: '#fff', borderRadius: 999, paddingHorizontal: 12, paddingVertical: 7 },
-  field: { height: 50, borderRadius: 14, backgroundColor: C.surface2, borderWidth: 1, borderColor: C.stroke, color: '#fff', paddingHorizontal: 14, fontSize: 16, paddingVertical: 0 },
+  manualBtn: { flexDirection: 'row', alignItems: 'center', gap: 5, backgroundColor: C.inv, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 7 },
+  field: { height: 50, borderRadius: 14, backgroundColor: C.surface2, borderWidth: 1, borderColor: C.stroke, color: C.text, paddingHorizontal: 14, fontSize: 16, paddingVertical: 0 },
   back: { width: 40, height: 40, borderRadius: 20, backgroundColor: C.surface2, alignItems: 'center', justifyContent: 'center' },
   search: { flexDirection: 'row', alignItems: 'center', gap: 10, marginHorizontal: 20, marginTop: 16, marginBottom: 12, backgroundColor: C.surface, borderWidth: 1, borderColor: C.stroke, borderRadius: R.pill, paddingHorizontal: 16, height: 52 },
-  input: { flex: 1, color: '#fff', fontSize: 15, paddingVertical: 0 },
+  input: { flex: 1, color: C.text, fontSize: 15, paddingVertical: 0 },
   row: { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: C.surface, borderWidth: 1, borderColor: C.stroke, borderRadius: R.md, padding: 10 },
   plus: { width: 30, height: 30, borderRadius: 15, backgroundColor: C.green, alignItems: 'center', justifyContent: 'center' },
   dim: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)' },
   sheet: { backgroundColor: C.surface, borderTopLeftRadius: 32, borderTopRightRadius: 32, padding: 22, paddingBottom: 36, borderWidth: 1, borderColor: C.stroke },
-  grab: { alignSelf: 'center', width: 44, height: 5, borderRadius: 3, backgroundColor: 'rgba(255,255,255,0.2)', marginBottom: 18 },
+  grab: { alignSelf: 'center', width: 44, height: 5, borderRadius: 3, backgroundColor: fa(0.2), marginBottom: 18 },
   kcal: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 18, paddingVertical: 8, backgroundColor: C.surface2, borderRadius: 20 },
   mt: { flex: 1, alignItems: 'center', backgroundColor: C.surface2, borderRadius: 16, paddingVertical: 10 },
   lab: { color: C.mut, fontWeight: '700', fontSize: 13, marginTop: 18, marginBottom: 8 },
   mult: { flex: 1, height: 46, borderRadius: 14, backgroundColor: C.surface2, alignItems: 'center', justifyContent: 'center' },
-  multOn: { backgroundColor: '#fff' },
-});
+  multOn: { backgroundColor: C.inv },
+}));

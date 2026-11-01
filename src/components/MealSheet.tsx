@@ -4,7 +4,7 @@ import * as Haptics from 'expo-haptics';
 import { useT, TKey } from '../i18n';
 import { CATS, Cat, Meal, useApp } from '../store';
 import { fmt } from '../calc';
-import { C, CAT_ICON } from '../theme';
+import { C, CAT_ICON, themed, fa } from '../theme';
 import { Btn, Chip, IconBadge, Num, Row, Txt } from './ui';
 import { Icon, IconName } from './Icon';
 
@@ -39,7 +39,7 @@ export function MealSheet({ meal, dayK, onClose }: { meal: Meal | null; dayK: st
         </Row>
 
         <View style={st.kcal}>
-          <Icon name="flame" size={26} color="#fff" fill="rgba(255,255,255,0.1)" />
+          <Icon name="flame" size={26} color={C.text} fill={fa(0.1)} />
           <Num style={{ fontSize: 40, fontWeight: '900' }}>{fmt(v(meal.kcal))}</Num>
           <Num style={{ color: C.mut, fontSize: 15, fontWeight: '700', marginTop: 12 }}>kcal</Num>
         </View>
@@ -55,8 +55,8 @@ export function MealSheet({ meal, dayK, onClose }: { meal: Meal | null; dayK: st
         <Txt style={st.lab}>{t('portion')}</Txt>
         <Row style={{ gap: 8 }}>
           {MULTS.map((m) => (
-            <Pressable key={m} onPress={() => setMult(m)} style={[st.mult, mult === m && { backgroundColor: '#fff' }]}>
-              <Num style={{ fontWeight: '900', fontSize: 16, color: mult === m ? '#000' : '#fff' }}>×{m}</Num>
+            <Pressable key={m} onPress={() => setMult(m)} style={[st.mult, mult === m && { backgroundColor: C.inv }]}>
+              <Num style={{ fontWeight: '900', fontSize: 16, color: mult === m ? C.onInv : C.text }}>×{m}</Num>
             </Pressable>
           ))}
         </Row>
@@ -78,14 +78,14 @@ export function MealSheet({ meal, dayK, onClose }: { meal: Meal | null; dayK: st
   );
 }
 
-const st = StyleSheet.create({
+const st = themed(() => StyleSheet.create({
   dim: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)' },
   sheet: { backgroundColor: C.surface, borderTopLeftRadius: 32, borderTopRightRadius: 32, padding: 22, paddingBottom: 34, borderWidth: 1, borderColor: C.stroke },
-  grab: { alignSelf: 'center', width: 44, height: 5, borderRadius: 3, backgroundColor: 'rgba(255,255,255,0.2)', marginBottom: 16 },
+  grab: { alignSelf: 'center', width: 44, height: 5, borderRadius: 3, backgroundColor: fa(0.2), marginBottom: 16 },
   ph: { width: 56, height: 56, borderRadius: 16 },
   x: { width: 36, height: 36, borderRadius: 18, backgroundColor: C.surface2, alignItems: 'center', justifyContent: 'center' },
   kcal: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 16, paddingVertical: 6, backgroundColor: C.surface2, borderRadius: 20 },
   mt: { flex: 1, alignItems: 'center', backgroundColor: C.surface2, borderRadius: 16, paddingVertical: 10 },
   lab: { color: C.mut, fontWeight: '700', fontSize: 13, marginTop: 16, marginBottom: 8 },
   mult: { flex: 1, height: 44, borderRadius: 14, backgroundColor: C.surface2, alignItems: 'center', justifyContent: 'center' },
-});
+}));

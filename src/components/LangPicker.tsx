@@ -4,7 +4,7 @@ import { Txt } from './ui';
 import { Icon } from './Icon';
 import { LANGS, langName, useT } from '../i18n';
 import { useApp } from '../store';
-import { C, R } from '../theme';
+import { C, R, themed } from '../theme';
 
 /** Pill that shows the current language and opens a list of all languages. */
 export function LangPicker({ style, textStyle }: { style?: object; textStyle?: object }) {
@@ -14,7 +14,7 @@ export function LangPicker({ style, textStyle }: { style?: object; textStyle?: o
   return (
     <>
       <Pressable style={style} onPress={() => setOpen(true)}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}><Icon name="globe" size={16} color={(textStyle as { color?: string })?.color ?? '#fff'} /><Txt style={textStyle}>{langName(lang)}</Txt></View>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}><Icon name="globe" size={16} color={(textStyle as { color?: string })?.color ?? C.text} /><Txt style={textStyle}>{langName(lang)}</Txt></View>
       </Pressable>
       <Modal visible={open} transparent animationType="fade" onRequestClose={() => setOpen(false)}>
         <Pressable style={st.back} onPress={() => setOpen(false)}>
@@ -35,11 +35,11 @@ export function LangPicker({ style, textStyle }: { style?: object; textStyle?: o
   );
 }
 
-const st = StyleSheet.create({
+const st = themed(() => StyleSheet.create({
   back: { flex: 1, backgroundColor: 'rgba(0,0,0,0.7)', justifyContent: 'center', padding: 24 },
   sheet: { backgroundColor: C.surface, borderRadius: R.lg, borderWidth: 1, borderColor: C.stroke, padding: 16 },
-  title: { color: '#fff', fontSize: 20, fontWeight: '800', marginBottom: 10, textAlign: 'center' },
+  title: { color: C.text, fontSize: 20, fontWeight: '800', marginBottom: 10, textAlign: 'center' },
   row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 14, paddingHorizontal: 16, borderRadius: R.md, marginBottom: 6, backgroundColor: C.surface2 },
   on: { backgroundColor: C.green },
-  name: { color: '#fff', fontSize: 17, fontWeight: '700' },
-});
+  name: { color: C.text, fontSize: 17, fontWeight: '700' },
+}));

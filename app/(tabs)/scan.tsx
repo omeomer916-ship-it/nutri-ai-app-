@@ -9,7 +9,7 @@ import { useT, TKey } from '../../src/i18n';
 import { CATS, Cat, FREE_SCANS, PAYWALL_ON, dayKey, useApp } from '../../src/store';
 import { AiError, ScanResult, scanMeal } from '../../src/ai';
 import { fmt } from '../../src/calc';
-import { C, CAT_ICON, IMG, R, fontFor } from '../../src/theme';
+import { C, CAT_ICON, IMG, R, fontFor, themed, fa } from '../../src/theme';
 import { Btn, Card, Chip, H2, IconBadge, Num, Row, Screen, Segmented, Txt } from '../../src/components/ui';
 import { IntroVideo } from '../../src/components/IntroVideo';
 import { Icon, IconName } from '../../src/components/Icon';
@@ -171,7 +171,7 @@ export default function Scan() {
           <Icon name="image" size={22} />
         </Pressable>
         <Pressable style={({ pressed }) => [st.shutterOut, pressed && { transform: [{ scale: 0.94 }] }]} onPress={() => pick(true)} disabled={s.k === 'busy'}>
-          <View style={st.shutterIn}><Icon name="camera" size={30} color="#000" /></View>
+          <View style={st.shutterIn}><Icon name="camera" size={30} color={C.onInv} /></View>
         </Pressable>
         <Pressable style={st.side} onPress={() => router.push({ pathname: '/barcode', params: { cat } })}>
           <Icon name="barcode" size={22} color={C.green} />
@@ -200,7 +200,7 @@ export default function Scan() {
             </View>
           </Row>
           <View style={st.kcalBox}>
-            <Icon name="flame" size={30} color="#fff" fill="rgba(255,255,255,0.1)" />
+            <Icon name="flame" size={30} color={C.text} fill={fa(0.1)} />
             {fix ? (
               <TextInput value={fix.kcal} onChangeText={(v) => setFix({ ...fix, kcal: v })} keyboardType="number-pad" style={[st.fixIn, { fontSize: 34, width: 140, textAlign: 'center', fontFamily: fontFor(900, lang) }]} />
             ) : (
@@ -212,8 +212,8 @@ export default function Scan() {
           <Txt style={{ color: C.mut, fontWeight: '700', fontSize: 13, marginTop: 16, marginBottom: 8 }}>{t('portion')}</Txt>
           <Row style={{ gap: 8 }}>
             {[0.5, 1, 1.5, 2].map((m) => (
-              <Pressable key={m} onPress={() => setMult(m)} style={[st.mult, mult === m && { backgroundColor: '#fff' }]}>
-                <Num style={{ fontWeight: '900', fontSize: 15, color: mult === m ? '#000' : '#fff' }}>×{m}</Num>
+              <Pressable key={m} onPress={() => setMult(m)} style={[st.mult, mult === m && { backgroundColor: C.inv }]}>
+                <Num style={{ fontWeight: '900', fontSize: 15, color: mult === m ? C.onInv : C.text }}>×{m}</Num>
               </Pressable>
             ))}
           </Row>
@@ -232,7 +232,7 @@ export default function Scan() {
           {!!s.r.note && <Txt style={{ color: C.dim, fontSize: 12, marginTop: 10, lineHeight: 19 }}>{s.r.note}</Txt>}
           <Row style={{ gap: 10, marginTop: 20 }}>
             <Pressable onPress={() => setFix(fix ? null : { name: s.r.name, kcal: String(Math.round(s.r.kcal)) })} style={[st.fixBtn, fix && { backgroundColor: C.green }]}>
-              <Icon name="edit" size={18} color={fix ? '#000' : '#fff'} />
+              <Icon name="edit" size={18} color={fix ? '#000' : C.text} />
             </Pressable>
             <Btn kind="soft" title={t('retake')} style={{ flex: 1 }} icon={<Icon name="refresh" size={18} />} onPress={() => setS({ k: 'idle' })} />
             <Btn title={t('save')} style={{ flex: 1.4 }} icon={<Icon name="check" size={18} color="#000" stroke={2.6} />} onPress={save} />
@@ -298,7 +298,7 @@ function MacroTiles({ P, C: Cb, F, t, compact }: { P: number; C: number; F: numb
         <View key={k} style={[st.mt, compact && { paddingVertical: 8, backgroundColor: 'rgba(255,255,255,0.1)' }]}>
           <Row style={{ gap: 5 }}>
             <Icon name={ic} size={compact ? 14 : 17} color={col} />
-            <Num style={{ color: '#fff', fontWeight: '900', fontSize: compact ? 14 : 17 }}>{Math.round(v)}g</Num>
+            <Num style={{ color: compact ? '#fff' : C.text, fontWeight: '900', fontSize: compact ? 14 : 17 }}>{Math.round(v)}g</Num>
           </Row>
           <Txt center numberOfLines={1} style={{ color: C.mut, fontSize: compact ? 10 : 12, fontWeight: '600', marginTop: 1 }}>{t(k)}</Txt>
         </View>
@@ -307,7 +307,7 @@ function MacroTiles({ P, C: Cb, F, t, compact }: { P: number; C: number; F: numb
   );
 }
 
-const st = StyleSheet.create({
+const st = themed(() => StyleSheet.create({
   view: { borderRadius: R.xl, overflow: 'hidden', backgroundColor: '#050c08', borderWidth: 1, borderColor: C.stroke },
   lineWrap: { position: 'absolute', left: 30, right: 30, top: -40 },
   line: { height: 2.5, borderRadius: 2, backgroundColor: C.green, shadowColor: C.green, shadowOpacity: 1, shadowRadius: 10, elevation: 6 },
@@ -317,16 +317,16 @@ const st = StyleSheet.create({
   ex: { backgroundColor: '#fff', borderRadius: 999, paddingHorizontal: 9, paddingVertical: 2 },
   busy: { ...StyleSheet.absoluteFillObject, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.25)' },
   mt: { flex: 1, alignItems: 'center', backgroundColor: C.surface2, borderRadius: 16, paddingVertical: 12 },
-  shutterOut: { width: 84, height: 84, borderRadius: 42, borderWidth: 4, borderColor: '#fff', alignItems: 'center', justifyContent: 'center' },
-  shutterIn: { width: 68, height: 68, borderRadius: 34, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center' },
+  shutterOut: { width: 84, height: 84, borderRadius: 42, borderWidth: 4, borderColor: C.inv, alignItems: 'center', justifyContent: 'center' },
+  shutterIn: { width: 68, height: 68, borderRadius: 34, backgroundColor: C.inv, alignItems: 'center', justifyContent: 'center' },
   side: { width: 52, height: 52, borderRadius: 26, backgroundColor: C.surface2, borderWidth: 1, borderColor: C.stroke, alignItems: 'center', justifyContent: 'center', alignSelf: 'center' },
   sideL: { width: 52, color: C.dim, fontSize: 11, fontWeight: '600' },
   conf: { flexDirection: 'row', alignItems: 'center', gap: 4, alignSelf: 'flex-start', backgroundColor: 'rgba(57,230,140,0.12)', borderRadius: 999, paddingHorizontal: 9, paddingVertical: 3, marginTop: 4 },
   kcalBox: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 18, paddingVertical: 10, backgroundColor: C.surface2, borderRadius: 20 },
   item: { paddingVertical: 10, gap: 6 },
-  fixIn: { color: '#fff', fontSize: 18, backgroundColor: C.surface2, borderRadius: 12, paddingHorizontal: 12, paddingVertical: 6, borderWidth: 1, borderColor: C.green },
+  fixIn: { color: C.text, fontSize: 18, backgroundColor: C.surface2, borderRadius: 12, paddingHorizontal: 12, paddingVertical: 6, borderWidth: 1, borderColor: C.green },
   fixBtn: { width: 56, height: 56, borderRadius: 28, backgroundColor: C.surface2, alignItems: 'center', justifyContent: 'center' },
   mult: { flex: 1, height: 44, borderRadius: 14, backgroundColor: C.surface2, alignItems: 'center', justifyContent: 'center' },
   search: { flexDirection: 'row', alignItems: 'center', gap: 14, marginTop: 20, backgroundColor: C.surface, borderWidth: 1, borderColor: 'rgba(57,230,140,0.35)', borderRadius: R.lg, padding: 16 },
   rec: { width: 130, height: 150, borderRadius: R.md, overflow: 'hidden', borderWidth: 1, borderColor: C.stroke },
-});
+}));

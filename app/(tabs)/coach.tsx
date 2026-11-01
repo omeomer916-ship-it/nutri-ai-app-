@@ -5,7 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useT } from '../../src/i18n';
 import { dayKey, totals, useApp } from '../../src/store';
 import { AiError, ChatMsg, askCoach } from '../../src/ai';
-import { C, R, fontFor } from '../../src/theme';
+import { C, R, fontFor, themed } from '../../src/theme';
 import { Glow, Row, Txt } from '../../src/components/ui';
 import { Leaf } from '../../src/components/Leaf';
 import { Icon, IconName } from '../../src/components/Icon';
@@ -99,7 +99,7 @@ export default function Coach() {
             )}
           </Row>
           <ScrollView ref={sv} style={{ flex: 1 }} contentContainerStyle={{ padding: 20, gap: 12, paddingBottom: 24 }} showsVerticalScrollIndicator={false}>
-            <View style={[st.b, st.ai]}><Rich text={t('hello')} color="#fff" /></View>
+            <View style={[st.b, st.ai]}><Rich text={t('hello')} color={C.text} /></View>
             {msgs.length === 0 && (
               <View style={{ gap: 10, marginTop: 8 }}>
                 {sugg.map(([ic, col, k]) => (
@@ -115,7 +115,7 @@ export default function Coach() {
               <View key={i} style={[st.b, m.role === 'user' ? st.me : st.ai]}>
                 {m.role === 'user'
                   ? <Txt style={{ color: '#000', fontWeight: '700', fontSize: 15, lineHeight: 23 }}>{m.content}</Txt>
-                  : <Rich text={m.content} color="#fff" />}
+                  : <Rich text={m.content} color={C.text} />}
               </View>
             ))}
             {busy && (
@@ -143,11 +143,11 @@ export default function Coach() {
   );
 }
 
-const st = StyleSheet.create({
+const st = themed(() => StyleSheet.create({
   head: { gap: 12, paddingHorizontal: 20, paddingTop: 12, paddingBottom: 12, borderBottomWidth: 1, borderBottomColor: C.stroke },
   av: { width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center' },
   clear: { width: 40, height: 40, borderRadius: 20, backgroundColor: C.surface2, alignItems: 'center', justifyContent: 'center' },
-  online: { position: 'absolute', bottom: 1, end: 1, width: 13, height: 13, borderRadius: 7, backgroundColor: C.green, borderWidth: 2.5, borderColor: '#000' },
+  online: { position: 'absolute', bottom: 1, end: 1, width: 13, height: 13, borderRadius: 7, backgroundColor: C.green, borderWidth: 2.5, borderColor: C.bg },
   b: { maxWidth: '88%', borderRadius: 22, paddingHorizontal: 16, paddingVertical: 12 },
   ai: { alignSelf: 'flex-start', backgroundColor: C.surface, borderWidth: 1, borderColor: C.stroke, borderTopStartRadius: 6 },
   me: { alignSelf: 'flex-end', backgroundColor: C.green, borderTopEndRadius: 6 },
@@ -157,6 +157,6 @@ const st = StyleSheet.create({
   typing: { width: 8, height: 8, borderRadius: 4, backgroundColor: C.green },
   inputRow: { paddingHorizontal: 14, paddingTop: 8, paddingBottom: Platform.OS === 'ios' ? 112 : 104 },
   inputWrap: { flex: 1, flexDirection: 'row', alignItems: 'flex-end', gap: 8, backgroundColor: C.surface, borderWidth: 1, borderColor: C.stroke, borderRadius: 28, padding: 6, paddingStart: 16 },
-  input: { flex: 1, color: '#fff', paddingVertical: 10, fontSize: 15, maxHeight: 120 },
+  input: { flex: 1, color: C.text, paddingVertical: 10, fontSize: 15, maxHeight: 120 },
   send: { width: 44, height: 44, borderRadius: 22, backgroundColor: C.green, alignItems: 'center', justifyContent: 'center' },
-});
+}));

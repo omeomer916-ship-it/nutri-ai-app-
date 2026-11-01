@@ -5,7 +5,7 @@ import { useT, TKey } from '../../src/i18n';
 import { Meal, dayKey, streakOf, totals, useApp } from '../../src/store';
 import { MealSheet } from '../../src/components/MealSheet';
 import { KG_LB, fmt, wShow } from '../../src/calc';
-import { C, CAT_ICON, R, fontFor } from '../../src/theme';
+import { C, CAT_ICON, R, fontFor, themed, fa } from '../../src/theme';
 import { Bar, Btn, Card, H2, IconBadge, Num, Row, Screen, Segmented, Txt } from '../../src/components/ui';
 import { Ring } from '../../src/components/Ring';
 import { Icon, IconName } from '../../src/components/Icon';
@@ -53,8 +53,8 @@ function Daily() {
           const on = i === sel;
           return (
             <Pressable key={w.k} onPress={() => setSel(i)} style={[st.day, on && st.dayOn]}>
-              <Txt center style={{ color: on ? '#000' : C.dim, fontSize: 10, fontWeight: '700' }}>{new Date(w.ts).toLocaleDateString(loc, { weekday: 'short' })}</Txt>
-              <Num style={{ color: on ? '#000' : '#fff', fontWeight: '900', fontSize: 16 }}>{new Date(w.ts).getDate()}</Num>
+              <Txt center style={{ color: on ? C.onInv : C.dim, fontSize: 10, fontWeight: '700' }}>{new Date(w.ts).toLocaleDateString(loc, { weekday: 'short' })}</Txt>
+              <Num style={{ color: on ? C.onInv : C.text, fontWeight: '900', fontSize: 16 }}>{new Date(w.ts).getDate()}</Num>
               <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: col }} />
             </Pressable>
           );
@@ -63,7 +63,7 @@ function Daily() {
 
       <Card style={{ marginTop: 14, alignItems: 'center', paddingVertical: 24 }}>
         <Ring size={210} stroke={16} value={d.tot.kcal} max={goals.kcal} segments={sp}>
-          <Icon name="flame" size={22} color="#fff" />
+          <Icon name="flame" size={22} color={C.text} />
           <Num style={{ fontSize: 42, fontWeight: '900', lineHeight: 52 }}>{fmt(d.tot.kcal)}</Num>
           <Num style={{ color: C.mut, fontSize: 13 }}>/ {fmt(goals.kcal)} kcal</Num>
         </Ring>
@@ -288,10 +288,10 @@ function Weight() {
                 <Stop offset="1" stopColor={C.green} stopOpacity={0} />
               </SvgGrad>
             </Defs>
-            <Line x1={0} x2={W} y1={gy} y2={gy} stroke="rgba(255,255,255,0.35)" strokeDasharray="6 6" />
+            <Line x1={0} x2={W} y1={gy} y2={gy} stroke={fa(0.35)} strokeDasharray="6 6" />
             {xy.length > 1 && <Path d={area} fill="url(#g)" />}
             <Path d={line} fill="none" stroke={C.green} strokeWidth={3} strokeLinejoin="round" strokeLinecap="round" />
-            {xy.map(([x, y], i) => <Circle key={i} cx={x} cy={y} r={i === xy.length - 1 ? 6 : 3.5} fill={i === xy.length - 1 ? '#fff' : C.green} />)}
+            {xy.map(([x, y], i) => <Circle key={i} cx={x} cy={y} r={i === xy.length - 1 ? 6 : 3.5} fill={i === xy.length - 1 ? C.text : C.green} />)}
           </Svg>
         </View>
         {input}
@@ -300,14 +300,14 @@ function Weight() {
   );
 }
 
-const st = StyleSheet.create({
+const st = themed(() => StyleSheet.create({
   day: { flex: 1, alignItems: 'center', gap: 3, paddingVertical: 9, borderRadius: 16, backgroundColor: C.surface, borderWidth: 1, borderColor: C.stroke },
-  dayOn: { backgroundColor: '#fff', borderColor: '#fff' },
+  dayOn: { backgroundColor: C.inv, borderColor: C.inv },
   diff: { flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'flex-start', borderRadius: 999, paddingHorizontal: 10, paddingVertical: 4, marginTop: 8 },
   tiles: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 10 },
   tile: { width: '31.9%', padding: 12 },
   thumb: { width: 46, height: 46, borderRadius: 14 },
-  goalLine: { position: 'absolute', left: 0, right: 0, borderTopWidth: 1, borderStyle: 'dashed', borderColor: 'rgba(255,255,255,0.4)' },
-  in: { flex: 1, height: 54, paddingVertical: 0, textAlignVertical: 'center', includeFontPadding: false, color: '#fff', backgroundColor: C.surface2, borderRadius: R.pill, paddingHorizontal: 16, fontSize: 18, textAlign: 'center' },
+  goalLine: { position: 'absolute', left: 0, right: 0, borderTopWidth: 1, borderStyle: 'dashed', borderColor: fa(0.4) },
+  in: { flex: 1, height: 54, paddingVertical: 0, textAlignVertical: 'center', includeFontPadding: false, color: C.text, backgroundColor: C.surface2, borderRadius: R.pill, paddingHorizontal: 16, fontSize: 18, textAlign: 'center' },
   toGo: { flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'flex-start', backgroundColor: 'rgba(57,230,140,0.12)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 999, marginTop: 12 },
-});
+}));

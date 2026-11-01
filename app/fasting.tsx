@@ -5,7 +5,7 @@ import * as Haptics from 'expo-haptics';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useT, TKey } from '../src/i18n';
 import { useApp } from '../src/store';
-import { C, R } from '../src/theme';
+import { C, R, themed, fa } from '../src/theme';
 import { hms, time12 } from '../src/calc';
 import { Btn, Card, Glow, H2, Num, Row, Txt } from '../src/components/ui';
 import { Ring } from '../src/components/Ring';
@@ -61,8 +61,8 @@ export default function Fasting() {
           <Row style={{ gap: 8, marginTop: 18 }}>
             {PH.map(([h, k, c]) => (
               <View key={k} style={{ flex: 1, alignItems: 'center', gap: 4 }}>
-                <View style={{ height: 6, alignSelf: 'stretch', borderRadius: 3, backgroundColor: on && hrs >= h ? c : 'rgba(255,255,255,0.1)' }} />
-                <Txt center numberOfLines={2} style={{ fontSize: 10, color: on && hrs >= h ? '#fff' : C.dim, fontWeight: '700' }}>{t(k)}</Txt>
+                <View style={{ height: 6, alignSelf: 'stretch', borderRadius: 3, backgroundColor: on && hrs >= h ? c : fa(0.1) }} />
+                <Txt center numberOfLines={2} style={{ fontSize: 10, color: on && hrs >= h ? C.text : C.dim, fontWeight: '700' }}>{t(k)}</Txt>
                 <Num style={{ fontSize: 10, color: C.dim, textAlign: 'center' }}>{h}h+</Num>
               </View>
             ))}
@@ -85,7 +85,7 @@ export default function Fasting() {
           <View style={st.plans}>
             {PLANS.map((h) => (
               <Pressable key={h} disabled={on} onPress={() => setFastHours(h)} style={[st.plan, fast.hours === h && st.planOn, on && fast.hours !== h && { opacity: 0.4 }]}>
-                <Num style={{ fontWeight: '900', fontSize: 18, color: fast.hours === h ? '#000' : '#fff', textAlign: 'center' }}>{h}:{24 - h}</Num>
+                <Num style={{ fontWeight: '900', fontSize: 18, color: fast.hours === h ? '#000' : C.text, textAlign: 'center' }}>{h}:{24 - h}</Num>
                 <Num style={{ fontSize: 11, color: fast.hours === h ? '#000' : C.dim, textAlign: 'center' }}>{h}h</Num>
               </Pressable>
             ))}
@@ -123,11 +123,11 @@ export default function Fasting() {
   );
 }
 
-const st = StyleSheet.create({
+const st = themed(() => StyleSheet.create({
   back: { width: 40, height: 40, borderRadius: 20, backgroundColor: C.surface2, alignItems: 'center', justifyContent: 'center' },
   phase: { alignSelf: 'center', flexDirection: 'row', alignItems: 'center', gap: 6, borderWidth: 1, borderRadius: 999, paddingHorizontal: 14, paddingVertical: 6, marginTop: 14 },
   plans: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   plan: { width: '31.5%', paddingVertical: 12, borderRadius: R.md, backgroundColor: C.surface, borderWidth: 1, borderColor: C.stroke },
   planOn: { backgroundColor: '#7CF5B5', borderColor: '#7CF5B5' },
   dot: { width: 26, height: 26, borderRadius: 13, alignItems: 'center', justifyContent: 'center' },
-});
+}));

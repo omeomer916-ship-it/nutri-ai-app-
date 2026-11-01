@@ -4,7 +4,7 @@ import * as Haptics from 'expo-haptics';
 import { useT } from '../i18n';
 import { useApp } from '../store';
 import { fmt } from '../calc';
-import { C } from '../theme';
+import { C, themed, fa } from '../theme';
 import { Btn, Num, Row, Txt } from './ui';
 import { Icon } from './Icon';
 
@@ -47,20 +47,20 @@ export function ExerciseSheet({ open, onClose }: { open: boolean; onClose: () =>
         <View style={st.grid}>
           {ACTS.map((x) => (
             <Pressable key={x.id} onPress={() => setAct(x.id)} style={[st.act, act === x.id && st.actOn]}>
-              <Txt center numberOfLines={1} style={{ fontWeight: '800', fontSize: 13, color: act === x.id ? '#000' : '#fff' }}>{lang === 'ar' ? x.ar : x.en}</Txt>
+              <Txt center numberOfLines={1} style={{ fontWeight: '800', fontSize: 13, color: act === x.id ? '#000' : C.text }}>{lang === 'ar' ? x.ar : x.en}</Txt>
             </Pressable>
           ))}
         </View>
         <Txt style={st.lab}>{t('minutes')}</Txt>
         <Row style={{ gap: 8 }}>
           {MINS.map((m) => (
-            <Pressable key={m} onPress={() => setMin(m)} style={[st.min, min === m && { backgroundColor: '#fff' }]}>
-              <Num style={{ fontWeight: '900', color: min === m ? '#000' : '#fff' }}>{m}</Num>
+            <Pressable key={m} onPress={() => setMin(m)} style={[st.min, min === m && { backgroundColor: C.inv }]}>
+              <Num style={{ fontWeight: '900', color: min === m ? C.onInv : C.text }}>{m}</Num>
             </Pressable>
           ))}
         </Row>
         <View style={st.kcal}>
-          <Icon name="flame" size={26} color="#7CF5B5" fill="#7CF5B533" />
+          <Icon name="flame" size={26} color={C.water} fill={C.water + '33'} />
           <Num style={{ fontSize: 38, fontWeight: '900' }}>{fmt(kcal)}</Num>
           <Num style={{ color: C.mut, fontSize: 14, fontWeight: '700', marginTop: 12 }}>kcal</Num>
         </View>
@@ -70,14 +70,14 @@ export function ExerciseSheet({ open, onClose }: { open: boolean; onClose: () =>
   );
 }
 
-const st = StyleSheet.create({
+const st = themed(() => StyleSheet.create({
   dim: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)' },
   sheet: { backgroundColor: C.surface, borderTopLeftRadius: 32, borderTopRightRadius: 32, padding: 22, paddingBottom: 34, borderWidth: 1, borderColor: C.stroke },
-  grab: { alignSelf: 'center', width: 44, height: 5, borderRadius: 3, backgroundColor: 'rgba(255,255,255,0.2)', marginBottom: 16 },
+  grab: { alignSelf: 'center', width: 44, height: 5, borderRadius: 3, backgroundColor: fa(0.2), marginBottom: 16 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 14 },
   act: { width: '31.6%', paddingVertical: 11, borderRadius: 14, backgroundColor: C.surface2, alignItems: 'center' },
-  actOn: { backgroundColor: '#7CF5B5' },
+  actOn: { backgroundColor: C.water },
   lab: { color: C.mut, fontWeight: '700', fontSize: 13, marginTop: 16, marginBottom: 8 },
   min: { flex: 1, height: 44, borderRadius: 14, backgroundColor: C.surface2, alignItems: 'center', justifyContent: 'center' },
   kcal: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 16, paddingVertical: 6, backgroundColor: C.surface2, borderRadius: 20 },
-});
+}));

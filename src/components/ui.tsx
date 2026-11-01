@@ -2,7 +2,7 @@ import { ReactNode, useEffect, useRef } from 'react';
 import { Animated, Easing, Platform, Pressable, ScrollView, StyleProp, StyleSheet, Text, TextProps, TextStyle, View, ViewStyle } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { C, R, fontFor } from '../theme';
+import { C, R, fontFor, themed, fa } from '../theme';
 import { useT } from '../i18n';
 import { Icon, IconName } from './Icon';
 import * as Haptics from 'expo-haptics';
@@ -10,7 +10,7 @@ import * as Haptics from 'expo-haptics';
 /** Text with the Cairo font picked by weight, and direction from the app language. */
 export function Txt({ style, center, ...p }: TextProps & { center?: boolean }) {
   const { rtl, lang } = useT();
-  const flat = (StyleSheet.flatten([{ color: C.white, fontSize: 15 }, style]) || {}) as TextStyle;
+  const flat = (StyleSheet.flatten([{ color: C.text, fontSize: 15 }, style]) || {}) as TextStyle;
   const fam = fontFor(flat.fontWeight as string | undefined, lang);
   // Android mirrors left/right inside an RTL layout, so 'left' means "start" here.
   const out: TextStyle = { textAlign: center ? 'center' : 'left', writingDirection: rtl ? 'rtl' : 'ltr', ...flat };
@@ -29,7 +29,7 @@ function logical(st: TextStyle, rtl: boolean) {
 /** Numbers / Latin bits that must stay left-to-right inside Arabic text. */
 export function Num({ style, children, ...p }: TextProps) {
   const { lang, rtl } = useT();
-  const flat = (StyleSheet.flatten([{ color: C.white, fontSize: 15 }, style]) || {}) as TextStyle;
+  const flat = (StyleSheet.flatten([{ color: C.text, fontSize: 15 }, style]) || {}) as TextStyle;
   const fam = fontFor(flat.fontWeight as string | undefined, lang);
   const out: TextStyle = { textAlign: 'left', writingDirection: 'ltr', ...flat };
   if (fam) { out.fontFamily = fam; delete out.fontWeight; }
@@ -73,7 +73,7 @@ export function Screen({ children, scroll = true, pad = true, glow = true }: { c
 export function Card({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) {
   return (
     <View style={[s.card, style]}>
-      <LinearGradient pointerEvents="none" colors={['rgba(255,255,255,0.05)', 'rgba(255,255,255,0)']} locations={[0, 0.5]} style={[StyleSheet.absoluteFill, { borderRadius: R.lg }]} />
+      <LinearGradient pointerEvents="none" colors={[fa(0.05), fa(0)]} locations={[0, 0.5]} style={[StyleSheet.absoluteFill, { borderRadius: R.lg }]} />
       {children}
     </View>
   );
@@ -97,8 +97,8 @@ export function Label({ children, style }: { children: ReactNode; style?: StyleP
 export function Btn({ title, onPress, kind = 'primary', style, disabled, icon }: {
   title: string; onPress?: () => void; kind?: 'primary' | 'ghost' | 'white' | 'soft'; style?: StyleProp<ViewStyle>; disabled?: boolean; icon?: ReactNode;
 }) {
-  const bg = kind === 'primary' ? C.green : kind === 'white' ? '#fff' : kind === 'soft' ? C.surface2 : 'transparent';
-  const fg = kind === 'ghost' || kind === 'soft' ? C.white : '#000';
+  const bg = kind === 'primary' ? C.green : kind === 'white' ? C.inv : kind === 'soft' ? C.surface2 : 'transparent';
+  const fg = kind === 'ghost' || kind === 'soft' ? C.text : kind === 'white' ? C.onInv : '#000';
   return (
     <Pressable
       onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {}); onPress?.(); }}
@@ -118,9 +118,9 @@ export function Btn({ title, onPress, kind = 'primary', style, disabled, icon }:
 
 export function Chip({ title, on, onPress, icon }: { title: string; on?: boolean; onPress?: () => void; icon?: IconName }) {
   return (
-    <Pressable onPress={onPress} style={[s.chip, on && { backgroundColor: '#fff', borderColor: '#fff' }]}>
-      {icon && <Icon name={icon} size={16} color={on ? '#000' : C.mut} />}
-      <Txt style={{ color: on ? '#000' : C.white, fontWeight: '700', fontSize: 14 }}>{title}</Txt>
+    <Pressable onPress={onPress} style={[s.chip, on && { backgroundColor: C.inv, borderColor: C.inv }]}>
+      {icon && <Icon name={icon} size={16} color={on ? C.onInv : C.mut} />}
+      <Txt style={{ color: on ? C.onInv : C.text, fontWeight: '700', fontSize: 14 }}>{title}</Txt>
     </Pressable>
   );
 }
@@ -131,7 +131,7 @@ export function Segmented<T extends string>({ value, options, onChange }: { valu
     <View style={s.seg}>
       {options.map(([v, l]) => (
         <Pressable key={v} onPress={() => onChange(v)} style={[s.segB, value === v && s.segOn]}>
-          <Txt center style={{ color: value === v ? '#000' : C.mut, fontWeight: '800', fontSize: 14 }}>{l}</Txt>
+          <Txt center numberOfLines={1} adjustsFontSizeToFit style={{ color: value === v ? C.onInv : C.mut, fontWeight: '800', fontSize: 13 }}>{l}</Txt>
         </Pressable>
       ))}
     </View>
@@ -172,7 +172,7 @@ export function IconBadge({ name, color = C.green, size = 40, icon = 20, loop, d
   return (
     <Pop delay={delay} loop={loop}>
       <View style={{ width: size, height: size, borderRadius: r, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(124,245,181,0.28)', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(57,230,140,0.07)' }}>
-        <LinearGradient pointerEvents="none" colors={['rgba(255,255,255,0.16)', 'rgba(57,230,140,0.10)', 'rgba(0,0,0,0.15)']} locations={[0, 0.45, 1]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={StyleSheet.absoluteFill} />
+        <LinearGradient pointerEvents="none" colors={C.mode === 'light' ? ['rgba(255,255,255,0.9)', 'rgba(57,230,140,0.12)', 'rgba(57,230,140,0.05)'] : ['rgba(255,255,255,0.16)', 'rgba(57,230,140,0.10)', 'rgba(0,0,0,0.15)']} locations={[0, 0.45, 1]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={StyleSheet.absoluteFill} />
         <View pointerEvents="none" style={{ position: 'absolute', top: 0, left: r * 0.6, right: r * 0.6, height: 1, backgroundColor: 'rgba(255,255,255,0.35)' }} />
         <Icon name={name} size={icon} color={color} fill={LINE_ONLY.has(name) ? undefined : color + '2E'} />
       </View>
@@ -183,21 +183,21 @@ export function IconBadge({ name, color = C.green, size = 40, icon = 20, loop, d
 export function Bar({ value, max, color = C.green, height = 8 }: { value: number; max: number; color?: string; height?: number }) {
   const pct = Math.max(0, Math.min(100, max ? (value / max) * 100 : 0));
   return (
-    <View style={{ height, borderRadius: height, backgroundColor: 'rgba(255,255,255,0.08)', overflow: 'hidden' }}>
+    <View style={{ height, borderRadius: height, backgroundColor: fa(0.08), overflow: 'hidden' }}>
       <View style={{ width: `${pct}%`, height, borderRadius: height, backgroundColor: color }} />
     </View>
   );
 }
 
-export const s = StyleSheet.create({
-  card: { backgroundColor: C.surface, borderColor: 'rgba(255,255,255,0.09)', borderWidth: 1, borderRadius: R.lg, padding: 18 },
+export const s = themed(() => StyleSheet.create({
+  card: { backgroundColor: C.surface, borderColor: C.border, borderWidth: 1, borderRadius: R.lg, padding: 18 },
   h1: { fontSize: 30, fontWeight: '900', marginTop: 6, marginBottom: 14, lineHeight: 42 },
   h2: { fontSize: 19, fontWeight: '800' },
   label: { color: C.mut, fontSize: 13, fontWeight: '600' },
-  btn: { height: 56, borderRadius: R.pill, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 10, borderColor: 'rgba(255,255,255,0.18)', paddingHorizontal: 20 },
+  btn: { height: 56, borderRadius: R.pill, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 10, borderColor: fa(0.18), paddingHorizontal: 20 },
   glow: { shadowColor: C.green, shadowOpacity: 0.45, shadowRadius: 18, shadowOffset: { width: 0, height: 8 }, elevation: 8 },
   chip: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 16, paddingVertical: 8, borderRadius: R.pill, borderWidth: 1, borderColor: C.stroke, backgroundColor: C.surface },
   seg: { flexDirection: 'row', backgroundColor: C.surface, borderWidth: 1, borderColor: C.stroke, borderRadius: R.pill, padding: 4 },
   segB: { flex: 1, alignItems: 'center', paddingVertical: 9, borderRadius: R.pill },
-  segOn: { backgroundColor: '#fff' },
-});
+  segOn: { backgroundColor: C.inv },
+}));

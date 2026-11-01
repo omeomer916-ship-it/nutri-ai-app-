@@ -49,7 +49,7 @@ export default function ShareDay() {
     setBusy(false);
   };
 
-  const mac: [string, number, number, string][] = [[t('P'), tot.P, goals.P, '#39E68C'], [t('Cb'), tot.C, goals.C, '#FFB547'], [t('F'), tot.F, goals.F, '#5AB8FF']];
+  const mac: [string, number, number, string][] = [[t('P'), tot.P, goals.P, '#39E68C'], [t('Cb'), tot.C, goals.C, '#B5F7D5'], [t('F'), tot.F, goals.F, '#17B062']];
   const macCol = (c: string) => (look === 'mint' ? '#03140B' : c);
 
   return (

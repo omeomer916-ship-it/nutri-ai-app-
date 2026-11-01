@@ -207,13 +207,6 @@ export default function Profile() {
             <Segmented value={imperial ? 'i' : 'm'} options={[['m', 'kg · cm'], ['i', 'lb · ft']]} onChange={(v) => setImperial(v === 'i')} />
           </View>
         </Row>
-        <Row style={st.row}>
-          <IconBadge name={C.mode === 'light' ? 'sun' : 'moon'} size={38} icon={18} />
-          <Txt style={{ flex: 1, fontWeight: '700' }}>{t('appearance')}</Txt>
-          <View style={{ width: 196 }}>
-            <Segmented value={theme} options={[['system', t('thAuto')], ['dark', t('thDark')], ['light', t('thLight')]]} onChange={(v) => setTheme(v as 'system' | 'dark' | 'light')} />
-          </View>
-        </Row>
         {item('refresh', t('redo'), () => router.push('/onboarding'))}
         {item('share', t('share'), () => { Share.share({ message: t('shareMsg') }).catch(() => {}); })}
         {!!INSTAGRAM && item('instagram', t('igFollow'), openInstagram)}

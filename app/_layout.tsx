@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Pressable, Text, View, useColorScheme } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { Stack, router, usePathname } from 'expo-router';
 import { useFonts } from 'expo-font';
 import { StatusBar } from 'expo-status-bar';
@@ -29,10 +29,8 @@ export default function RootLayout() {
   const [late, setLate] = useState(false);
   useEffect(() => { const id = setTimeout(() => setLate(true), 4000); return () => clearTimeout(id); }, []);
   const ready = hydrated && (fontsOk || !!fontErr || late);
-  // Light / dark: the user's choice, or follow the phone when set to Auto.
-  const sys = useColorScheme();
-  const pref = useApp((s) => s.theme);
-  applyTheme(pref === 'system' ? (sys === 'light' ? 'light' : 'dark') : pref);
+  // The app is always dark (black with green).
+  applyTheme('dark');
   const tv = themeVersion();
   // Changing the theme remounts the screens; come back to the same screen afterwards.
   const path = usePathname();

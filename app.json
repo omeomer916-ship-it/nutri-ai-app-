@@ -3,10 +3,10 @@
     "name": "Nutri AI",
     "slug": "nutri-ai",
     "scheme": "nutriai",
-    "version": "2.3.0",
+    "version": "2.3.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "dark",
     "backgroundColor": "#000000",
     "newArchEnabled": true,
     "ios": {
@@ -18,7 +18,7 @@
         "NSUserNotificationsUsageDescription": "Nutri AI sends the meal and water reminders you turn on.",
         "NSMicrophoneUsageDescription": "Nutri AI uses the microphone so you can log meals by voice."
       },
-      "buildNumber": "3",
+      "buildNumber": "4",
       "config": {
         "usesNonExemptEncryption": false
       }
@@ -34,7 +34,7 @@
         "CAMERA",
         "RECORD_AUDIO"
       ],
-      "versionCode": 20,
+      "versionCode": 21,
       "predictiveBackGestureEnabled": false
     },
     "web": {

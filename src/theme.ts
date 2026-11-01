@@ -25,18 +25,18 @@ const DARK = {
   red: '#FF6B6B',
   // One brand: every accent is a shade of the logo green.
   pro: '#39E68C',
-  carb: '#FFB547',
-  fat: '#5AB8FF',
-  water: '#4FC3F7',
+  carb: '#B5F7D5',
+  fat: '#17B062',
+  water: '#7CF5B5',
   mint: '#9AF3C4',
   deep: '#0F2A1B',
-  // Accents: one per kind of thing, so the app reads at a glance.
-  violet: '#A78BFA',
-  coral: '#FF7A7A',
-  orange: '#FF8A3D',
-  sky: '#5AB8FF',
+  // Accents stay in the green family (gold is kept for Pro and levels).
+  violet: '#9AF3C4',
+  coral: '#39E68C',
+  orange: '#39E68C',
+  sky: '#7CF5B5',
   gold: '#FFD45C',
-  pink: '#F472B6',
+  pink: '#9AF3C4',
 };
 const LIGHT: typeof DARK = {
   mode: 'light',
@@ -128,12 +128,12 @@ export const IMG = {
 
 /** Category icon names + accent colours (see components/Icon). */
 export const CAT_ICON = {
-  bf: { icon: 'sun', color: '#FFB547' },
+  bf: { icon: 'sun', color: '#39E68C' },
   ln: { icon: 'bowl', color: '#39E68C' },
-  dn: { icon: 'moon', color: '#A78BFA' },
-  sn: { icon: 'cookie', color: '#FF8A3D' },
-  ds: { icon: 'cake', color: '#F472B6' },
-  dr: { icon: 'cup', color: '#4FC3F7' },
+  dn: { icon: 'moon', color: '#39E68C' },
+  sn: { icon: 'cookie', color: '#39E68C' },
+  ds: { icon: 'cake', color: '#39E68C' },
+  dr: { icon: 'cup', color: '#39E68C' },
 } as const;
 
 // legacy emoji map (unused by new screens)
